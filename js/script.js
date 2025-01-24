@@ -11,8 +11,6 @@ jQuery(document).ready(function ($) {
         updateSatoshiField(bitcoinDonationData.defaultAmount);
         const messageField = $('#bitcoin-donation-message');
         messageField.val(bitcoinDonationData.defaultMessage);
-        console.log(exchangeRates)
-
     }
 
     // Fetch exchange rates from CoinGecko API
@@ -51,7 +49,8 @@ jQuery(document).ready(function ($) {
                 redirectAutomatically: true,
                 metadata: {
                     orderNumber: message,
-                    referralCode: 'D19833'
+                    referralCode: 'D19833',
+                    type: 'Bitcoin Donation'
                 },
                 referralCode: 'D19833'
             }),
@@ -109,7 +108,8 @@ jQuery(document).ready(function ($) {
                 redirectAutomatically: true,
                 metadata: {
                     orderNumber: message,
-                    referralCode: 'D19833'
+                    referralCode: 'D19833',
+                    type: 'Bitcoin Donation'
                 }
 
             }),
