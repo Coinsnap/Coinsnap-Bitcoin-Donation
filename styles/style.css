@@ -1,0 +1,102 @@
+/* Common Styles */
+#bitcoin-donation-donation-form {
+  max-width: 220px;
+  margin: 20px auto;
+  padding: 30px;
+  border-radius: 8px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#bitcoin-donation-donation-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+#bitcoin-donation-donation-form input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+#bitcoin-donation-donation-form button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 10px;
+  background-color: #6393c7;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+#bitcoin-donation-donation-form button:hover {
+  transition: 250ms;
+  background-color: #f7a70a;
+}
+
+/* Light Theme */
+.bitcoin-donation-light-theme {
+  background-color: #f2f2f2;
+  color: #333333;
+}
+
+.bitcoin-donation-light-theme input {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  color: #333;
+}
+
+.bitcoin-donation-light-theme textarea {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  color: #333;
+}
+
+/* Dark Theme */
+.bitcoin-donation-dark-theme {
+  background-color: #2c2c2cf7;
+  color: #f1f1f1;
+}
+
+.bitcoin-donation-dark-theme input {
+  background-color: #3a3a3a;
+  border: 1px solid #555;
+  color: #f1f1f1;
+}
+
+.bitcoin-donation-dark-theme textarea {
+  background-color: #3a3a3a;
+  border: 1px solid #555;
+  color: #f1f1f1;
+}
+
+
+#bitcoin-donation-message {
+  width: 100%;
+  resize: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.bitcoin-donation-title-wrapper {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.bitcoin-donation-title-wrapper h3 {
+  font-weight: bold;
+  color: #f7a70a;
+  stroke: #6393c7;
+}

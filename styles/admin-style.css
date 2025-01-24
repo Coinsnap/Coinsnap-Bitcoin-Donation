@@ -1,0 +1,76 @@
+/* styles/admin-style.css */
+.wrap h1 {
+  margin-bottom: 20px;
+}
+
+.bitcoin-donation-settings-form input[type="text"],
+.bitcoin-donation-settings-form select {
+  width: 100%;
+  max-width: 500px;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.bitcoin-donation-settings-form label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.provider-settings {
+  display: none;
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  background: #f9f9f9;
+}
+
+/* Admin styles for donation list */
+.donation-controls {
+  margin: 20px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#check_connection_coinsnap_button {
+  margin-right: 40px;
+  background-color: #f6f6f6;
+  border: 1px solid #444444;
+  cursor: pointer;
+  padding: 6px 14px;
+  border-radius: 10%;
+}
+
+#check_connection_coinsnap_button:hover {
+  background-color: #f1f1f1;
+}
+
+#check_connection_btcpay_button {
+  margin-right: 40px;
+  background-color: #f6f6f6;
+  border: 1px solid #444444;
+  cursor: pointer;
+  padding: 6px 14px;
+  border-radius: 8px;
+}
+
+#check_connection_btcpay_button:hover {
+  background-color: #f1f1f1;
+}
+
+.shortcode_text {
+  font-size: 12px;
+  font-weight: bold;
+  background-color: #6393C7;
+  color: white;
+  padding: 4px;
+  border-radius: 2px;
+}
+
+.shortcode_text_wrapper {
+  font-size: 12px;
+}
