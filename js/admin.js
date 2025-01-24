@@ -36,7 +36,10 @@
 
     // Function to toggle visibility based on selected provider
     function toggleProviderSettings() {
-      const selectedProvider = $providerSelector?.val();
+      if (!$providerSelector || !$providerSelector.length) {
+        return; // Return if no provider element is found
+      }
+      const selectedProvider = $providerSelector.val();
       $coinsnapWrapper.toggle(selectedProvider === 'coinsnap');
       $btcpayWrapper.toggle(selectedProvider === 'btcpay');
     }
