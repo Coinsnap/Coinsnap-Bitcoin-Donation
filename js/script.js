@@ -1,8 +1,6 @@
 // js/script.js
 jQuery(document).ready(function ($) {
-    const coingeckoAPI = 'https://api.coingecko.com/api/v3/simple/price';
     const exchangeRates = {};
-    const satoshiConversionFactor = 100000000;
     var lastInputCurency = bitcoinDonationData.currency // Used to detrmine if invoice should be created in by fiat or crypto
 
     const setDefaults = () => {
@@ -13,19 +11,23 @@ jQuery(document).ready(function ($) {
         messageField.val(bitcoinDonationData.defaultMessage);
     }
 
-    // Fetch exchange rates from CoinGecko API
-    const fetchExchangeRates = () => {
+    function fetchCoinsnapExchangeRates() {
         $.ajax({
-            url: coingeckoAPI,
-            data: {
-                ids: 'bitcoin',
-                vs_currencies: 'eur,usd,cad,jpy,gbp,chf',
+            url: `https://app.coinsnap.io/api/v1/stores/${bitcoinDonationData.coinsnapStoreId}/rates`,
+            method: 'GET',
+            contentType: 'application/json',
+            headers: {
+                'x-api-key': bitcoinDonationData.coinsnapApiKey
             },
             success: (response) => {
-                exchangeRates.bitcoin = response.bitcoin;
-                exchangeRates.bitcoin.btc = 1
-                exchangeRates.bitcoin.sats = satoshiConversionFactor;
+                response
+                    .filter(item => item.currencyPair.includes("SATS")) // Filter only SATS rates
+                    .forEach(item => {
+                        const currency = item.currencyPair.replace("SATS_", ""); // Remove "SATS_" prefix
+                        exchangeRates[currency] = parseFloat(item.rate); // Update the exchangeRates
+                    });
                 setDefaults();
+
             },
             error: (error) => {
                 console.error('Error fetching exchange rates:', error);
@@ -177,12 +179,10 @@ jQuery(document).ready(function ($) {
     }
 
     const updateSatoshiField = (amount) => {
-        const currencyRate = exchangeRates.bitcoin[bitcoinDonationData.currency?.toLowerCase()];
+        const currencyRate = exchangeRates[bitcoinDonationData.currency?.toUpperCase()];
         const satoshiField = $('#bitcoin-donation-satoshi');
-
         if (!isNaN(amount) && currencyRate) {
-            const btcValue = amount / currencyRate;
-            const satoshiValue = btcValue * satoshiConversionFactor;
+            const satoshiValue = amount / currencyRate;
             satoshiField.val(satoshiValue.toFixed(0));
         } else {
             satoshiField.val('');
@@ -190,12 +190,11 @@ jQuery(document).ready(function ($) {
     };
 
     const updateAmountField = (satoshi) => {
-        const currencyRate = exchangeRates.bitcoin[bitcoinDonationData.currency?.toLowerCase()];
+        const currencyRate = exchangeRates[bitcoinDonationData.currency?.toUpperCase()];
         const amountField = $('#bitcoin-donation-amount');
 
         if (!isNaN(satoshi) && currencyRate) {
-            const btcValue = satoshi / satoshiConversionFactor;
-            const amountValue = btcValue * currencyRate;
+            const amountValue = satoshi * currencyRate;
             amountField.val(amountValue.toFixed(8));
         } else {
             amountField.val('');
@@ -244,6 +243,6 @@ jQuery(document).ready(function ($) {
         updateAmountField(satoshi);
     });
 
-    fetchExchangeRates();
+    fetchCoinsnapExchangeRates();
 });
 
