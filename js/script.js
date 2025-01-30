@@ -142,7 +142,7 @@ jQuery(document).ready(function ($) {
             },
             success: (response) => {
                 if (response?.status === 'Settled') {
-                    createCoinsnapInvoice(amount, message)
+                    createBTCPayInvoice(amount, message)
                 } else if (response?.status === 'New') {
                     window.location.href = response.checkoutLink;
                 }
