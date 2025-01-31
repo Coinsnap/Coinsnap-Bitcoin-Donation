@@ -1,31 +1,28 @@
 === Bitcoin Donation ===
+
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, donation, BTCPay
-Requires at least: 6.2
 Tested up to: 6.7
-Requires PHP: 8.0
 Stable tag: 1.0.0
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Offer pay-per-text, -video/audio, -digital goods with a Bitcoin paywall. Buyers get instant access after sending Bitcoin/Sats directly to your wallet
+Instant Bitcoin/Sats donations on Wordpress website directly to your wallet
 
 == Description ==
 
-The [Coinsnap](https://coinsnap.io/en/) Bitcoin Paywall protects your high-quality content and ensures that you are fairly remunerated for your work.
+[Coinsnap](https://coinsnap.io/en/) Bitcoin Donation plugin allows you to process Bitcoin Lightning donations over the Lightning network. 
+With the Coinsnap Bitcoin-Lightning payment plugin you only need a Lightning wallet with a Lightning address to accept Bitcoin Lightning payments on your Wordpress site.
 
-It allows you to build up a sustainable source of income and be less dependent on advertising revenue or sponsors. With your Coinsnap Bitcoin paywall, you can target loyal users who are willing to pay, which leads to a high-quality community in the long term.
+* Coinsnap Bitcoin Donation Demo Site: https://donation.coinsnap.org/
+* Blog Article: https://coinsnap.io/en/
+* WordPress: https://wordpress.org/plugins/bitcoin-donation/
+* GitHub: https://github.com/Coinsnap/Bitcoin-Donation
 
-* Coinsnap Bitcoin Paywall Demo Site: https://btcpaywall.com/en/
-* Blog Article: https://coinsnap.io/en/coinsnap-for-btcpaywall-payment-plugin/
-* WordPress: https://wordpress.org/plugins/coinsnap-bitcoin-paywall/
-* GitHub: https://github.com/Coinsnap/Coinsnap-Paywall
 
-== Bitcoin and Lightning payments in Coinsnap Bitcoin Paywall ==
+== Bitcoin and Lightning payments in Donation Plugin ==
 
-The Coinsnap Bitcoin Paywall allows you to accept Bitcoin for exclusive content and clearly differentiate your offer from the competition.
-
-This is how you create added value – both for yourself and for the growing target group of Bitcoin customers!
+The Bitcoin Donation plugin allows you to launch Bitcoin donations on your site fast and simply.
 
 With the Coinsnap Bitcoin Lightning payment processing plugin you can immediately accept Bitcoin Lightning payments on your site. You don’t need your own Lightning node or any other technical requirements if you'd like to provide payments via Coinsnap payment gateway.
 
@@ -84,32 +81,32 @@ If you want to use another BTCPay server as Payment provider, you need to know y
 
 == Installation ==
 
-### 1. Install the Coinsnap Bitcoin Paywall plug-in from the WordPress directory. ###
+### 1. Install the Bitcoin Donation plug-in from the WordPress directory. ###
 
-The Coinsnap Bitcoin Paywall can be searched and installed in the WordPress plugin directory.
+The Bitcoin Donation can be searched and installed in the WordPress plugin directory.
 
 In your WordPress instance, go to the Plugins > Add New section.
-In the search you enter Coinsnap and get as a result the Coinsnap Bitcoin Paywall plugin displayed.
+In the search you enter Coinsnap and get as a result the Bitcoin Donation plugin displayed.
 
 Then click Install.
 
 After successful installation, click Activate and then you can start setting up the plugin.
 
 
-### 2. Connect Coinsnap account with Bitcoin Paywall ###
+### 2. Connect Coinsnap account with Bitcoin Donation plugin ###
 
-After you have installed and activated the Coinsnap Bitcoin Paywall, you must make the Coinsnap settings. You can find these in the sidebar on the left under “Coinsnap Bitcoin Paywall”.
+After you have installed and activated the Bitcoin Donation plugin, you need to set Coinsnap or BTCPay server up. You can find Bitcoin Donations settings in the sidebar on the left under “Bitcoin Donations”.
 
-Simply enter your Coinsnap Store ID and your API key there; you can find these in your Coinsnap account under “Settings”, “Coinsnap Shop Settings”.
+To set up Bitcoin Lightning donation, please enter your Coinsnap Store ID and your API key besides the other parameters there; you can find these in your Coinsnap account under “Settings -> Store”, “Coinsnap Shop”.
 
-If you don’t have a Coinsnap account yet, you can do so via the link shown: Coinsnap Registration
+If you don’t have a Coinsnap account yet, you can do so via the link shown: [Coinsnap Registration](https://app.coinsnap.io/register).
 
 
 ### 3. Create Coinsnap account ####
 
 ### 3.1. Create a Coinsnap Account ####
 
-Now go to the Coinsnap website at: https://app.coinsnap.io/register and open an account by entering your email address and a password of your choice.
+Now go to the Coinsnap website at: [https://app.coinsnap.io/register](https://app.coinsnap.io/register) and open an account by entering your email address and a password of your choice.
 
 If you are using a Lightning Wallet with Lightning Login, then you can also open a Coinsnap account with it.
 
@@ -135,42 +132,43 @@ https://coinsnap.io/lightning-wallet-mit-lightning-adresse/
 After saving settings you can use Store ID and Api Key on the step 2.
 
 
-### 4. Configure Coinsnap Bitcoin Paywall ####
+### 4. Configure Bitcoin Donation plugin ####
 
-### 4.1. Create a paywall shortcode ###
+### 4.1. Donation shortcode ###
 
-Go to Coinsnap Bitcoin Paywall in the sideboard on the left in your WordPress and click on Paywall Shortcodes. Then click on “Add New Paywall Shortcode” at the top.
+Go to "Bitcoin Donations" in the sideboard on the left in your WordPress and click on "Bitcoin Donations". At the top of the page you will find shortcode [bitcoin_donation] that you can use it in your content.
+
+### 4.2. Configure your settings ####
+
+Scroll down a little bit, and you'll find Bitcoin Donation plugin settings:
+
+* Currency
+* Theme (Light/Dark)
+* Button Text
+* Title Text
+* Default amount in chosen currency
+* Default Message
+* Thank you page URL
+* Payment gateway (Coinsnap / BTCPay server)
+
+After you will fill all the necessary data you can use shortcode in your content and get Bitcoin Lightning donations.
 
 
-### 4.2. configure your paywall shortcode ####
 
-In the window that now appears, make the following settings (see orange entries):
-
-* First you assign a name so that you know later what the short code is intended for.
-* Then you can enter a short description as background information for yourself or your editors.
-* Then set the text of the payment button.
-* Set your price!
-* Select the currency in which the price is to be displayed
-* Set the duration of the activation and
-* select the color scheme of the paywall.
-
-Now you can copy the shortcode at the bottom and use it in your content! 
-
-
-
-### Upgrade Notice ###
+=== Upgrade Notice ===
 
 Follow updates on plugin's GitHub page:
-https://github.com/Coinsnap/Bitcoin-Paywall
 
-### Frequently Asked Questions ###
+https://github.com/Coinsnap/Bitcoin-Donation
+
+=== Frequently Asked Questions ===
 
 Plugin's page on Coinsnap website: https://coinsnap.io/en/
 
-== Screenshots ==
+=== Screenshots ===
 
  
-# Changelog #
+=== Changelog ===
 
 = 1.0.0 :: 2025-01-31 =
 * Initial release.
