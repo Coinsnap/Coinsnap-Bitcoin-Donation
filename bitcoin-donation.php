@@ -1,13 +1,33 @@
 <?php
 /*
-Plugin Name: Bitcoin Donation
-Description: Easy Bitcoin donations on a WordPress website
-Version: 0.1
-Author: Coinsnap Dev
-*/
+ * Plugin Name:        Bitcoin Donation
+ * Plugin URI:         https://coinsnap.io
+ * Description:        Easy Bitcoin donations on a WordPress website
+ * Version:            1.0.0
+ * Author:             Coinsnap
+ * Author URI:         https://coinsnap.io/
+ * Text Domain:        bitcoin-donation
+ * Domain Path:         /languages
+ * Tested up to:        6.7
+ * License:             GPL2
+ * License URI:         https://www.gnu.org/licenses/gpl-2.0.html
+ *
+ * Network:             true
+ */
 
-if (!defined('ABSPATH')) {
-    exit;
+defined( 'ABSPATH' ) || exit;
+
+if ( ! defined( 'BITCOIN_DONATION_REFERRAL_CODE' ) ) {
+    define( 'BITCOIN_DONATION_REFERRAL_CODE', 'D19833' );
+}
+if ( ! defined( 'BITCOIN_DONATION_VERSION' ) ) {
+    define( 'BITCOIN_DONATION_VERSION', '1.0.0' );
+}
+if ( ! defined( 'BITCOIN_DONATION_PHP_VERSION' ) ) {
+    define( 'BITCOIN_DONATION_PHP_VERSION', '8.0' );
+}
+if( ! defined( 'BITCOIN_DONATION_PLUGIN_DIR' ) ){
+    define('BITCOIN_DONATION_PLUGIN_DIR',plugin_dir_url(__FILE__));
 }
 
 // Plugin settings
@@ -16,8 +36,8 @@ require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shortc
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shortcode-wide.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-list.php';
 
-class Bitcoin_Donation
-{
+class Bitcoin_Donation {
+    
     public function __construct()
     {
 
@@ -27,9 +47,9 @@ class Bitcoin_Donation
 
     function bitcoin_donation_enqueue_scripts()
     {
-        wp_enqueue_style('bitcoin-donation-style', plugin_dir_url(__FILE__) . 'styles/style.css', [], '1.0.0');
-        wp_enqueue_style('bitcoin-donation-style-wide', plugin_dir_url(__FILE__) . 'styles/style-wide.css', [], '1.0.0');
-        wp_enqueue_script('bitcoin-donation-script', plugin_dir_url(__FILE__) . 'js/script.js', ['jquery'], '1.0.0', true);
+        wp_enqueue_style('bitcoin-donation-style', plugin_dir_url(__FILE__) . 'assets/css/style.css', [], '1.0.0');
+        wp_enqueue_style('bitcoin-donation-style-wide', plugin_dir_url(__FILE__) . 'assets/css/style-wide.css', [], '1.0.0');
+        wp_enqueue_script('bitcoin-donation-script', plugin_dir_url(__FILE__) . 'assets/js/script.js', ['jquery'], '1.0.0', true);
         $options = get_option('bitcoin_donation_options');
         wp_localize_script('bitcoin-donation-script', 'bitcoinDonationData', [
             'currency' => $options['currency'],
@@ -48,19 +68,19 @@ class Bitcoin_Donation
     {
         // Only load on the settings page for the plugin
         if ($hook === 'bitcoin-donations_page_bitcoin-donation-donation-list') {
-            wp_enqueue_style('bitcoin-donation-admin-style', plugin_dir_url(__FILE__) . 'styles/admin-style.css', [], '1.0.0');
+            wp_enqueue_style('bitcoin-donation-admin-style', plugin_dir_url(__FILE__) . 'assets/css/admin-style.css', [], '1.0.0');
         }
 
         if ($hook === 'toplevel_page_bitcoin_donation') {
-            wp_enqueue_style('bitcoin-donation-admin-style', plugin_dir_url(__FILE__) . 'styles/admin-style.css', [], '1.0.0');
-            wp_enqueue_script('bitcoin-donation-admin-script', plugin_dir_url(__FILE__) . 'js/admin.js', ['jquery'], '1.0.0', true);
+            wp_enqueue_style('bitcoin-donation-admin-style', plugin_dir_url(__FILE__) . 'assets/css/admin-style.css', [], '1.0.0');
+            wp_enqueue_script('bitcoin-donation-admin-script', plugin_dir_url(__FILE__) . 'assets/js/admin.js', ['jquery'], '1.0.0', true);
         }
     }
 
     function bitcoin_donation_verify_nonce($nonce, $action)
     {
         if (!wp_verify_nonce($nonce, $action)) {
-            wp_die(__('Security check failed', 'bitcoin_donation'));
+            wp_die(esc_html__('Security check failed', 'bitcoin-donation'));
         }
     }
 }
