@@ -20,8 +20,7 @@ class Bitcoin_Donation_Settings
             'manage_options',
             'bitcoin_donation',
             [$this, 'bitcoin_donation_options_page'],
-            plugin_dir_url(__FILE__) . 'assets/bitcoin.svg',
-
+            BITCOIN_DONATION_PLUGIN_DIR . 'assets/images/bitcoin.svg',
             100
         );
     }
@@ -391,23 +390,23 @@ class Bitcoin_Donation_Settings
     // Optional section callbacks for additional descriptions
     public function provider_section_callback()
     {
-        echo esc_html_e('Select your preferred payment provider and configure its settings below.', 'bitcoin_donation');
+        echo esc_html_e('Select your preferred payment provider and configure its settings below.', 'bitcoin-donation');
     }
 
     public function coinsnap_section_callback()
     {
-        echo esc_html_e('Enter your Coinsnap credentials here if you selected Coinsnap as your payment provider.', 'bitcoin_donation');
+        echo esc_html_e('Enter your Coinsnap credentials here if you selected Coinsnap as your payment provider.', 'bitcoin-donation');
     }
 
     public function btcpay_section_callback()
     {
-        echo esc_html_e('Enter your BTCPay credentials here if you selected BTCPay as your payment provider.', 'bitcoin_donation');
+        echo esc_html_e('Enter your BTCPay credentials here if you selected BTCPay as your payment provider.', 'bitcoin-donation');
     }
 
 
     function bitcoin_donation_section_general_callback()
     {
-        echo __('Configure the plugin settings below.', 'sdb');
+        echo esc_html__('Configure the plugin settings below.', 'bitcoin-donation');
     }
 
     /**
