@@ -47,9 +47,9 @@ class Bitcoin_Donation {
 
     function bitcoin_donation_enqueue_scripts()
     {
-        wp_enqueue_style('bitcoin-donation-style', plugin_dir_url(__FILE__) . 'assets/css/style.css', [], '1.0.0');
-        wp_enqueue_style('bitcoin-donation-style-wide', plugin_dir_url(__FILE__) . 'assets/css/style-wide.css', [], '1.0.0');
-        wp_enqueue_script('bitcoin-donation-script', plugin_dir_url(__FILE__) . 'assets/js/script.js', ['jquery'], '1.0.0', true);
+        wp_enqueue_style('bitcoin-donation-style', plugin_dir_url(__FILE__) . 'assets/css/style.css', [], BITCOIN_DONATION_VERSION);
+        wp_enqueue_style('bitcoin-donation-style-wide', plugin_dir_url(__FILE__) . 'assets/css/style-wide.css', [], BITCOIN_DONATION_VERSION);
+        wp_enqueue_script('bitcoin-donation-script', plugin_dir_url(__FILE__) . 'assets/js/script.js', ['jquery'], BITCOIN_DONATION_VERSION, true);
         $options = get_option('bitcoin_donation_options');
         wp_localize_script('bitcoin-donation-script', 'bitcoinDonationData', [
             'currency' => $options['currency'],
@@ -68,19 +68,19 @@ class Bitcoin_Donation {
     {
         // Only load on the settings page for the plugin
         if ($hook === 'bitcoin-donations_page_bitcoin-donation-donation-list') {
-            wp_enqueue_style('bitcoin-donation-admin-style', plugin_dir_url(__FILE__) . 'assets/css/admin-style.css', [], '1.0.0');
+            wp_enqueue_style('bitcoin-donation-admin-style', plugin_dir_url(__FILE__) . 'assets/css/admin-style.css', [], BITCOIN_DONATION_VERSION);
         }
 
         if ($hook === 'toplevel_page_bitcoin_donation') {
-            wp_enqueue_style('bitcoin-donation-admin-style', plugin_dir_url(__FILE__) . 'assets/css/admin-style.css', [], '1.0.0');
-            wp_enqueue_script('bitcoin-donation-admin-script', plugin_dir_url(__FILE__) . 'assets/js/admin.js', ['jquery'], '1.0.0', true);
+            wp_enqueue_style('bitcoin-donation-admin-style', plugin_dir_url(__FILE__) . 'assets/css/admin-style.css', [], BITCOIN_DONATION_VERSION);
+            wp_enqueue_script('bitcoin-donation-admin-script', plugin_dir_url(__FILE__) . 'assets/js/admin.js', ['jquery'], BITCOIN_DONATION_VERSION, true);
         }
     }
 
     function bitcoin_donation_verify_nonce($nonce, $action)
     {
         if (!wp_verify_nonce($nonce, $action)) {
-            wp_die(esc_html__('Security check failed', 'bitcoin-donation'));
+                wp_die(esc_html__('Security check failed', 'bitcoin-donation'));
         }
     }
 }

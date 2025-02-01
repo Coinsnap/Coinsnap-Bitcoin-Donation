@@ -4,12 +4,12 @@
     const $providerSelector = $('#provider');
     const $coinsnapWrapper = $('#coinsnap-settings-wrapper');
     const $btcpayWrapper = $('#btcpay-settings-wrapper');
-    const $checkConnectionCoisnanpButton = $('#check_connection_coinsnap_button');
+    const $checkConnectionCoinsnapButton = $('#check_connection_coinsnap_button');
     const $checkConnectionBtcPayButton = $('#check_connection_btcpay_button');
 
     function checkBtcPayConnection(btcpayUrl, btcpayStoreId, btcpayApiKey) {
-      return $.ajax({
-        url: `${btcpayUrl}/api/v1/stores/${btcpayStoreId}/invoices`,
+        return $.ajax({
+        url: `${btcpayUrl}/api/v1/stores/${btcpayStoreId}`,
         method: 'GET',
         contentType: 'application/json',
         headers: {
@@ -60,14 +60,14 @@
       const d = new Date();
       d.setTime(d.getTime() + (seconds * 1000));
       const expires = "expires=" + d.toUTCString();
-      document.cookie = name + "=" + value + ";" + expires + ";path=/";
+      document.cookie = name + "=" + value + ";" + expires + "; Secure; SameSite=None; path=/";
     }
 
-
     async function handleCheckConnection() {
-      // event.preventDefault();
-      var connection = false
-      if ($providerSelector?.val() == 'coinsnap') {
+      event.preventDefault();
+      var connection = false;
+      
+      if ($providerSelector?.val() === 'coinsnap') {
         const coinsnapStoreId = $('#coinsnap_store_id').val();
         const coinsnapApiKey = $('#coinsnap_api_key').val();
         connection = await checkCoinsnapConnection(coinsnapStoreId, coinsnapApiKey)
@@ -77,12 +77,13 @@
         const btcpayUrl = $('#btcpay_url').val();
         connection = await checkBtcPayConnection(btcpayUrl, btcpayStoreId, btcpayApiKey)
       }
-      setCookie('coinsnap_connection_', JSON.stringify({ 'connection': connection }), 20)
-
+      console.log($providerSelector?.val()+': '+connection);
+      setCookie('coinsnap_connection_', JSON.stringify({ 'connection': connection }), 20);
+      $('#submit').click();
     }
 
     // Add click event listener to the check connection button
-    $checkConnectionCoisnanpButton.on('click', async () => {
+    $checkConnectionCoinsnapButton.on('click', async () => {
       handleCheckConnection()
     });
     $checkConnectionBtcPayButton.on('click', async () => {
