@@ -74,3 +74,10 @@
 .shortcode_text_wrapper {
   font-size: 12px;
 }
+
+.tab-content {
+  display: none;
+}
+.tab-content.active {
+  display: block;
+}

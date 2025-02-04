@@ -1,0 +1,168 @@
+.wp-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.wp-table th {
+    background-color: #f9f9f9;
+    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    font-size: 20px;
+}
+
+.wp-table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    font-size: 18px;
+}
+
+.wp-table.striped tbody tr:nth-child(even) {
+    background-color: #f6f6f6;
+}
+
+.bitcoin-shoutouts-title-wrapper {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.bitcoin-shoutouts-title-wrapper h3 {
+    font-weight: bold;
+}
+
+#bitcoin-donation-shoutouts-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+}
+
+.bitcoin-donation-shoutout-top {
+    display: flex;
+    justify-content: space-between;
+    margin: 16px;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #a8a8a866;
+}
+
+.bitcoin-donation-shoutout-top-right {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.bitcoin-donation-shoutout-top-right-amount {
+    background-color: #bababaac;
+    padding: 0px 20px;
+    border-radius: 8px;
+    color: white;
+    font-size: 16px;
+}
+
+.bitcoin-donation-shoutout-top-right-days {
+    font-size: 14px;
+    color: #696767;
+}
+
+.bitcoin-donation-dark-theme .bitcoin-donation-shoutout-top-right-days {
+    color: #ffffff !important;
+
+}
+
+.highlight {
+    font-weight: 400;
+    /* border: 2px solid #f7931a; */
+    background-color: #f7931a;
+}
+
+.highlight-shoutout {
+    border: 2px solid #f7931a !important;
+}
+
+.bitcoin-donation-shoutout-help {
+    font-size: 12px;
+    color: #a8a8a8;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+.bitcoin-donation-shoutout-help p {
+    margin: 2px;
+}
+#bitcoin-donation-shoutout-help-premium{
+    display: none;
+    color: #f7941ac4;
+}
+#bitcoin-donation-shoutout-help-minimum{
+    display: none;
+    color: #e55e65;
+}
+
+/* .bitcoin-donation-shoutout-bottom {
+    margin: 16px;
+    font-size: 16px
+}
+
+.bitcoin-donation-shoutout{
+    border-radius: 4px;
+    padding: 10px 4px;
+}
+
+.shoutout-form-container{
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+.shoutout-form-right{
+    display: flex;
+    flex-direction: column;
+}
+.bitcoin-donation-shoutout-message{
+ flex-grow: 1;
+ margin-bottom: 10px;
+}
+.bitcoin-donation-donation-form{
+    max-width: 380px!important;
+} */
+
+.bitcoin-donation-shoutout-bottom {
+    margin: 16px;
+    font-size: 16px
+}
+
+.bitcoin-donation-shoutout {
+    border-radius: 4px;
+    padding: 10px 4px;
+    border: 2px solid #d6d6d687;
+
+}
+
+.shoutout-form-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* gap: 12px; */
+}
+
+.shoutout-form-left {
+    display: flex;
+    gap: 8px;
+}
+
+.shoutout-form-right {
+    display: flex;
+    flex-direction: column;
+    height: 120px;
+}
+
+.bitcoin-donation-shoutout-message {
+    flex-grow: 1;
+    margin-bottom: 10px;
+}
+
+.bitcoin-donation-donation-form {
+    max-width: 380px !important;
+}

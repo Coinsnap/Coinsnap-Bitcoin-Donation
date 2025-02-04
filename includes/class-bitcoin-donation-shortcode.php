@@ -23,8 +23,10 @@ class Bitcoin_Donation_Shortcode
         <div id="bitcoin-donation-donation-form" class="<?php echo esc_attr($theme_class); ?>">
             <div class="bitcoin-donation-title-wrapper">
                 <h3><?php echo esc_html($title_text); ?></h3>
-
             </div>
+
+            <input type="text" id="bitcoin-donation-email" name="bitcoin-email" style="display: none;" aria-hidden="true">
+
             <label for="bitcoin-donation-amount">Amount (in <?php echo esc_html($currency); ?>):</label>
             <input type="number" id="bitcoin-donation-amount" step="0.01">
 

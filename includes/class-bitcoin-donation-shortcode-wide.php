@@ -26,6 +26,7 @@ class Bitcoin_Donation_Shortcode_Wide
                 <h3><?php echo esc_html($title_text); ?></h3>
 
             </div>
+            <input type="text" id="bitcoin-donation-email" name="bitcoin-email" style="display: none;" aria-hidden="true">
             <div class="bitcoin-donation-wide-field-wrapper">
                 <input class="amount-field" type="number" id="bitcoin-donation-amount" step="0.01" placeholder="Amount (in <?php echo esc_html($currency); ?>)">
                 <input class="amount-field" type="number" id="bitcoin-donation-satoshi" placeholder="Satoshi">

@@ -88,6 +88,15 @@
   box-sizing: border-box;
 }
 
+#bitcoin-donation-shoutout-message {
+  width: 100%;
+  resize: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
 .bitcoin-donation-title-wrapper {
   display: flex;
   width: 100%;

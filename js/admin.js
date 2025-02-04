@@ -4,12 +4,26 @@
     const $providerSelector = $('#provider');
     const $coinsnapWrapper = $('#coinsnap-settings-wrapper');
     const $btcpayWrapper = $('#btcpay-settings-wrapper');
-    const $checkConnectionCoinsnapButton = $('#check_connection_coinsnap_button');
+    const $checkConnectionCoisnanpButton = $('#check_connection_coinsnap_button');
     const $checkConnectionBtcPayButton = $('#check_connection_btcpay_button');
 
+    const tabs = document.querySelectorAll(".nav-tab");
+    const contents = document.querySelectorAll(".tab-content");
+    tabs.forEach(tab => {
+      tab.addEventListener("click", function (e) {
+        e.preventDefault();
+        tabs.forEach(t => t.classList.remove("nav-tab-active"));
+        contents.forEach(c => c.classList.remove("active"));
+        tab.classList.add("nav-tab-active");
+        const target = tab.getAttribute("data-tab");
+        document.getElementById(target).classList.add("active");
+      });
+    });
+
+
     function checkBtcPayConnection(btcpayUrl, btcpayStoreId, btcpayApiKey) {
-        return $.ajax({
-        url: `${btcpayUrl}/api/v1/stores/${btcpayStoreId}`,
+      return $.ajax({
+        url: `${btcpayUrl}/api/v1/stores/${btcpayStoreId}/invoices`,
         method: 'GET',
         contentType: 'application/json',
         headers: {
@@ -60,14 +74,14 @@
       const d = new Date();
       d.setTime(d.getTime() + (seconds * 1000));
       const expires = "expires=" + d.toUTCString();
-      document.cookie = name + "=" + value + ";" + expires + "; Secure; SameSite=None; path=/";
+      document.cookie = name + "=" + value + ";" + expires + ";path=/";
     }
+
 
     async function handleCheckConnection() {
       event.preventDefault();
-      var connection = false;
-      
-      if ($providerSelector?.val() === 'coinsnap') {
+      var connection = false
+      if ($providerSelector?.val() == 'coinsnap') {
         const coinsnapStoreId = $('#coinsnap_store_id').val();
         const coinsnapApiKey = $('#coinsnap_api_key').val();
         connection = await checkCoinsnapConnection(coinsnapStoreId, coinsnapApiKey)
@@ -77,17 +91,18 @@
         const btcpayUrl = $('#btcpay_url').val();
         connection = await checkBtcPayConnection(btcpayUrl, btcpayStoreId, btcpayApiKey)
       }
-      console.log($providerSelector?.val()+': '+connection);
-      setCookie('coinsnap_connection_', JSON.stringify({ 'connection': connection }), 20);
+      setCookie('coinsnap_connection_', JSON.stringify({ 'connection': connection }), 20)
       $('#submit').click();
+
     }
 
     // Add click event listener to the check connection button
-    $checkConnectionCoinsnapButton.on('click', async () => {
-      handleCheckConnection()
-    });
-    $checkConnectionBtcPayButton.on('click', async () => {
-      handleCheckConnection()
+    $checkConnectionCoisnanpButton.on('click', async (event) => {
+      await handleCheckConnection();
+    })
+
+    $checkConnectionBtcPayButton.on('click', async (event) => {
+      await handleCheckConnection();
     });
 
     const connectionCookie = getCookie('coinsnap_connection_')

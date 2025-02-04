@@ -20,9 +20,18 @@ class Bitcoin_Donation_Settings
             'manage_options',
             'bitcoin_donation',
             [$this, 'bitcoin_donation_options_page'],
-            BITCOIN_DONATION_PLUGIN_DIR . 'assets/images/bitcoin.svg',
+            plugin_dir_url(__FILE__) . 'assets/bitcoin.svg',
+
             100
         );
+        add_submenu_page(
+			'bitcoin_donation', // Parent slug
+			'Shoutouts', // Page title
+			'Shoutouts', // Menu title
+			'manage_options', // Capability
+			'edit.php?post_type=bitcoin-shoutouts' // Submenu slug
+		);
+
     }
 
     function bitcoin_donation_settings_init()
@@ -41,11 +50,35 @@ class Bitcoin_Donation_Settings
         );
 
         add_settings_field(
+            'provider',
+            'Payment Gateway',
+            [$this, 'render_field'],
+            'bitcoin_donation',
+            'bitcoin_donation_provider_section',
+            [
+                'label_for' => 'provider',
+                'type'      => 'select',
+                'options'   => [
+                    'coinsnap' => 'Coinsnap',
+                    'btcpay'   => 'BTCPay'
+                ]
+            ]
+        );
+
+        // Simple Donation Section
+        add_settings_section(
+            'bitcoin_donation_simple_donation_section',
+            'Simple Donation Settings',
+            [$this, 'simple_donation_section_callback'],
+            'bitcoin_donation'
+        );
+
+        add_settings_field(
             'currency',
             'Currency',
             [$this, 'render_field'],
             'bitcoin_donation',
-            'bitcoin_donation_provider_section',
+            'bitcoin_donation_simple_donation_section',
             [
                 'label_for' => 'currency',
                 'type'      => 'select',
@@ -65,7 +98,7 @@ class Bitcoin_Donation_Settings
             'Theme',
             [$this, 'render_field'],
             'bitcoin_donation',
-            'bitcoin_donation_provider_section',
+            'bitcoin_donation_simple_donation_section',
             [
                 'label_for' => 'theme',
                 'type'      => 'select',
@@ -81,7 +114,7 @@ class Bitcoin_Donation_Settings
             'Button Text',
             [$this, 'render_field'],
             'bitcoin_donation',
-            'bitcoin_donation_provider_section',
+            'bitcoin_donation_simple_donation_section',
             [
                 'label_for' => 'button_text',
                 'type'      => 'text'
@@ -93,7 +126,7 @@ class Bitcoin_Donation_Settings
             'Title Text',
             [$this, 'render_field'],
             'bitcoin_donation',
-            'bitcoin_donation_provider_section',
+            'bitcoin_donation_simple_donation_section',
             [
                 'label_for' => 'title_text',
                 'type'      => 'text'
@@ -105,7 +138,7 @@ class Bitcoin_Donation_Settings
             'Default Amount',
             [$this, 'render_field'],
             'bitcoin_donation',
-            'bitcoin_donation_provider_section',
+            'bitcoin_donation_simple_donation_section',
             [
                 'label_for' => 'default_amount',
                 'type'      => 'text'
@@ -117,7 +150,7 @@ class Bitcoin_Donation_Settings
             'Default Message',
             [$this, 'render_field'],
             'bitcoin_donation',
-            'bitcoin_donation_provider_section',
+            'bitcoin_donation_simple_donation_section',
             [
                 'label_for' => 'default_message',
                 'type'      => 'text'
@@ -129,30 +162,140 @@ class Bitcoin_Donation_Settings
             'Redirect Url (Thank You Page)',
             [$this, 'render_field'],
             'bitcoin_donation',
-            'bitcoin_donation_provider_section',
+            'bitcoin_donation_simple_donation_section',
             [
                 'label_for' => 'redirect_url',
                 'type'      => 'text'
             ]
         );
 
+        //Shoutout Section
+        add_settings_section(
+            'bitcoin_donation_shoutout_donation_section',
+            'Shoutout Donation Settings',
+            [$this, 'shoutout_donation_section_callback'],
+            'bitcoin_donation'
+        );
+
         add_settings_field(
-            'provider',
-            'Payment Gateway',
+            'shoutout_currency',
+            'Currency',
             [$this, 'render_field'],
             'bitcoin_donation',
-            'bitcoin_donation_provider_section',
+            'bitcoin_donation_shoutout_donation_section',
             [
-                'label_for' => 'provider',
+                'label_for' => 'shoutout_currency',
                 'type'      => 'select',
                 'options'   => [
-                    'coinsnap' => 'Coinsnap',
-                    'btcpay'   => 'BTCPay'
+                    "EUR" => "EUR",
+                    "USD" => "USD",
+                    "CAD" => "CAD",
+                    "JPY" => "JPY",
+                    "GBP" => "GBP",
+                    "CHF" => "CHF"
                 ]
             ]
         );
 
+        add_settings_field(
+            'shoutout_theme',
+            'Theme',
+            [$this, 'render_field'],
+            'bitcoin_donation',
+            'bitcoin_donation_shoutout_donation_section',
+            [
+                'label_for' => 'shoutout_theme',
+                'type'      => 'select',
+                'options'   => [
+                    "light" => "Light",
+                    "dark" => "Dark"
+                ]
+            ]
+        );
 
+        add_settings_field(
+            'shoutout_button_text',
+            'Button Text',
+            [$this, 'render_field'],
+            'bitcoin_donation',
+            'bitcoin_donation_shoutout_donation_section',
+            [
+                'label_for' => 'shoutout_button_text',
+                'type'      => 'text'
+            ]
+        );
+
+        add_settings_field(
+            'shoutout_title_text',
+            'Title Text',
+            [$this, 'render_field'],
+            'bitcoin_donation',
+            'bitcoin_donation_shoutout_donation_section',
+            [
+                'label_for' => 'shoutout_title_text',
+                'type'      => 'text'
+            ]
+        );
+
+        add_settings_field(
+            'shoutout_default_amount',
+            'Default Amount',
+            [$this, 'render_field'],
+            'bitcoin_donation',
+            'bitcoin_donation_shoutout_donation_section',
+            [
+                'label_for' => 'shoutout_default_amount',
+                'type'      => 'text'
+            ]
+        );
+
+        add_settings_field(
+            'shoutout_default_message',
+            'Default Message',
+            [$this, 'render_field'],
+            'bitcoin_donation',
+            'bitcoin_donation_shoutout_donation_section',
+            [
+                'label_for' => 'shoutout_default_message',
+                'type'      => 'text'
+            ]
+        );
+
+        add_settings_field(
+            'shoutout_minimum_amount',
+            'Minimum Shoutout Amount',
+            [$this, 'render_field'],
+            'bitcoin_donation',
+            'bitcoin_donation_shoutout_donation_section',
+            [
+                'label_for' => 'shoutout_minimum_amount',
+                'type'      => 'text'
+            ]
+        );
+
+        add_settings_field(
+            'shoutout_premium_amount',
+            'Premium Shoutout Amount',
+            [$this, 'render_field'],
+            'bitcoin_donation',
+            'bitcoin_donation_shoutout_donation_section',
+            [
+                'label_for' => 'shoutout_premium_amount',
+                'type'      => 'text'
+            ]
+        );
+
+        add_settings_field(
+            'shoutout_redirect_url',
+            'Shoutout List Page Url',
+            [$this, 'render_field'],
+            'bitcoin_donation',
+            'bitcoin_donation_shoutout_donation_section',
+            [
+                'label_for' => 'shoutout_redirect_url',
+                'type'      => 'text'
+            ]
+        );
 
         // Coinsnap Section
         add_settings_section(
@@ -294,6 +437,42 @@ class Bitcoin_Donation_Settings
             $sanitized['redirect_url'] = sanitize_text_field($options['redirect_url']);
         }
 
+        if (isset($options['shoutout_currency'])) {
+            $sanitized['shoutout_currency'] = sanitize_text_field($options['shoutout_currency']);
+        }
+
+        if (isset($options['shoutout_theme'])) {
+            $sanitized['shoutout_theme'] = sanitize_text_field($options['shoutout_theme']);
+        }
+
+        if (isset($options['shoutout_button_text'])) {
+            $sanitized['shoutout_button_text'] = sanitize_text_field($options['shoutout_button_text']);
+        }
+
+        if (isset($options['shoutout_title_text'])) {
+            $sanitized['shoutout_title_text'] = sanitize_text_field($options['shoutout_title_text']);
+        }
+
+        if (isset($options['shoutout_default_amount'])) {
+            $sanitized['shoutout_default_amount'] = sanitize_text_field($options['shoutout_default_amount']);
+        }
+
+        if (isset($options['shoutout_default_message'])) {
+            $sanitized['shoutout_default_message'] = sanitize_text_field($options['shoutout_default_message']);
+        }
+
+        if (isset($options['shoutout_minimum_amount'])) {
+            $sanitized['shoutout_minimum_amount'] = sanitize_text_field($options['shoutout_minimum_amount']);
+        }
+
+        if (isset($options['shoutout_premium_amount'])) {
+            $sanitized['shoutout_premium_amount'] = sanitize_text_field($options['shoutout_premium_amount']);
+        }
+
+        if (isset($options['shoutout_redirect_url'])) {
+            $sanitized['shoutout_redirect_url'] = sanitize_text_field($options['shoutout_redirect_url']);
+        }
+
         if (isset($options['coinsnap_store_id'])) {
             $sanitized['coinsnap_store_id'] = sanitize_text_field($options['coinsnap_store_id']);
         }
@@ -390,23 +569,34 @@ class Bitcoin_Donation_Settings
     // Optional section callbacks for additional descriptions
     public function provider_section_callback()
     {
-        echo esc_html_e('Select your preferred payment provider and configure its settings below.', 'bitcoin-donation');
+        echo esc_html_e('Select your preferred payment provider and configure its settings below.', 'bitcoin_donation');
     }
+
+    public function simple_donation_section_callback()
+    {
+        echo esc_html_e('Configure simple donation form.', 'bitcoin_donation');
+    }
+
+    public function shoutout_donation_section_callback()
+    {
+        echo esc_html_e('Configure shoutout donation form.', 'bitcoin_donation');
+    }
+
 
     public function coinsnap_section_callback()
     {
-        echo esc_html_e('Enter your Coinsnap credentials here if you selected Coinsnap as your payment provider.', 'bitcoin-donation');
+        echo esc_html_e('Enter your Coinsnap credentials here if you selected Coinsnap as your payment provider.', 'bitcoin_donation');
     }
 
     public function btcpay_section_callback()
     {
-        echo esc_html_e('Enter your BTCPay credentials here if you selected BTCPay as your payment provider.', 'bitcoin-donation');
+        echo esc_html_e('Enter your BTCPay credentials here if you selected BTCPay as your payment provider.', 'bitcoin_donation');
     }
 
 
     function bitcoin_donation_section_general_callback()
     {
-        echo esc_html__('Configure the plugin settings below.', 'bitcoin-donation');
+        echo __('Configure the plugin settings below.', 'sdb');
     }
 
     /**
@@ -448,7 +638,13 @@ class Bitcoin_Donation_Settings
             'default_message' => 'Thank you for your work',
             'default_amount'  => '5',
             'button_text'     => 'Donate',
-            'title_text'      => 'Donate with Bitcoin'
+            'title_text'      => 'Donate with Bitcoin',
+            'shoutout_default_message' => 'Thank you!',
+            'shoutout_default_amount'  => '5',
+            'shoutout_button_text'     => 'Shoutout',
+            'shoutout_title_text'      => 'Bitcoin Shoutouts',
+            'shoutout_minimum_amount'  => '21',
+            'shoutout_premium_amount'  => '21000'
         ];
         if ($field_type == 'text') {
             $field_value = isset($options[$field_id]) ? $options[$field_id] : ($defaults[$field_id] ?? '');
@@ -505,23 +701,40 @@ class Bitcoin_Donation_Settings
             <!-- Display any registered settings errors -->
             <?php settings_errors('bitcoin_donation_settings'); ?>
 
+            <!-- Tab Navigation -->
+            <h2 class="nav-tab-wrapper">
+                <a href="#general" class="nav-tab nav-tab-active" data-tab="general">Global settings connection</a>
+                <a href="#coinsnap" class="nav-tab" data-tab="simple-donation">Simple donation </a>
+                <a href="#btcpay" class="nav-tab" data-tab="shoutout-donation">Shoutout donation</a>
+            </h2>
+
+
             <form method="post" action="options.php">
                 <?php
+                
                 // Render the settings fields for the Bitcoin Donation
                 settings_fields('bitcoin_donation_settings');
 
-                // Render the Provider Settings Section
+                // Render the General Settings Section
+                echo '<div id="general" class="tab-content active">';
                 $this->render_section('bitcoin_donation_provider_section');
-
                 // Render Coinsnap Settings inside a wrapper
-                echo '<div id="coinsnap-settings-wrapper" class="provider-settings">';
+                echo '<div id="coinsnap-settings-wrapper" class="provider-settings tab-content">';
                 $this->render_section('bitcoin_donation_coinsnap_section');
                 echo '</div>';
 
                 // Render BTCPay Settings inside a wrapper
-                echo '<div id="btcpay-settings-wrapper" class="provider-settings">';
+                echo '<div id="btcpay-settings-wrapper" class="provider-settings tab-content">';
                 $this->render_section('bitcoin_donation_btcpay_section');
                 echo '</div>';
+                echo '</div>';
+                echo '<div id="simple-donation" class="tab-content">';
+                $this->render_section('bitcoin_donation_simple_donation_section');
+                echo '</div>';
+                echo '<div id="shoutout-donation" class="tab-content">';
+                $this->render_section('bitcoin_donation_shoutout_donation_section');
+                echo '</div>';
+
                 ?>
                 <?php
                 // Render submit button
