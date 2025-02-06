@@ -20,66 +20,62 @@
       });
     });
 
+    function checkConnection(storeId, apiKey, btcpayUrl) {
+      const headers = btcpayUrl ? { 'Authorization': `token ${apiKey}` } : { 'x-api-key': apiKey, };
+      const url = btcpayUrl
+        ? `${btcpayUrl}/api/v1/stores/${storeId}/invoices`
+        : `https://app.coinsnap.io/api/v1/stores/${storeId}`
 
-    function checkBtcPayConnection(btcpayUrl, btcpayStoreId, btcpayApiKey) {
       return $.ajax({
-        url: `${btcpayUrl}/api/v1/stores/${btcpayStoreId}/invoices`,
+        url: url,
         method: 'GET',
         contentType: 'application/json',
-        headers: {
-          'Authorization': `token ${btcpayApiKey}`,
-        },
+        headers: headers
       })
         .then(() => true)
         .catch(() => false);
 
     }
 
-    function checkCoinsnapConnection(coinsnapStoreId, coinsnapApiKey) {
-      return $.ajax({
-        url: `https://app.coinsnap.io/api/v1/stores/${coinsnapStoreId}`,
-        method: 'GET',
-        contentType: 'application/json',
-        headers: {
-          'x-api-key': coinsnapApiKey,
-        },
-      })
-        .then(() => true)
-        .catch(() => false);
-    }
+    function checkWebhooks(storeId, apiKey, btcpayUrl) {
+      const headers = btcpayUrl ? { 'Authorization': `token ${apiKey}` } : { 'x-api-key': apiKey, };
+      const url = btcpayUrl
+        ? `${btcpayUrl}/api/v1/stores/${storeId}/webhooks`
+        : `https://app.coinsnap.io/api/v1/stores/${storeId}/webhooks`
 
-    function checkCoinsnapWebhook(coinsnapStoreId, coinsnapApiKey) {
       return $.ajax({
-        url: `https://app.coinsnap.io/api/v1/stores/${coinsnapStoreId}/webhooks`,
+        url: url,
         method: 'GET',
         contentType: 'application/json',
-        headers: {
-          'x-api-key': coinsnapApiKey,
-        },
+        headers: headers
       })
         .then((response) => response)
         .catch(() => []);
     }
 
-    function createCoinsnapWebhook(coinsnapStoreId, coinsnapApiKey, url) {
+    function createWebhook(storeId, apiKey, webhookUrl, btcpayUrl) {
       const data = {
-        url: url,
+        url: webhookUrl,
         events: ['Settled'],
-        secret: 'topsecret'
+        secret: adminData.webhookSecret
       }
 
+      const headers = btcpayUrl
+        ? { 'Authorization': `token ${apiKey}` }
+        : { 'x-api-key': apiKey };
+
+      const url = btcpayUrl
+        ? `${btcpayUrl}/api/v1/stores/${storeId}/webhooks`
+        : `https://app.coinsnap.io/api/v1/stores/${storeId}/webhooks`
+
       return $.ajax({
-        url: `https://app.coinsnap.io/api/v1/stores/${coinsnapStoreId}/webhooks`,
+        url: url,
         method: 'POST',
         contentType: 'application/json',
-        headers: {
-          'x-api-key': coinsnapApiKey,
-        },
+        headers: headers,
         data: JSON.stringify(data)
 
       })
-        .then(() => true)
-        .catch(() => false);
     }
 
 
@@ -117,28 +113,34 @@
     async function handleCheckConnection() {
       event.preventDefault();
       var connection = false
+      const origin =  new URL(window.location.href).origin;
+      const webhookUrl = `${origin}/wp-json/bitcoin-donation/v1/webhook`
       if ($providerSelector?.val() == 'coinsnap') {
         const coinsnapStoreId = $('#coinsnap_store_id').val();
         const coinsnapApiKey = $('#coinsnap_api_key').val();
-        connection = await checkCoinsnapConnection(coinsnapStoreId, coinsnapApiKey)
+        connection = await checkConnection(coinsnapStoreId, coinsnapApiKey)
         if (connection) {
-          const webhooks = await checkCoinsnapWebhook(coinsnapStoreId, coinsnapApiKey)
-          const origin =  new URL(window.location.href).origin;
-          const webhookUrl = `${origin}/wp-json/bitcoin-donation/v1/webhook`
+          const webhooks = await checkWebhooks(coinsnapStoreId, coinsnapApiKey)
           const webhookFound = webhooks.some(webhook => webhook.url === webhookUrl);
           if (!webhookFound) {
-            await createCoinsnapWebhook(coinsnapStoreId, coinsnapApiKey, webhookUrl)
+            await createWebhook(coinsnapStoreId, coinsnapApiKey, webhookUrl)
           }
         }
       } else {
         const btcpayStoreId = $('#btcpay_store_id').val();
         const btcpayApiKey = $('#btcpay_api_key').val();
         const btcpayUrl = $('#btcpay_url').val();
-        connection = await checkBtcPayConnection(btcpayUrl, btcpayStoreId, btcpayApiKey)
+        connection = await checkConnection(btcpayStoreId, btcpayApiKey, btcpayUrl)
+        if (connection) {
+          const webhooks = await checkWebhooks(btcpayStoreId, btcpayApiKey, btcpayUrl)
+          const webhookFound = webhooks.some(webhook => webhook.url === webhookUrl);
+          if (!webhookFound) {
+            await createWebhook(btcpayStoreId, btcpayApiKey, webhookUrl, btcpayUrl)
+          }
+        }
       }
       setCookie('coinsnap_connection_', JSON.stringify({ 'connection': connection }), 20)
       $('#submit').click();
-
     }
 
     // Add click event listener to the check connection button

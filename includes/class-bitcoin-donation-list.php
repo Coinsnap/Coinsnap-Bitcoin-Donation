@@ -29,13 +29,22 @@ class Bitcoin_Donation_List
 		if (!current_user_can('manage_options')) {
 			return;
 		}
+		$options = get_option('bitcoin_donation_options');
+		$provider = $options['provider'];
+		$btcpay_store_id = $options['btcpay_store_id'];
+		$btcpay_url = $options['btcpay_url'];
+		$btcpay_href = $btcpay_url . '/stores/' . $btcpay_store_id . '/invoices';
 
 ?>
 		<div class="wrap">
 			<h1><?php echo esc_html(get_admin_page_title()); ?></h1>
-			<h4>Check <a href="https://app.coinsnap.io/transactions" target="_blank" rel="noopener noreferrer">Coinsnap app</a> for a detailed overview</h4>
-
-			<table class="wp-list-table widefat fixed striped donation-list-table">
+			<?php if ($provider === 'coinsnap'): ?>
+				<h4>Check <a href="https://app.coinsnap.io/transactions" target="_blank" rel="noopener noreferrer">Coinsnap app</a> for a detailed overview</h4>
+			<?php elseif ($provider === 'btcpay'): ?>
+				<h4>Check <a href="<?php echo esc_html($btcpay_href); ?>" target="_blank" rel="noopener noreferrer">BtcPay server</a> for a detailed overview</h4>
+			<?php else: ?>
+				<p>Provider not recognized.</p>
+			<?php endif; ?> <table class="wp-list-table widefat fixed striped donation-list-table">
 				<thead>
 					<tr>
 						<th>Date</th>

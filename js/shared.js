@@ -18,9 +18,7 @@ function setCookie(name, value, minutes) {
 
 
 async function createCPT(amount, message, name, invoiceId) {
-    // Ensure that the nonce is available for authentication
     const nonce = sharedData.nonce;
-    // Construct the request payload
     const data = {
         title: `Shoutout from ${name}`,
         status: "pending",
@@ -49,7 +47,7 @@ async function createCPT(amount, message, name, invoiceId) {
         }
         await response.json();
     } catch (error) {
-        // console.error("Error creating shoutout:", error);
+        console.error("Error creating shoutout:", error);
     }
 }
 
