@@ -28,10 +28,24 @@ class Bitcoin_Donation_Shortcode_Wide
             </div>
             <input type="text" id="bitcoin-donation-email" name="bitcoin-email" style="display: none;" aria-hidden="true">
             <div class="bitcoin-donation-wide-field-wrapper">
-                <input class="amount-field" type="number" id="bitcoin-donation-amount" step="0.01" placeholder="Amount (in <?php echo esc_html($currency); ?>)">
-                <input class="amount-field" type="number" id="bitcoin-donation-satoshi" placeholder="Satoshi">
-                <input class="bitcoin-donation-message-wide" id="bitcoin-donation-message" placeholder="Message"></input>
-                <button id="bitcoin-donation-pay"><?php echo esc_html($butoon_text); ?></button>
+                <div class="bitcoin-donation-wide-up">
+
+                    <div class="shoutout-input-label">
+                        <label for="bitcoin-donation-amount">Amount (in <?php echo esc_html($currency); ?>)</label>
+                        <input type="number" id="bitcoin-donation-amount" step="0.01">
+                    </div>
+
+                    <div class="shoutout-input-label">
+                        <label for="bitcoin-donation-satoshi">Satoshi</label>
+                        <input type="number" id="bitcoin-donation-satoshi">
+                    </div>
+                    <button id="bitcoin-donation-pay"><?php echo esc_html($butoon_text); ?></button>
+                </div>
+                <div class="bitcoin-donation-wide-down">
+                    <label for="bitcoin-donation-message">Message</label>
+                    <textarea id="bitcoin-donation-message" class="bitcoin-donation-message-wide" required name="message" rows="2"></textarea>
+                </div>
+
             </div>
         </div>
 

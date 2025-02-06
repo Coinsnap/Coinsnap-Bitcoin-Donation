@@ -18,6 +18,19 @@ jQuery(document).ready(function ($) {
         messageField.val(shoutoutsData.defaultShoutoutMessage);
 
     }
+
+    const addErrorField = (field) => {
+        field.css('border', '1px solid red');
+        removeBorderOnFocus(field, field)
+    }
+
+    const removeBorderOnFocus = (field1, field2) => {
+        field1.on('focus', function () {
+            field2.css('border', '');
+        })
+
+    }
+
     if (document.getElementById('bitcoin-donation-shoutout-amount')) {
         fetchCoinsnapExchangeRates().then(rates => {
             exchangeRates = rates
@@ -33,13 +46,31 @@ jQuery(document).ready(function ($) {
                 return
             }
             const amountField = $('#bitcoin-donation-shoutout-amount');
+            const fiatAmount = parseFloat(amountField.val())
+
             const satoshiField = $('#bitcoin-donation-shoutout-satoshi');
+            const satsAmount = parseFloat(satoshiField.val())
+            if (!satsAmount || !fiatAmount) {
+                addErrorField(satoshiField)
+                addErrorField(amountField)
+                removeBorderOnFocus(satoshiField, amountField)
+                removeBorderOnFocus(amountField, satoshiField)
+                event.preventDefault();
+                return
+            }
+
+
             const messageField = $('#bitcoin-donation-shoutout-message');
+            const message = messageField.val()
+            if (message == "") {
+                addErrorField(messageField)
+                event.preventDefault();
+                return
+
+            }
             const nameField = $('#bitcoin-donation-shoutout-name');
             const name = nameField.val() || "Anonymous"
-            const satsAmount = parseFloat(satoshiField.val())
-            const message = messageField.val()
-            const amount = lastInputCurency == 'SATS' ? satsAmount : parseFloat(amountField.val());
+            const amount = lastInputCurency == 'SATS' ? satsAmount : fiatAmount;
             if (amount) {
                 createInvoice(amount, message, lastInputCurency, name);
             }

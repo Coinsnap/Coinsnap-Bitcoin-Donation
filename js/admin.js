@@ -48,6 +48,42 @@
         .catch(() => false);
     }
 
+    function checkCoinsnapWebhook(coinsnapStoreId, coinsnapApiKey) {
+      return $.ajax({
+        url: `https://app.coinsnap.io/api/v1/stores/${coinsnapStoreId}/webhooks`,
+        method: 'GET',
+        contentType: 'application/json',
+        headers: {
+          'x-api-key': coinsnapApiKey,
+        },
+      })
+        .then((response) => response)
+        .catch(() => []);
+    }
+
+    function createCoinsnapWebhook(coinsnapStoreId, coinsnapApiKey, url) {
+      const data = {
+        url: url,
+        events: ['Settled'],
+        secret: 'topsecret'
+      }
+
+      return $.ajax({
+        url: `https://app.coinsnap.io/api/v1/stores/${coinsnapStoreId}/webhooks`,
+        method: 'POST',
+        contentType: 'application/json',
+        headers: {
+          'x-api-key': coinsnapApiKey,
+        },
+        data: JSON.stringify(data)
+
+      })
+        .then(() => true)
+        .catch(() => false);
+    }
+
+
+
     // Function to toggle visibility based on selected provider
     function toggleProviderSettings() {
       if (!$providerSelector || !$providerSelector.length) {
@@ -85,6 +121,15 @@
         const coinsnapStoreId = $('#coinsnap_store_id').val();
         const coinsnapApiKey = $('#coinsnap_api_key').val();
         connection = await checkCoinsnapConnection(coinsnapStoreId, coinsnapApiKey)
+        if (connection) {
+          const webhooks = await checkCoinsnapWebhook(coinsnapStoreId, coinsnapApiKey)
+          const origin =  new URL(window.location.href).origin;
+          const webhookUrl = `${origin}/wp-json/bitcoin-donation/v1/webhook`
+          const webhookFound = webhooks.some(webhook => webhook.url === webhookUrl);
+          if (!webhookFound) {
+            await createCoinsnapWebhook(coinsnapStoreId, coinsnapApiKey, webhookUrl)
+          }
+        }
       } else {
         const btcpayStoreId = $('#btcpay_store_id').val();
         const btcpayApiKey = $('#btcpay_api_key').val();

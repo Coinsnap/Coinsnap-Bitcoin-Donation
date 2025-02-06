@@ -78,6 +78,35 @@
 .tab-content {
   display: none;
 }
+
 .tab-content.active {
   display: block;
+}
+
+.donation-list-table th:nth-child(1),
+.donation-list-table td:nth-child(1) {
+  width: 150px;
+  /* Adjust for Date column */
+}
+
+.donation-list-table th:nth-child(2),
+.donation-list-table td:nth-child(2) {
+  width: 100px;
+  /* Adjust for Amount column */
+}
+
+.donation-list-table th:nth-child(3),
+.donation-list-table td:nth-child(3) {
+  width: 140px;
+  /* Adjust for Type column */
+}
+
+.donation-list-table th:nth-child(5),
+.donation-list-table td:nth-child(5) {
+  width: 200px;
+  /* Adjust for InvoiceId column */
+}
+
+.form-table th{
+ width: 240px
 }

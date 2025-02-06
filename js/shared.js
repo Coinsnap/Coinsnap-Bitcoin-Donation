@@ -24,6 +24,8 @@ async function createCPT(amount, message, name, invoiceId) {
     const data = {
         title: `Shoutout from ${name}`,
         status: "pending",
+        name: name,
+        _bitcoin_donation_shoutouts_name: name,
         meta: {
             _bitcoin_donation_shoutouts_name: name,
             _bitcoin_donation_shoutouts_amount: parseFloat(amount),
@@ -32,13 +34,12 @@ async function createCPT(amount, message, name, invoiceId) {
         }
     };
 
-
     try {
         const response = await fetch('/wp-json/wp/v2/bitcoin-shoutouts', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "X-WP-Nonce": nonce, // Required for authentication
+                "X-WP-Nonce": nonce,
             },
             body: JSON.stringify(data),
         });
@@ -46,12 +47,9 @@ async function createCPT(amount, message, name, invoiceId) {
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
-
-        const result = await response.json();
-        alert("Shoutout successfully created!");
+        await response.json();
     } catch (error) {
-        console.error("Error creating shoutout:", error);
-        alert("Failed to create shoutout. Please try again.");
+        // console.error("Error creating shoutout:", error);
     }
 }
 
@@ -179,7 +177,7 @@ const createActualInvoice = (amount, message, lastInputCurency, name, coinsnap) 
                 message: message,
                 name: name
             };
-            // createCPT(amount, message, name, 'response.id') // TODO unstring
+            createCPT(amount, message, name, response.id)
             setCookie('coinsnap_invoice_', JSON.stringify(invoiceCookieData), 15);
             window.location.href = response.checkoutLink;
         })

@@ -104,7 +104,7 @@ class Bitcoin_Donation_Metabox
 		$message = get_post_meta($post->ID, '_bitcoin_donation_shoutouts_message', true);
 		$amount = get_post_meta($post->ID, '_bitcoin_donation_shoutouts_amount', true);
 		$invoice_id = get_post_meta($post->ID, '_bitcoin_donation_shoutouts_invoice_id', true);
-		error_log($name);
+
 ?>
 		<table class="form-table">
 			<tr>
@@ -153,12 +153,13 @@ class Bitcoin_Donation_Metabox
 					<label for="bitcoin_donation_shoutouts_message"><?php echo esc_html_e('Message', 'bitcoin-donation-shoutouts') ?></label>
 				</th>
 				<td>
-					<input
-						type="text"
+					<textarea
 						id="bitcoin_donation_shoutouts_message"
 						name="bitcoin_donation_shoutouts_message"
 						class="regular-text"
-						value="<?php echo esc_attr($message); ?>">
+						rows="5"
+						cols="50"><?php echo esc_textarea($message); ?></textarea>
+
 				</td>
 			</tr>
 		</table>
@@ -167,61 +168,77 @@ class Bitcoin_Donation_Metabox
 
 	public function save_shoutouts_meta($post_id, $post)
 	{
-		// if (defined('REST_REQUEST') && REST_REQUEST) return;
+		// Bail out if this is an autosave.
+		if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+			return;
+		}
 
-		// Check if this is an autosave
-		if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
-		error_log("START");
 		// Check nonce for security
-		// if (
-		// 	null === filter_input(INPUT_POST, 'bitcoin_donation_shoutouts_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS) ||
-		// 	!wp_verify_nonce(filter_input(INPUT_POST, 'bitcoin_donation_shoutouts_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS), 'bitcoin_donation_shoutouts_nonce')
-		// ) {
-		// 	return;
-		// }
+		if (defined('REST_REQUEST') && REST_REQUEST) {
+			$expected_nonce = 'wp_rest';
+			$nonce = isset($_SERVER['HTTP_X_WP_NONCE']) ? sanitize_text_field($_SERVER['HTTP_X_WP_NONCE']) : '';
+		} else {
+			$expected_nonce = 'bitcoin_donation_shoutouts_nonce';
+			$nonce = filter_input(INPUT_POST, $expected_nonce, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+		}
+		if (empty($nonce) || !wp_verify_nonce($nonce, $expected_nonce)) {
+			return;
+		}
 
-		// // Check user permissions
-		// if (!current_user_can('edit_post', $post_id)) {
-		// 	return;
-		// }
+		// Check user permissions
+		if (!current_user_can('edit_post', $post_id)) {
+			return;
+		}
 
-		// // Check post type
-		// if ($post->post_type !== 'bitcoin-shoutouts') {
-		// 	return;
-		// }
+		// Check post type
+		if ($post->post_type !== 'bitcoin-shoutouts') {
+			return;
+		}
 
-		// Sanitize and save meta fields
-		$meta_fields = [
-			'name'       => 'bitcoin_donation_shoutouts_name',
-			'amount'     => 'bitcoin_donation_shoutouts_amount',
-			'invoice_id' => 'bitcoin_donation_shoutouts_invoice_id',
-			'message'    => 'bitcoin_donation_shoutouts_message'
+		$fields = [
+			'bitcoin_donation_shoutouts_name'     => 'text',
+			'bitcoin_donation_shoutouts_amount'   => 'number',
+			'bitcoin_donation_shoutouts_invoice_id' => 'text',
+			'bitcoin_donation_shoutouts_message'    => 'text',
 		];
 
-		$meta_fields_types = [
-			$meta_fields['name']        => 'FILTER_SANITIZE_FULL_SPECIAL_CHARS',
-			$meta_fields['amount']      => 'FILTER_SANITIZE_FULL_SPECIAL_CHARS',
-			$meta_fields['invoice_id']  => 'FILTER_SANITIZE_FULL_SPECIAL_CHARS',
-			$meta_fields['message']  => 'FILTER_SANITIZE_FULL_SPECIAL_CHARS'
+		// If this is a REST request, get the JSON payload.
+		if (defined('REST_REQUEST') && REST_REQUEST) {
+			$json_body = file_get_contents('php://input');
+			$data = json_decode($json_body, true);
 
-		];
-
-		$post_array_filtered = filter_input_array(INPUT_POST, $meta_fields_types);
-		error_log(var_export($post_array_filtered, true));
-		foreach ($meta_fields as $key => $field) {
-			if (isset($post_array_filtered[$field])) {
-				$value = match ($key) {
-					'name' 		 => sanitize_textarea_field($post_array_filtered[$field]),
-					'amount'     => sanitize_text_field($post_array_filtered[$field]),
-					'invoice_id' => sanitize_text_field($post_array_filtered[$field]),
-					'message' => sanitize_text_field($post_array_filtered[$field]),
-					default      => sanitize_text_field($post_array_filtered[$field])
-				};
-
+			// Check if meta is set and is an array.
+			if (isset($data['meta']) && is_array($data['meta'])) {
+				foreach ($fields as $field => $type) {
+					$json_key = '_' . $field;
+					if (isset($data['meta'][$json_key])) {
+						$value = $data['meta'][$json_key];
+						// Sanitize the value according to its type.
+						if ($type === 'number') {
+							$value = floatval($value);
+						} else {
+							$value = sanitize_text_field($value);
+						}
+						update_post_meta($post_id, $json_key, $value);
+					}
+				}
+			}
+			return;
+		}
+		foreach ($fields as $field => $type) {
+			if (isset($_POST[$field])) {
+				$value = $_POST[$field];
+				if ($type === 'number') {
+					$value = floatval($value);
+				} else {
+					$value = sanitize_text_field($value);
+				}
+				// The stored meta keys have a leading underscore.
 				update_post_meta($post_id, '_' . $field, $value);
 			}
 		}
 	}
+
 
 	public function add_custom_columns($columns)
 	{
@@ -251,7 +268,9 @@ class Bitcoin_Donation_Metabox
 				echo esc_html(get_post_meta($post_id, '_bitcoin_donation_shoutouts_invoice_id', true) ?: '');
 				break;
 			case 'message':
-				echo esc_html(get_post_meta($post_id, '_bitcoin_donation_shoutouts_message', true) ?: '');
+				$message = get_post_meta($post_id, '_bitcoin_donation_shoutouts_message', true) ?: '';
+				$message = strlen($message) > 150 ? substr($message, 0, 150) . ' ...' : $message;
+				echo esc_html($message);
 				break;
 		}
 	}

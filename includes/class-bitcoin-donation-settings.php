@@ -25,13 +25,12 @@ class Bitcoin_Donation_Settings
             100
         );
         add_submenu_page(
-			'bitcoin_donation', // Parent slug
-			'Shoutouts', // Page title
-			'Shoutouts', // Menu title
-			'manage_options', // Capability
-			'edit.php?post_type=bitcoin-shoutouts' // Submenu slug
-		);
-
+            'bitcoin_donation', // Parent slug
+            'Shoutouts', // Page title
+            'Shoutouts', // Menu title
+            'manage_options', // Capability
+            'edit.php?post_type=bitcoin-shoutouts' // Submenu slug
+        );
     }
 
     function bitcoin_donation_settings_init()
@@ -135,7 +134,7 @@ class Bitcoin_Donation_Settings
 
         add_settings_field(
             'default_amount',
-            'Default Amount',
+            'Default Amount in Fiat',
             [$this, 'render_field'],
             'bitcoin_donation',
             'bitcoin_donation_simple_donation_section',
@@ -239,7 +238,7 @@ class Bitcoin_Donation_Settings
 
         add_settings_field(
             'shoutout_default_amount',
-            'Default Amount',
+            'Default Amount in Fiat',
             [$this, 'render_field'],
             'bitcoin_donation',
             'bitcoin_donation_shoutout_donation_section',
@@ -263,7 +262,7 @@ class Bitcoin_Donation_Settings
 
         add_settings_field(
             'shoutout_minimum_amount',
-            'Minimum Shoutout Amount',
+            'Minimum Shoutout Amount in sats',
             [$this, 'render_field'],
             'bitcoin_donation',
             'bitcoin_donation_shoutout_donation_section',
@@ -275,7 +274,7 @@ class Bitcoin_Donation_Settings
 
         add_settings_field(
             'shoutout_premium_amount',
-            'Premium Shoutout Amount',
+            'Premium Shoutout Amount in sats',
             [$this, 'render_field'],
             'bitcoin_donation',
             'bitcoin_donation_shoutout_donation_section',
@@ -607,7 +606,6 @@ class Bitcoin_Donation_Settings
     private function render_section($section_id)
     {
         global $wp_settings_sections, $wp_settings_fields;
-
         if (! isset($wp_settings_sections['bitcoin_donation'][$section_id])) {
             return;
         }
@@ -696,7 +694,7 @@ class Bitcoin_Donation_Settings
 ?>
         <div class="wrap">
             <h1>Bitcoin Donation Settings</h1>
-            <span class='shortcode_text_wrapper'>Use the shortcode <span class='shortcode_text'>[bitcoin_donation]</span></span>
+            <!-- <span class='shortcode_text_wrapper'>Use the shortcode <span class='shortcode_text'>[bitcoin_donation]</span></span> -->
 
             <!-- Display any registered settings errors -->
             <?php settings_errors('bitcoin_donation_settings'); ?>
@@ -711,7 +709,7 @@ class Bitcoin_Donation_Settings
 
             <form method="post" action="options.php">
                 <?php
-                
+
                 // Render the settings fields for the Bitcoin Donation
                 settings_fields('bitcoin_donation_settings');
 

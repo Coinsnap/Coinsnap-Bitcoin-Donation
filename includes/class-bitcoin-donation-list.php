@@ -35,11 +35,12 @@ class Bitcoin_Donation_List
 			<h1><?php echo esc_html(get_admin_page_title()); ?></h1>
 			<h4>Check <a href="https://app.coinsnap.io/transactions" target="_blank" rel="noopener noreferrer">Coinsnap app</a> for a detailed overview</h4>
 
-			<table class="wp-list-table widefat fixed striped">
+			<table class="wp-list-table widefat fixed striped donation-list-table">
 				<thead>
 					<tr>
 						<th>Date</th>
 						<th>Amount</th>
+						<th>Type</th>
 						<th>Message</th>
 						<th>Invoice ID</th>
 					</tr>
@@ -100,7 +101,6 @@ class Bitcoin_Donation_List
 
 		try {
 			$donations = $this->fetch_donations_from_api();
-
 			ob_start();
 			foreach ($donations as $donation) {
 				$this->render_donation_row($donation);
@@ -153,8 +153,8 @@ class Bitcoin_Donation_List
 
 		// Filter the invoices where metadata.referralCode equals "D19833"
 		$filtered_invoices = array_filter($invoices, function ($invoice) {
-			return isset($invoice['metadata']['type'])
-				&& $invoice['metadata']['type'] === "Bitcoin Donation"
+			return isset($invoice['metadata']['referralCode'])
+				&& $invoice['metadata']['referralCode'] === "D19833"
 				&& $invoice['status'] === 'Settled';
 		});
 		// error_log('Coinsnap Response Body: ' . print_r($filtered_invoices, true));
@@ -209,29 +209,31 @@ class Bitcoin_Donation_List
 
 	private function render_donation_row($donation)
 	{
-		// Check if we're rendering from database or API response
-		$is_db_record = isset($donation->created_at);
-		$invoice_id = $is_db_record ? $donation->invoice_id : $donation['id'];
+		$invoice_id = $donation['id'];
 		$options = get_option('bitcoin_donation_options');
 		$provider = $options['provider'];
 		$isBtcpay = $provider === 'btcpay';
 		$href = ($isBtcpay)
 			? "https://btcpay.coincharge.io/invoices/" . esc_html($invoice_id)
 			: "https://app.coinsnap.io/td/" . esc_html($invoice_id);
-
+		$message = isset($donation['metadata']['orderNumber']) ? $donation['metadata']['orderNumber'] : '';
+		$message = strlen($message) > 150 ? substr($message, 0, 150) . ' ...' : $message;
+		$type = isset($donation['metadata']['type']) ? $donation['metadata']['type'] : '';
 	?>
 		<tr>
-			<td><?php echo esc_html($is_db_record ?
-					$donation->created_at :
-					date('Y-m-d H:i:s', (int)$donation[$isBtcpay ? 'createdTime' :  'createdAt'])); ?></td>
+			<td>
+				<?php echo esc_html(date('Y-m-d H:i:s', (int)$donation[$isBtcpay ? 'createdTime' :  'createdAt'])); ?>
+			</td>
 
-			<td><?php
-				$amount = $is_db_record ? $donation->amount : $donation['amount'];
-				$currency = $is_db_record ? $donation->currency : $donation['currency'];
+			<td>
+				<?php
+				$amount =  $donation['amount'];
+				$currency = $donation['currency'];
 				echo esc_html(number_format($amount, $isBtcpay ? 2 : 0) . ' ' . ($isBtcpay ? $currency : 'sats'));
-				?></td>
-			<td><?php echo esc_html($is_db_record ?
-					$donation->message : (isset($donation['metadata']['orderNumber']) ? $donation['metadata']['orderNumber'] : '')); ?></td>
+				?>
+			</td>
+			<td><?php echo esc_html($type); ?></td>
+			<td><?php echo esc_html($message); ?></td>
 			<td>
 				<a href="<?php echo $href; ?>" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
 					<?php echo esc_html($invoice_id); ?>
