@@ -25,6 +25,7 @@ jQuery(document).ready(function ($) {
 
         // Event listeners
         $('#bitcoin-donation-pay').on('click', function () {
+            $(this).prop('disabled', true);
             const emailField = $('bitcoin-donation-email')
             if(emailField.val()){
                 event.preventDefault();

@@ -40,6 +40,7 @@ jQuery(document).ready(function ($) {
 
         // Event listeners
         $('#bitcoin-donation-shout').on('click', function () {
+            $(this).prop('disabled', true);
             const emailField = $('bitcoin-donation-shoutout-email')
             if (emailField.val()) {
                 event.preventDefault();
