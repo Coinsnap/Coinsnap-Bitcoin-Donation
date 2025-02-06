@@ -177,7 +177,10 @@ const createActualInvoice = (amount, message, lastInputCurency, name, coinsnap) 
                 message: message,
                 name: name
             };
-            createCPT(amount, message, name, response.id)
+
+            if (name) {
+                createCPT(amount, message, name, response.id)
+            }
             setCookie('coinsnap_invoice_', JSON.stringify(invoiceCookieData), 15);
             window.location.href = response.checkoutLink;
         })
