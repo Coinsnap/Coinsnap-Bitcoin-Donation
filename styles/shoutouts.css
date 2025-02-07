@@ -1,74 +1,14 @@
 #bitcoin-donation-shoutouts-form {
-    margin: 20px auto;
-    font-family: Arial, sans-serif;
-    font-size: 14px;
-}
-
-#bitcoin-donation-shoutouts-form label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+    border-radius: 0px;
+    box-shadow: none;
 }
 
 #bitcoin-donation-shoutouts-form input {
-    width: 100%;
-    padding: 8px;
     margin-bottom: 4px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-sizing: border-box;
 }
 
 #bitcoin-donation-shoutouts-form button {
-    margin-top: 20px;
     width: 30%;
-    padding: 10px;
-    background-color: #6393c7;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-}
-
-#bitcoin-donation-shoutouts-form button:hover {
-    transition: 250ms;
-    background-color: #f7a70a;
-}
-
-.wp-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.wp-table th {
-    background-color: #f9f9f9;
-    text-align: left;
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-    font-size: 20px;
-}
-
-.wp-table td {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-    font-size: 18px;
-}
-
-.wp-table.striped tbody tr:nth-child(even) {
-    background-color: #f6f6f6;
-}
-
-.bitcoin-shoutouts-title-wrapper {
-    display: flex;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-}
-
-.bitcoin-shoutouts-title-wrapper h3 {
-    font-weight: bold;
 }
 
 #bitcoin-donation-shoutouts-wrapper {
@@ -107,7 +47,6 @@
 
 .bitcoin-donation-dark-theme .bitcoin-donation-shoutout-top-right-days {
     color: #ffffff !important;
-
 }
 
 .highlight {
@@ -150,6 +89,7 @@
     border-radius: 4px;
     padding: 10px 4px;
     border: 2px solid #d6d6d687;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 
 }
 
@@ -172,6 +112,12 @@
 }
 
 .bitcoin-donation-shoutout-message {
+    width: 100%;
+    resize: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px;
+    box-sizing: border-box;
     flex-grow: 1;
     margin-bottom: 10px;
 }
@@ -189,4 +135,5 @@
     padding: 30px;
     border: 2px solid #d6d6d687;
     border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }

@@ -12,7 +12,7 @@ class Bitcoin_Donation_Shortcode
 
     function bitcoin_donation_render_shortcode()
     {
-        $options = get_option('bitcoin_donation_options');
+        $options = get_option('bitcoin_donation_forms_options');
         $options = is_array($options) ? $options : [];
         $theme_class = isset($options['theme']) && $options['theme'] === 'dark' ? 'bitcoin-donation-dark-theme' : 'bitcoin-donation-light-theme';
         $currency = $options['currency'] ?? 'USD';
@@ -20,7 +20,7 @@ class Bitcoin_Donation_Shortcode
         $title_text = $options['title_text'] ?? 'Donate with Bitcoin';
         ob_start();
 ?>
-        <div id="bitcoin-donation-donation-form" class="<?php echo esc_attr($theme_class); ?>">
+        <div class="bitcoin-donation-donation-form <?php echo esc_attr($theme_class); ?> narrow-form">
             <div class="bitcoin-donation-title-wrapper">
                 <h3><?php echo esc_html($title_text); ?></h3>
             </div>
@@ -34,7 +34,7 @@ class Bitcoin_Donation_Shortcode
             <input type="number" id="bitcoin-donation-satoshi">
 
             <label for="bitcoin-donation-message">Message:</label>
-            <textarea id="bitcoin-donation-message" rows="2"></textarea>
+            <textarea id="bitcoin-donation-message" class="bitcoin-donation-message" rows="2"></textarea>
 
             <button id="bitcoin-donation-pay"><?php echo esc_html($butoon_text); ?></button>
         </div>

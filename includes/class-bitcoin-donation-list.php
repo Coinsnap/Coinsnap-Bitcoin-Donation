@@ -1,25 +1,12 @@
 <?php
+
 class Bitcoin_Donation_List
 {
 
 	public function __construct()
 	{
-		add_action('admin_menu', array($this, 'add_donations_submenu'));
 		add_action('wp_ajax_refresh_donations', array($this, 'refresh_donations_ajax'));
 	}
-
-	public function add_donations_submenu()
-	{
-		add_submenu_page(
-			'bitcoin_donation',
-			'Donation List',
-			'Donation List',
-			'manage_options',
-			'bitcoin-donation-donation-list',
-			array($this, 'render_donation_page')
-		);
-	}
-
 	private function fetch_donations()
 	{
 		$options = get_option('bitcoin_donation_options');
@@ -174,4 +161,3 @@ class Bitcoin_Donation_List
 <?php
 	}
 }
-new Bitcoin_Donation_List();

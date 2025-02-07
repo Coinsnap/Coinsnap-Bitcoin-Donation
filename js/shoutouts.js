@@ -1,11 +1,11 @@
 // js/script.js
 jQuery(document).ready(function ($) {
     var exchangeRates = {};
-    var lastInputCurency = shoutoutsData.currency // Used to detrmine if invoice should be created in by fiat or crypto
+    var lastInputCurency = shoutoutsData.currency
     const minAmount = shoutoutsData.minimumShoutoutAmount
     const premiumAmount = shoutoutsData.premiumShoutoutAmount
-    const setDefaults = () => {
 
+    const setDefaults = () => {
         const amountField = $('#bitcoin-donation-shoutout-amount');
         amountField.val(shoutoutsData.defaultShoutoutAmount);
         updateValueField(
@@ -16,19 +16,6 @@ jQuery(document).ready(function ($) {
         )
         const messageField = $('#bitcoin-donation-shoutout-message');
         messageField.val(shoutoutsData.defaultShoutoutMessage);
-
-    }
-
-    const addErrorField = (field) => {
-        field.css('border', '1px solid red');
-        removeBorderOnFocus(field, field)
-    }
-
-    const removeBorderOnFocus = (field1, field2) => {
-        field1.on('focus', function () {
-            field2.css('border', '');
-        })
-
     }
 
     if (document.getElementById('bitcoin-donation-shoutout-amount')) {
@@ -37,44 +24,19 @@ jQuery(document).ready(function ($) {
             setDefaults()
         });
 
-
-        // Event listeners
-        $('#bitcoin-donation-shout').on('click', function () {
-            $(this).prop('disabled', true);
-            const emailField = $('bitcoin-donation-shoutout-email')
-            if (emailField.val()) {
-                event.preventDefault();
-                return
-            }
-            const amountField = $('#bitcoin-donation-shoutout-amount');
-            const fiatAmount = parseFloat(amountField.val())
-
-            const satoshiField = $('#bitcoin-donation-shoutout-satoshi');
-            const satsAmount = parseFloat(satoshiField.val())
-            if (!satsAmount || !fiatAmount) {
-                addErrorField(satoshiField)
-                addErrorField(amountField)
-                removeBorderOnFocus(satoshiField, amountField)
-                removeBorderOnFocus(amountField, satoshiField)
-                event.preventDefault();
-                return
-            }
-
-
-            const messageField = $('#bitcoin-donation-shoutout-message');
-            const message = messageField.val()
-            if (message == "") {
-                addErrorField(messageField)
-                event.preventDefault();
-                return
-
-            }
+        $('#bitcoin-donation-shout').on('click', () => {
             const nameField = $('#bitcoin-donation-shoutout-name');
             const name = nameField.val() || "Anonymous"
-            const amount = lastInputCurency == 'SATS' ? satsAmount : fiatAmount;
-            if (amount) {
-                createInvoice(amount, message, lastInputCurency, name);
-            }
+
+            handleButtonClick(
+                'bitcoin-donation-shout',
+                'bitcoin-donation-shoutout-email',
+                'bitcoin-donation-shoutout-amount',
+                'bitcoin-donation-shoutout-satoshi',
+                'bitcoin-donation-shoutout-message',
+                lastInputCurency,
+                name
+            )
         });
 
         $('#bitcoin-donation-shoutout-amount').on('input', function () {
@@ -122,4 +84,3 @@ jQuery(document).ready(function ($) {
     }
 
 });
-

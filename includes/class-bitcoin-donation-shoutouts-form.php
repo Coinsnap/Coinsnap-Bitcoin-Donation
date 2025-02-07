@@ -13,7 +13,7 @@ class Bitcoin_Donation_Shoutouts_Form
 
     function bitcoin_donation_render_shortcode()
     {
-        $options = get_option('bitcoin_donation_options');
+        $options = get_option('bitcoin_donation_forms_options');
         $options = is_array($options) ? $options : [];
         $theme_class = isset($options['shoutout_theme']) && $options['shoutout_theme'] === 'dark' ? 'bitcoin-donation-dark-theme' : 'bitcoin-donation-light-theme';
         $currency = $options['shoutout_currency'] ?? 'USD';
@@ -23,7 +23,7 @@ class Bitcoin_Donation_Shoutouts_Form
         $premium_amount = (int)$options['shoutout_premium_amount'] ?? 21000;
         ob_start();
 ?>
-        <div id="bitcoin-donation-shoutouts-form">
+        <div id="bitcoin-donation-shoutouts-form" class="bitcoin-donation-donation-form">
             <div class="shoutout-form-wrapper <?php echo esc_attr($theme_class); ?>">
                 <form method="post">
                     <?php wp_nonce_field('shoutout_nonce', 'shoutout_nonce'); ?>

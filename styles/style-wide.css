@@ -1,93 +1,18 @@
-/* Common Styles */
-#bitcoin-donation-donation-form-wide {
-  margin: 20px auto;
-  border-radius: 8px;
-  font-family: Arial, sans-serif;
-  font-size: 14px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.wide-form input {
+  margin-bottom: 0px !important;
 }
 
-#bitcoin-donation-donation-form-wide label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-#bitcoin-donation-donation-form-wide input {
-  padding: 8px;
-  width: 100%;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-
-#bitcoin-donation-donation-form-wide button {
-  width: 80%;
-  height: 33px;
-  padding: 10px;
-  background-color: #6393c7;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  align-self: flex-end;
+.wide-form button {
+  width: 80% !important;
+  height: 33px !important;
+  align-self: flex-end !important;
 }
 
 .amount-field {
   width: 140px;
 }
 
-#bitcoin-donation-donation-form-wide button:hover {
-  transition: 250ms;
-  background-color: #f7a70a;
-}
-
-/* Light Theme */
-.bitcoin-donation-light-theme-wide {
-  background-color: #f2f2f2;
-  color: #333333;
-}
-
-.bitcoin-donation-light-theme-wide input {
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  color: #333;
-}
-
-.bitcoin-donation-light-theme-wide textarea {
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  color: #333;
-}
-
-/* Dark Theme */
-.bitcoin-donation-dark-theme-wide {
-  background-color: #2c2c2cf7;
-  color: #f1f1f1;
-}
-
-.bitcoin-donation-dark-theme-wide input {
-  background-color: #3a3a3a;
-  border: 1px solid #555;
-  color: #f1f1f1;
-}
-
-.bitcoin-donation-dark-theme-wide textarea {
-  background-color: #3a3a3a;
-  border: 1px solid #555;
-  color: #f1f1f1;
-}
-
-
-.bitcoin-donation-message-wide {
-  width: 100%;
-  resize: none;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 8px;
-  box-sizing: border-box;
+.wide-message-text-area {
   flex-grow: 1;
 }
 
@@ -95,20 +20,6 @@
   height: 80px;
   display: flex;
   flex-direction: column;
-}
-
-.bitcoin-donation-title-wrapper-wide {
-  display: flex;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
-}
-
-.bitcoin-donation-title-wrapper-wide h3 {
-  font-weight: bold;
-  color: #f7a70a;
-  stroke: #6393c7;
-
 }
 
 .bitcoin-donation-wide-field-wrapper {

@@ -1,68 +1,66 @@
 // js/script.js
 jQuery(document).ready(function ($) {
     var exchangeRates = {};
-    var lastInputCurency = donationData.currency // Used to detrmine if invoice should be created in by fiat or crypto
+    var lastInputCurency = donationData.currency
 
-    const setDefaults = () => {
-        const amountField = $('#bitcoin-donation-amount');
+    const setDefaults = (amountField, satoshiFieldName, messageFieldName) => {
         amountField.val(donationData.defaultAmount);
         updateValueField(
             donationData.defaultAmount,
-            'bitcoin-donation-satoshi',
+            satoshiFieldName,
             '/',
             exchangeRates
         )
-        const messageField = $('#bitcoin-donation-message');
+        const messageField = $(messageFieldName);
         messageField.val(donationData.defaultMessage);
     }
-    if (document.getElementById('bitcoin-donation-amount')) {
+
+    const simpleDonation = document.getElementById('bitcoin-donation-amount')
+    const wideDonation = document.getElementById('bitcoin-donation-amount-wide')
+
+    if (simpleDonation || wideDonation) {
 
         fetchCoinsnapExchangeRates().then(rates => {
             exchangeRates = rates
-            setDefaults()
-        });
+            if (simpleDonation) {
+                setDefaults($('#bitcoin-donation-amount'), 'bitcoin-donation-satoshi', '#bitcoin-donation-message')
+            }
+            if (wideDonation) {
+                setDefaults($('#bitcoin-donation-amount-wide'), 'bitcoin-donation-satoshi-wide', '#bitcoin-donation-message-wide')
 
+            }
+        });
 
         // Event listeners
-        $('#bitcoin-donation-pay').on('click', function () {
-            $(this).prop('disabled', true);
-            const emailField = $('bitcoin-donation-email')
-            if(emailField.val()){
-                event.preventDefault();
-                return
-            }
-            const amountField = $('#bitcoin-donation-amount');
-            const satoshiField = $('#bitcoin-donation-satoshi');
-            const messageField = $('#bitcoin-donation-message');
-            const satsAmount = parseFloat(satoshiField.val())
-            const message = messageField.val()
-            const amount = lastInputCurency == 'SATS' ? satsAmount : parseFloat(amountField.val());
-            if (amount) {
-                createInvoice(amount, message, lastInputCurency);
-            }
-        });
+        const fieldUpdateListener = (field1, field2, operator, currency) => {
+            const amount = document.getElementById(field1).value
+            lastInputCurency = currency
+            updateValueField(amount, field2, operator, exchangeRates)
+        }
 
-        $('#bitcoin-donation-amount').on('input', function () {
-            const amount = parseFloat($(this).val());
-            lastInputCurency = donationData.currency
-            updateValueField(
-                amount,
-                'bitcoin-donation-satoshi',
-                '/',
-                exchangeRates
-            )
-        });
+        $('#bitcoin-donation-pay-wide').on('click', () =>
+            handleButtonClick(
+                'bitcoin-donation-pay-wide',
+                'bitcoin-donation-email-wide',
+                'bitcoin-donation-amount-wide',
+                'bitcoin-donation-satoshi-wide',
+                'bitcoin-donation-message-wide',
+                lastInputCurency
+            ));
 
-        $('#bitcoin-donation-satoshi').on('input', function () {
-            const satoshi = parseFloat($(this).val());
-            lastInputCurency = 'SATS'
-            updateValueField(
-                satoshi,
+        $('#bitcoin-donation-pay').on('click', () =>
+            handleButtonClick(
+                'bitcoin-donation-pay',
+                'bitcoin-donation-email',
                 'bitcoin-donation-amount',
-                '*',
-                exchangeRates
-            )
-        });
+                'bitcoin-donation-satoshi',
+                'bitcoin-donation-message',
+                lastInputCurency
+            ));
+
+        $('#bitcoin-donation-amount').on('input', () => fieldUpdateListener('bitcoin-donation-amount', 'bitcoin-donation-satoshi', '/', donationData.currency));
+        $('#bitcoin-donation-satoshi').on('input', () => fieldUpdateListener('bitcoin-donation-satoshi', 'bitcoin-donation-amount', '*', 'SATS'));
+        $('#bitcoin-donation-amount-wide').on('input', () => fieldUpdateListener('bitcoin-donation-amount-wide', 'bitcoin-donation-satoshi-wide', '/', donationData.currency));
+        $('#bitcoin-donation-satoshi-wide').on('input', () => fieldUpdateListener('bitcoin-donation-satoshi-wide', 'bitcoin-donation-amount-wide', '*', 'SATS'));
     }
 });
-

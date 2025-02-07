@@ -1,21 +1,24 @@
 /* Common Styles */
-#bitcoin-donation-donation-form {
-  max-width: 220px;
+.bitcoin-donation-donation-form {
   margin: 20px auto;
-  padding: 30px;
   border-radius: 8px;
   font-family: Arial, sans-serif;
   font-size: 14px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-#bitcoin-donation-donation-form label {
+.narrow-form {
+  max-width: 220px;
+  padding: 30px;
+}
+
+.bitcoin-donation-donation-form label {
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
 }
 
-#bitcoin-donation-donation-form input {
+.bitcoin-donation-donation-form input {
   width: 100%;
   padding: 8px;
   margin-bottom: 10px;
@@ -24,7 +27,7 @@
   box-sizing: border-box;
 }
 
-#bitcoin-donation-donation-form button {
+.bitcoin-donation-donation-form button {
   margin-top: 20px;
   width: 100%;
   padding: 10px;
@@ -37,7 +40,7 @@
   font-weight: bold;
 }
 
-#bitcoin-donation-donation-form button:hover {
+.bitcoin-donation-donation-form button:hover {
   transition: 250ms;
   background-color: #f7a70a;
 }
@@ -78,17 +81,7 @@
   color: #f1f1f1;
 }
 
-
-#bitcoin-donation-message {
-  width: 100%;
-  resize: none;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 8px;
-  box-sizing: border-box;
-}
-
-#bitcoin-donation-shoutout-message {
+.bitcoin-donation-message {
   width: 100%;
   resize: none;
   border: 1px solid #ccc;
@@ -107,5 +100,4 @@
 .bitcoin-donation-title-wrapper h3 {
   font-weight: bold;
   color: #f7a70a;
-  stroke: #6393c7;
 }

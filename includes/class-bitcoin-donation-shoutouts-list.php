@@ -10,10 +10,9 @@ class Bitcoin_Donation_Shoutouts_List
         add_shortcode('shoutout_list', [$this, 'bitcoin_donation_render_shortcode']);
     }
 
-
     function bitcoin_donation_render_shortcode()
     {
-        $options = get_option('bitcoin_donation_options');
+        $options = get_option('bitcoin_donation_forms_options');
         $theme_class = isset($options['shoutout_theme']) && $options['shoutout_theme'] === 'dark' ? 'bitcoin-donation-dark-theme' : 'bitcoin-donation-light-theme';
         $args = array(
             'post_type'      => 'bitcoin-shoutouts',
@@ -65,7 +64,7 @@ class Bitcoin_Donation_Shoutouts_List
 
     private function render_donation_row($donation, $theme)
     {
-        $options = get_option('bitcoin_donation_options');
+        $options = get_option('bitcoin_donation_forms_options');
         $name = $donation['name'];
         $amount = $donation['amount'];
         $message = $donation['message'];

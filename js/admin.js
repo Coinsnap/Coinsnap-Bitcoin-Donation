@@ -17,6 +17,15 @@
         tab.classList.add("nav-tab-active");
         const target = tab.getAttribute("data-tab");
         document.getElementById(target).classList.add("active");
+
+        document.getElementById('simple_donation_shortcodes').style.display = 'none';
+        document.getElementById('shoutout_donation_shortcodes').style.display = 'none';
+        if (tab.text == 'Shoutout donation') {
+          document.getElementById('shoutout_donation_shortcodes').style.display = 'block';
+        } else if (tab.text == 'Donation Button') {
+          document.getElementById('simple_donation_shortcodes').style.display = 'block';
+
+        }
       });
     });
 
@@ -77,8 +86,6 @@
 
       })
     }
-
-
 
     // Function to toggle visibility based on selected provider
     function toggleProviderSettings() {
@@ -143,14 +150,8 @@
       $('#submit').click();
     }
 
-    // Add click event listener to the check connection button
-    $checkConnectionCoisnanpButton.on('click', async (event) => {
-      await handleCheckConnection();
-    })
-
-    $checkConnectionBtcPayButton.on('click', async (event) => {
-      await handleCheckConnection();
-    });
+    $checkConnectionCoisnanpButton.on('click', async (event) => {await handleCheckConnection();})
+    $checkConnectionBtcPayButton.on('click', async (event) => {await handleCheckConnection();});
 
     const connectionCookie = getCookie('coinsnap_connection_')
     if (connectionCookie) {

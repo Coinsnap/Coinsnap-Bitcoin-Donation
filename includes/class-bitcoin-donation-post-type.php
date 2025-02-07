@@ -62,7 +62,7 @@ class Bitcoin_Donation_Metabox
 
 		register_meta('post', '_bitcoin_donation_shoutouts_amount', [
 			'object_subtype' => 'bitcoin-shoutouts',
-			'type' => 'number',
+			'type' => 'string',
 			'single' => true,
 			'show_in_rest' => true,
 		]);
@@ -126,12 +126,10 @@ class Bitcoin_Donation_Metabox
 				</th>
 				<td>
 					<input
-						type="number"
+						type="text"
 						id="bitcoin_donation_shoutouts_amount"
 						name="bitcoin_donation_shoutouts_amount"
 						class="regular-text"
-						step="0.01"
-						min="0"
 						value="<?php echo esc_attr($amount); ?>">
 				</td>
 			</tr>
@@ -197,7 +195,7 @@ class Bitcoin_Donation_Metabox
 
 		$fields = [
 			'bitcoin_donation_shoutouts_name'     => 'text',
-			'bitcoin_donation_shoutouts_amount'   => 'number',
+			'bitcoin_donation_shoutouts_amount'   => 'text',
 			'bitcoin_donation_shoutouts_invoice_id' => 'text',
 			'bitcoin_donation_shoutouts_message'    => 'text',
 		];
@@ -262,7 +260,7 @@ class Bitcoin_Donation_Metabox
 				echo esc_html(get_post_meta($post_id, '_bitcoin_donation_shoutouts_name', true) ?: 'Anonymous');
 				break;
 			case 'amount':
-				echo esc_html(get_post_meta($post_id, '_bitcoin_donation_shoutouts_amount', true) ?: '0');
+				echo esc_html(get_post_meta($post_id, '_bitcoin_donation_shoutouts_amount', true) ?: '');
 				break;
 			case 'invoice_id':
 				echo esc_html(get_post_meta($post_id, '_bitcoin_donation_shoutouts_invoice_id', true) ?: '');
@@ -276,5 +274,4 @@ class Bitcoin_Donation_Metabox
 	}
 }
 
-// Initialize the class
 new Bitcoin_Donation_Metabox();

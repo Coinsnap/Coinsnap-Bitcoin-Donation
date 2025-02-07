@@ -26,7 +26,7 @@ async function createCPT(amount, message, name, invoiceId) {
         _bitcoin_donation_shoutouts_name: name,
         meta: {
             _bitcoin_donation_shoutouts_name: name,
-            _bitcoin_donation_shoutouts_amount: parseFloat(amount),
+            _bitcoin_donation_shoutouts_amount: amount,
             _bitcoin_donation_shoutouts_invoice_id: invoiceId,
             _bitcoin_donation_shoutouts_message: message,
         }
@@ -51,6 +51,49 @@ async function createCPT(amount, message, name, invoiceId) {
     }
 }
 
+const addErrorField = (field) => {
+    field.css('border', '1px solid red');
+    removeBorderOnFocus(field, field)
+}
+
+const removeBorderOnFocus = (field1, field2) => {
+    field1.on('focus', function () {
+        field2.css('border', '');
+    })
+
+}
+
+const handleButtonClick = (buttonId, honeypotId, amountId, satoshiId, messageId, lastInputCurency, name) => {
+    const button = document.getElementById(buttonId)
+    button.disabled = true;
+    event.preventDefault();
+    const honeypot = document.getElementById(honeypotId)
+    if (honeypot && honeypot.value) {
+        event.preventDefault();
+        return
+    }
+    const amountField = document.getElementById(amountId)
+    const fiatAmount = parseFloat(amountField.value)
+    const satoshiField = document.getElementById(satoshiId)
+    const satsAmount = parseFloat(satoshiField.value)
+
+    if (!satsAmount || !fiatAmount) {
+        button.disabled = false;
+        addErrorField(satoshiField)
+        addErrorField(amountField)
+        removeBorderOnFocus(satoshiField, amountField)
+        removeBorderOnFocus(amountField, satoshiField)
+        event.preventDefault();
+        return
+    }
+
+    const messageField = document.getElementById(messageId)
+    const message = messageField ? messageField.value : ""
+    const amount = lastInputCurency == 'SATS' ? satsAmount : fiatAmount;
+    if (amount) {
+        createInvoice(amount, message, lastInputCurency, name);
+    }
+}
 
 const updateValueField = (amount, fieldName, operation, exchangeRates) => {
     const currencyRate = exchangeRates[sharedData.currency?.toUpperCase()];
@@ -177,7 +220,7 @@ const createActualInvoice = (amount, message, lastInputCurency, name, coinsnap) 
             };
 
             if (name) {
-                createCPT(amount, message, name, response.id)
+                createCPT(`${amount} ${lastInputCurency}`, message, name, response.id)
             }
             setCookie('coinsnap_invoice_', JSON.stringify(invoiceCookieData), 15);
             window.location.href = response.checkoutLink;
@@ -265,4 +308,3 @@ const createInvoice = (amount, message, lastInputCurency, name) => {
             sharedData.provider == 'coinsnap')
     }
 }
-
