@@ -88,7 +88,7 @@ class Bitcoin_Donation_Shoutouts_List
             <div class="bitcoin-donation-shoutout-top">
                 <?php echo esc_html($name); ?>
                 <div class="bitcoin-donation-shoutout-top-right">
-                    <div class="bitcoin-donation-shoutout-top-right-amount <?php echo $highlight ? 'highlight' : ''; ?>"> <?php echo esc_html($amount); ?> sats</div>
+                    <div class="bitcoin-donation-shoutout-top-right-amount <?php echo $highlight ? 'highlight' : ''; ?>"> <?php echo esc_html($amount); ?></div>
                     <div class="bitcoin-donation-shoutout-top-right-days"> <?php echo esc_html($daysAgo); ?></div>
 
                 </div>
