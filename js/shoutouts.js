@@ -12,7 +12,8 @@ jQuery(document).ready(function ($) {
             shoutoutsData.defaultShoutoutAmount,
             'bitcoin-donation-shoutout-satoshi',
             '/',
-            exchangeRates
+            exchangeRates,
+            shoutoutsData.currency
         )
         const messageField = $('#bitcoin-donation-shoutout-message');
         messageField.val(shoutoutsData.defaultShoutoutMessage);
@@ -46,7 +47,8 @@ jQuery(document).ready(function ($) {
                 amount,
                 'bitcoin-donation-shoutout-satoshi',
                 '/',
-                exchangeRates
+                exchangeRates,
+                shoutoutsData.currency
             )
         });
 
@@ -77,7 +79,8 @@ jQuery(document).ready(function ($) {
                 satoshi,
                 'bitcoin-donation-shoutout-amount',
                 '*',
-                exchangeRates
+                exchangeRates,
+                shoutoutsData.currency
             )
 
         });

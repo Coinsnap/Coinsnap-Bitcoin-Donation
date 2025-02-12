@@ -63,6 +63,22 @@ const removeBorderOnFocus = (field1, field2) => {
 
 }
 
+handleSnapClick = (buttonId, honeypotId, amountId, messageId, currency) => {
+    const button = document.getElementById(buttonId)
+    button.disabled = true;
+    event.preventDefault();
+    const honeypot = document.getElementById(honeypotId)
+    if (honeypot && honeypot.value) {
+        event.preventDefault();
+        return
+    }
+    const amount = parseFloat(document.getElementById(amountId).textContent)
+    const messageField = document.getElementById(messageId)
+    const message = messageField ? messageField.value : ""
+    createInvoice(amount, message, currency.toUpperCase(), undefined , 'Multi Amount Donation');
+}
+
+
 const handleButtonClick = (buttonId, honeypotId, amountId, satoshiId, messageId, lastInputCurency, name) => {
     const button = document.getElementById(buttonId)
     button.disabled = true;
@@ -74,29 +90,63 @@ const handleButtonClick = (buttonId, honeypotId, amountId, satoshiId, messageId,
     }
     const amountField = document.getElementById(amountId)
     const fiatAmount = parseFloat(amountField.value)
-    const satoshiField = document.getElementById(satoshiId)
+    if (satoshiId) {
+        const satoshiField = document.getElementById(satoshiId)
+    }
     const satsAmount = parseFloat(satoshiField.value)
 
     if (!satsAmount || !fiatAmount) {
         button.disabled = false;
-        addErrorField(satoshiField)
         addErrorField(amountField)
-        removeBorderOnFocus(satoshiField, amountField)
-        removeBorderOnFocus(amountField, satoshiField)
+        if (satoshiId) {
+            addErrorField(satoshiField)
+            removeBorderOnFocus(satoshiField, amountField)
+            removeBorderOnFocus(amountField, satoshiField)
+        }
         event.preventDefault();
         return
     }
 
     const messageField = document.getElementById(messageId)
     const message = messageField ? messageField.value : ""
-    const amount = lastInputCurency == 'SATS' ? satsAmount : fiatAmount;
+    const currency = lastInputCurency.toUpperCase()
+    const amount = currency == 'SATS' ? satsAmount : fiatAmount;
     if (amount) {
-        createInvoice(amount, message, lastInputCurency, name);
+        const type = name ? 'Shoutout Donation' : 'Donation Button'
+        createInvoice(amount, message, lastInputCurency, name, type);
     }
 }
 
-const updateValueField = (amount, fieldName, operation, exchangeRates) => {
-    const currencyRate = exchangeRates[sharedData.currency?.toUpperCase()];
+const handleButtonClickMulti = (buttonId, honeypotId, amountId, messageId, lastInputCurency, name) => {
+    const button = document.getElementById(buttonId)
+    button.disabled = true;
+    event.preventDefault();
+    const honeypot = document.getElementById(honeypotId)
+    if (honeypot && honeypot.value) {
+        event.preventDefault();
+        return
+    }
+    const amountField = document.getElementById(amountId)
+    const fiatAmount = parseFloat(amountField.value)
+
+    if (!fiatAmount) {
+        button.disabled = false;
+        addErrorField(amountField)
+        event.preventDefault();
+        return
+    }
+
+    const messageField = document.getElementById(messageId)
+    const message = messageField ? messageField.value : ""
+    const currency = lastInputCurency.toUpperCase()
+    const amount = fiatAmount;
+    if (amount) {
+        createInvoice(amount, message, currency, name, 'Multi Amount Donation');
+    }
+}
+
+const updateValueField = (amount, fieldName, operation, exchangeRates, currency) => {
+    const currencyRate = exchangeRates[currency?.toUpperCase()];
     const field = document.getElementById(fieldName);
 
     if (!field) {
@@ -118,6 +168,11 @@ const updateValueField = (amount, fieldName, operation, exchangeRates) => {
             field.style.color = '';
             premiumAmount.disabled = false
         }
+    } else if (fieldName?.includes('bitcoin-donation-satoshi-multi') && !isNaN(amount) && currencyRate) {
+        const value = operation == '*' ? amount * currencyRate : amount / currencyRate;
+        const decimals = value > 1000 ? 4 : 8;
+        field.textContent = value.toFixed(operation == '*' ? decimals : 0);
+        return
     }
 
     if (!isNaN(amount) && currencyRate) {
@@ -160,7 +215,7 @@ async function fetchCoinsnapExchangeRates() {
 
 
 
-const createActualInvoice = (amount, message, lastInputCurency, name, coinsnap) => {
+const createActualInvoice = (amount, message, lastInputCurency, name, coinsnap, type) => {
     deleteCookie('coinsnap_invoice_')
     if (window.location.href.includes("localhost")) {
         sharedData.redirectUrl = "https://coinsnap.io"
@@ -173,7 +228,7 @@ const createActualInvoice = (amount, message, lastInputCurency, name, coinsnap) 
         metadata: {
             orderNumber: message,
             referralCode: 'D19833',
-            type: name ? 'Bitcoin Shoutout' : 'Bitcoin Donation',
+            type: type,
             name: name
         }
     };
@@ -271,7 +326,7 @@ function checkInvoiceStatus(invoiceId, amount, message, lastInputCurency, name, 
 }
 
 
-const createInvoice = (amount, message, lastInputCurency, name) => {
+const createInvoice = (amount, message, lastInputCurency, name, type) => {
     existingInvoice = getCookie('coinsnap_invoice_')
     if (existingInvoice) {
         invoiceJson = JSON.parse(existingInvoice)
@@ -289,7 +344,8 @@ const createInvoice = (amount, message, lastInputCurency, name) => {
                 message,
                 lastInputCurency,
                 name,
-                sharedData.provider == 'coinsnap')
+                sharedData.provider == 'coinsnap'
+            )
         }
         else {
             createActualInvoice(
@@ -297,7 +353,9 @@ const createInvoice = (amount, message, lastInputCurency, name) => {
                 message,
                 lastInputCurency,
                 name,
-                sharedData.provider == 'coinsnap')
+                sharedData.provider == 'coinsnap',
+                type
+            )
         }
     } else {
         createActualInvoice(
@@ -305,6 +363,8 @@ const createInvoice = (amount, message, lastInputCurency, name) => {
             message,
             lastInputCurency,
             name,
-            sharedData.provider == 'coinsnap')
+            sharedData.provider == 'coinsnap',
+            type
+        )
     }
 }

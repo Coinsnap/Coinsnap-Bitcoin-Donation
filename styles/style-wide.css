@@ -2,7 +2,7 @@
   margin-bottom: 0px !important;
 }
 
-.wide-form button {
+.wide-form-button {
   width: 80% !important;
   height: 33px !important;
   align-self: flex-end !important;
@@ -30,7 +30,28 @@
 
 }
 
+.bitcoin-donation-multi-wide-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 30px;
+}
+
 .bitcoin-donation-wide-up {
   display: flex;
   gap: 8px;
+}
+
+.multi-wide-button {
+  width: 31% !important;
+  align-self: center;
+}
+
+.mulit-wide-label-left{
+  width: 31%;
+}
+
+.mulit-wide-label-right{
+  width: 69%; 
+  /* Nice */
 }

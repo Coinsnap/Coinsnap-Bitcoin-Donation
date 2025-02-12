@@ -15,6 +15,8 @@ require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-post-t
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-settings.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shortcode.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shortcode-wide.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shortcode-multi-amount.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shortcode-multi-amount-wide.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shoutouts-list.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shoutouts-form.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-webhooks.php';
@@ -40,8 +42,13 @@ class Bitcoin_Donation
             'currency' => $forms_options['currency'],
             'defaultAmount' => $forms_options['default_amount'],
             'defaultMessage' => $forms_options['default_message'],
-            'redirectUrl' => $forms_options['redirect_url']
-
+            'redirectUrl' => $forms_options['redirect_url'],
+            'snap1Amount' => $forms_options['multi_amount_default_snap1'],
+            'snap2Amount' => $forms_options['multi_amount_default_snap2'],
+            'snap3Amount' => $forms_options['multi_amount_default_snap3'],
+            'multiPrimary' => $forms_options['multi_amount_primary_currency'],
+            'multiFiat' => $forms_options['multi_amount_fiat_currency'],
+            'defaultMultiAmount' => $forms_options['multi_amount_default_amount']
         ]);
         wp_enqueue_script('bitcoin-donation-shoutout-script', plugin_dir_url(__FILE__) . 'js/shoutouts.js', ['jquery'], '1.0.0', true);
         wp_localize_script('bitcoin-donation-shoutout-script', 'shoutoutsData', [

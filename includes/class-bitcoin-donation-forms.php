@@ -246,6 +246,163 @@ class Bitcoin_Donation_Forms
 				'type'      => 'text'
 			]
 		);
+
+		// Multi Amount
+		add_settings_section(
+			'bitcoin_donation_multi_amount_section',
+			'Multi Amount Donation Settings',
+			[$this, 'multi_amount_section_callback'],
+			'bitcoin_donation'
+		);
+
+		add_settings_field(
+			'multi_amount_primary_currency',
+			'Primary Currency',
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_primary_currency',
+				'type'      => 'select',
+				'options'   => [
+					"SATS" => "SATS",
+					"FIAT" => "FIAT"
+				]
+			]
+		);
+
+		add_settings_field(
+			'multi_amount_fiat_currency',
+			'Fiat Currency',
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_fiat_currency',
+				'type'      => 'select',
+				'options'   => [
+					"EUR" => "EUR",
+					"USD" => "USD",
+					"CAD" => "CAD",
+					"JPY" => "JPY",
+					"GBP" => "GBP",
+					"CHF" => "CHF"
+				]
+			]
+		);
+
+		add_settings_field(
+			'multi_amount_theme',
+			'Theme',
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_theme',
+				'type'      => 'select',
+				'options'   => [
+					"light" => "Light",
+					"dark" => "Dark"
+				]
+			]
+		);
+
+		add_settings_field(
+			'multi_amount_button_text',
+			'Button Text',
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_button_text',
+				'type'      => 'text'
+			]
+		);
+
+		add_settings_field(
+			'multi_amount_title_text',
+			'Title Text',
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_title_text',
+				'type'      => 'text'
+			]
+		);
+
+		add_settings_field(
+			'multi_amount_default_amount',
+			'Default Amount in Primary Curency',
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_default_amount',
+				'type'      => 'text'
+			]
+		);
+
+		add_settings_field(
+			'multi_amount_default_message',
+			'Default Message',
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_default_message',
+				'type'      => 'text'
+			]
+		);
+
+		add_settings_field(
+			'multi_amount_redirect_url',
+			'Redirect Url (Thank You Page)',
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_redirect_url',
+				'type'      => 'text'
+			]
+		);
+
+
+		add_settings_field(
+			'multi_amount_default_snap1',
+			'Default Amount Field 1',
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_default_snap1',
+				'type'      => 'text'
+			]
+		);
+
+		add_settings_field(
+			'multi_amount_default_snap2',
+			'Default Amount Field 2',
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_default_snap2',
+				'type'      => 'text'
+			]
+		);
+
+		add_settings_field(
+			'multi_amount_default_snap3',
+			'Default Amount Field 3',
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_default_snap3',
+				'type'      => 'text'
+			]
+		);
 	}
 
 	public function sanitize_forms_options($options)
@@ -316,6 +473,50 @@ class Bitcoin_Donation_Forms
 			$sanitized['shoutout_redirect_url'] = sanitize_text_field($options['shoutout_redirect_url']);
 		}
 
+		if (isset($options['multi_amount_primary_currency'])) {
+			$sanitized['multi_amount_primary_currency'] = sanitize_text_field($options['multi_amount_primary_currency']);
+		}
+
+		if (isset($options['multi_amount_fiat_currency'])) {
+			$sanitized['multi_amount_fiat_currency'] = sanitize_text_field($options['multi_amount_fiat_currency']);
+		}
+
+		if (isset($options['multi_amount_theme'])) {
+			$sanitized['multi_amount_theme'] = sanitize_text_field($options['multi_amount_theme']);
+		}
+
+		if (isset($options['multi_amount_button_text'])) {
+			$sanitized['multi_amount_button_text'] = sanitize_text_field($options['multi_amount_button_text']);
+		}
+
+		if (isset($options['multi_amount_title_text'])) {
+			$sanitized['multi_amount_title_text'] = sanitize_text_field($options['multi_amount_title_text']);
+		}
+
+		if (isset($options['multi_amount_default_amount'])) {
+			$sanitized['multi_amount_default_amount'] = sanitize_text_field($options['multi_amount_default_amount']);
+		}
+
+		if (isset($options['multi_amount_default_message'])) {
+			$sanitized['multi_amount_default_message'] = sanitize_text_field($options['multi_amount_default_message']);
+		}
+
+		if (isset($options['multi_amount_redirect_url'])) {
+			$sanitized['multi_amount_redirect_url'] = sanitize_text_field($options['multi_amount_redirect_url']);
+		}
+
+		if (isset($options['multi_amount_default_snap1'])) {
+			$sanitized['multi_amount_default_snap1'] = sanitize_text_field($options['multi_amount_default_snap1']);
+		}
+
+		if (isset($options['multi_amount_default_snap2'])) {
+			$sanitized['multi_amount_default_snap2'] = sanitize_text_field($options['multi_amount_default_snap2']);
+		}
+
+		if (isset($options['multi_amount_default_snap3'])) {
+			$sanitized['multi_amount_default_snap3'] = sanitize_text_field($options['multi_amount_default_snap3']);
+		}
+
 		return $sanitized;
 	}
 
@@ -357,6 +558,11 @@ class Bitcoin_Donation_Forms
 		echo esc_html_e('Configure shoutout donation form.', 'bitcoin_donation');
 	}
 
+	public function multi_amount_section_callback()
+	{
+		echo esc_html_e('Configure multi amount donation form.', 'bitcoin_donation');
+	}
+
 
 
 	public function render_field($args)
@@ -375,7 +581,14 @@ class Bitcoin_Donation_Forms
 			'shoutout_button_text'     => 'Shoutout',
 			'shoutout_title_text'      => 'Bitcoin Shoutouts',
 			'shoutout_minimum_amount'  => '21',
-			'shoutout_premium_amount'  => '21000'
+			'shoutout_premium_amount'  => '21000',
+			'multi_amount_default_message' => 'Thank you for your work',
+			'multi_amount_default_amount'  => '5',
+			'multi_amount_button_text'     => 'Donate',
+			'multi_amount_title_text'      => 'Donate with Bitcoin',
+			'multi_amount_default_snap1'      => '1000',
+			'multi_amount_default_snap2'      => '5000',
+			'multi_amount_default_snap3'      => '10000',
 		];
 		if ($field_type == 'text') {
 			$field_value = isset($options[$field_id]) ? $options[$field_id] : ($defaults[$field_id] ?? '');
@@ -427,14 +640,16 @@ class Bitcoin_Donation_Forms
 			<h1>Bitcoin Donation Settings</h1>
 			<div id='simple_donation_shortcodes' class='shortcode_text_wrapper'>Use the shortcode <span class='shortcode_text'>[bitcoin_donation]</span> or <span class='shortcode_text'> [bitcoin_donation_wide]</span></div>
 			<div id='shoutout_donation_shortcodes' class='shortcode_text_wrapper shortcode_text_wrapper_disabled'>Use the shortcodes <span class='shortcode_text'>[shoutout_form]</span> and <span class='shortcode_text'> [shoutout_list]</span></div>
+			<div id='multi_amount_shortcodes' class='shortcode_text_wrapper shortcode_text_wrapper_disabled'>Use the shortcodes <span class='shortcode_text'>[multi_amount_donation]</span> or <span class='shortcode_text'> [multi_amount_donation_wide]</span></div>
 
 			<!-- Display any registered settings errors -->
 			<?php settings_errors('bitcoin_donation_settings'); ?>
 
 			<!-- Tab Navigation -->
 			<h2 class="nav-tab-wrapper">
-				<a href="#coinsnap" class="nav-tab nav-tab-active" data-tab="simple-donation">Donation Button</a>
-				<a href="#btcpay" class="nav-tab" data-tab="shoutout-donation">Shoutout donation</a>
+				<a href="#coinsnap" class="nav-tab" data-tab="simple-donation">Donation Button</a>
+				<a href="#btcpay" class="nav-tab" data-tab="shoutout-donation">Shoutout Donation</a>
+				<a href="#multi" class="nav-tab" data-tab="multi-amount-donation">Multi Amount Donation</a>
 			</h2>
 
 
@@ -444,13 +659,15 @@ class Bitcoin_Donation_Forms
 				// Render the settings fields for the Bitcoin Donation
 				settings_fields('bitcoin_donation_forms_settings');
 
-				echo '<div id="simple-donation" class="tab-content active">';
+				echo '<div id="simple-donation" class="tab-content">';
 				$this->render_section('bitcoin_donation_simple_donation_section');
 				echo '</div>';
 				echo '<div id="shoutout-donation" class="tab-content">';
 				$this->render_section('bitcoin_donation_shoutout_donation_section');
 				echo '</div>';
-
+				echo '<div id="multi-amount-donation" class="tab-content">';
+				$this->render_section('bitcoin_donation_multi_amount_section');
+				echo '</div>';
 				?>
 				<?php
 				// Render submit button

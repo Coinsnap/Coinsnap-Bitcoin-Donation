@@ -39,7 +39,7 @@ class Bitcoin_Donation_Shortcode_Wide
                         <label for="bitcoin-donation-satoshi">Satoshi</label>
                         <input type="number" id="bitcoin-donation-satoshi-wide">
                     </div>
-                    <button id="bitcoin-donation-pay-wide"><?php echo esc_html($butoon_text); ?></button>
+                    <button class="wide-form-button" id="bitcoin-donation-pay-wide"><?php echo esc_html($butoon_text); ?></button>
                 </div>
                 <div class="bitcoin-donation-wide-down">
                     <label for="bitcoin-donation-message">Message</label>
