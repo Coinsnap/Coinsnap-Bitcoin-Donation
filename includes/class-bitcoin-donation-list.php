@@ -40,9 +40,15 @@ class Bitcoin_Donation_List
 				&& $invoice['metadata']['referralCode'] === "D19833"
 				&& $invoice['status'] === 'Settled';
 		});
-		usort($filtered_invoices, function ($a, $b) {
-			return $b['createdAt'] <=> $a['createdAt'];
-		});
+		if ($provider == 'coinsnap') {
+			usort($filtered_invoices, function ($a, $b) {
+				return $b['createdAt'] <=> $a['createdAt'];
+			});
+		} else {
+			usort($filtered_invoices, function ($a, $b) {
+				return $b['createdTime'] <=> $a['createdTime'];
+			});
+		}
 		return array_values($filtered_invoices);
 	}
 
