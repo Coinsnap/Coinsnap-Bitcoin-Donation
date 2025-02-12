@@ -9,6 +9,7 @@
 
     const tabs = document.querySelectorAll(".nav-tab");
     const contents = document.querySelectorAll(".tab-content");
+
     tabs.forEach(tab => {
       tab.addEventListener("click", function (e) {
         e.preventDefault();
@@ -20,14 +21,25 @@
 
         document.getElementById('simple_donation_shortcodes').style.display = 'none';
         document.getElementById('shoutout_donation_shortcodes').style.display = 'none';
-        if (tab.text == 'Shoutout donation') {
+        document.getElementById('multi_amount_shortcodes').style.display = 'none';
+        if (tab.text == 'Shoutout Donation') {
           document.getElementById('shoutout_donation_shortcodes').style.display = 'block';
         } else if (tab.text == 'Donation Button') {
           document.getElementById('simple_donation_shortcodes').style.display = 'block';
-
+        } else if (tab.text == 'Multi Amount Donation') {
+          document.getElementById('multi_amount_shortcodes').style.display = 'block';
         }
+        localStorage.setItem('activeTab', target);
       });
     });
+    const restoreTabs = () => {
+      const savedTab = localStorage.getItem('activeTab');
+      const activeTab = document.querySelector(`.nav-tab[data-tab="${savedTab}"]`);
+      if (activeTab) {
+        activeTab.click()
+      }
+    }
+    restoreTabs()
 
     function checkConnection(storeId, apiKey, btcpayUrl) {
       const headers = btcpayUrl ? { 'Authorization': `token ${apiKey}` } : { 'x-api-key': apiKey, };
@@ -150,8 +162,8 @@
       $('#submit').click();
     }
 
-    $checkConnectionCoisnanpButton.on('click', async (event) => {await handleCheckConnection();})
-    $checkConnectionBtcPayButton.on('click', async (event) => {await handleCheckConnection();});
+    $checkConnectionCoisnanpButton.on('click', async (event) => { await handleCheckConnection(); })
+    $checkConnectionBtcPayButton.on('click', async (event) => { await handleCheckConnection(); });
 
     const connectionCookie = getCookie('coinsnap_connection_')
     if (connectionCookie) {
