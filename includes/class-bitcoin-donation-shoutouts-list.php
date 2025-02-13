@@ -42,24 +42,52 @@ class Bitcoin_Donation_Shoutouts_List
 
         ob_start();
 ?>
-        <div id="bitcoin-donation-shoutouts-wrapper">
+        <div class="shoutouts-list-container">
+            <div id="bitcoin-donation-shoutouts-wrapper">
 
-            <?php
-            if (empty($shoutouts)) {
-                echo '<tr><td colspan="3">No donations found.</td></tr>';
-            } else {
-                foreach ($shoutouts as $shoutout) {
-                    $this->render_donation_row($shoutout, $theme_class);
+                <?php
+                if (empty($shoutouts)) {
+                    $this->render_empty_donation_row($theme_class);
+                } else {
+                    foreach ($shoutouts as $shoutout) {
+                        $this->render_donation_row($shoutout, $theme_class);
+                    }
                 }
-            }
-            ?>
+                ?>
 
 
+            </div>
         </div>
 
     <?php
 
         return ob_get_clean();
+    }
+
+    private function render_empty_donation_row($theme)
+    {
+
+        $highlight = false;
+        $name = "No Shoutouts Available";
+        $message = "There are no soutouts yet. This is just an example of how they will be displayed once there are some available.";
+        $amount = "0 sats";
+        $daysAgo = "Today";
+    ?>
+        <div class="bitcoin-donation-shoutout <?php echo esc_attr($theme); ?> <?php echo $highlight ? 'highlight-shoutout' : ''; ?>">
+            <div class="bitcoin-donation-shoutout-top">
+                <?php echo esc_html($name); ?>
+                <div class="bitcoin-donation-shoutout-top-right">
+                    <div class="bitcoin-donation-shoutout-top-right-amount <?php echo $highlight ? 'highlight' : ''; ?>"> <?php echo esc_html($amount); ?></div>
+                    <div class="bitcoin-donation-shoutout-top-right-days"> <?php echo esc_html($daysAgo); ?></div>
+
+                </div>
+            </div>
+            <div class="bitcoin-donation-shoutout-bottom">
+                <?php echo esc_html($message); ?>
+            </div>
+
+        </div>
+    <?php
     }
 
     private function render_donation_row($donation, $theme)
@@ -97,8 +125,6 @@ class Bitcoin_Donation_Shoutouts_List
                 <?php echo esc_html($message); ?>
             </div>
         </div>
-
-
 <?php
 
     }

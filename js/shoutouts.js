@@ -41,7 +41,7 @@ jQuery(document).ready(function ($) {
         });
 
         $('#bitcoin-donation-shoutout-amount').on('input', function () {
-            const amount = parseFloat($(this).val());
+            const amount = cleanAmount($(this).val());
             lastInputCurency = shoutoutsData.currency
             updateValueField(
                 amount,
@@ -51,9 +51,10 @@ jQuery(document).ready(function ($) {
                 shoutoutsData.currency
             )
         });
+        NumericInput('bitcoin-donation-shoutout-amount')
 
         $('#bitcoin-donation-shoutout-satoshi').on('input', function () {
-            const satoshi = parseFloat($(this).val());
+            const satoshi = cleanAmount($(this).val());
             if (satoshi < minAmount) {
                 $(this).css('color', '#e55e65');
                 $('#bitcoin-donation-shout').prop('disabled', true);
@@ -84,6 +85,9 @@ jQuery(document).ready(function ($) {
             )
 
         });
+        NumericInput('bitcoin-donation-shoutout-satoshi')
+
     }
+
 
 });

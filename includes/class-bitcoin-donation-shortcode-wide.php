@@ -21,7 +21,7 @@ class Bitcoin_Donation_Shortcode_Wide
 
         ob_start();
 ?>
-        <div class="bitcoin-donation-donation-form <?php echo esc_attr($theme_class); ?> wide-form">
+        <div id="bitcoin-donation-form-wide" class="bitcoin-donation-donation-form <?php echo esc_attr($theme_class); ?> wide-form">
             <div class="bitcoin-donation-title-wrapper">
                 <h3><?php echo esc_html($title_text); ?></h3>
 
@@ -32,12 +32,12 @@ class Bitcoin_Donation_Shortcode_Wide
 
                     <div class="shoutout-input-label">
                         <label for="bitcoin-donation-amount">Amount (in <?php echo esc_html($currency); ?>)</label>
-                        <input type="number" id="bitcoin-donation-amount-wide" step="0.01">
+                        <input type="text" id="bitcoin-donation-amount-wide" step="0.01">
                     </div>
 
                     <div class="shoutout-input-label">
                         <label for="bitcoin-donation-satoshi">Satoshi</label>
-                        <input type="number" id="bitcoin-donation-satoshi-wide">
+                        <input type="text" id="bitcoin-donation-satoshi-wide">
                     </div>
                     <button class="wide-form-button" id="bitcoin-donation-pay-wide"><?php echo esc_html($butoon_text); ?></button>
                 </div>

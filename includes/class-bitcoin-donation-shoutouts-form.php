@@ -43,12 +43,12 @@ class Bitcoin_Donation_Shoutouts_Form
                             <input type="text" id="bitcoin-donation-shoutout-email" name="email" style="display: none;" aria-hidden="true">
                             <div class="shoutout-input-label">
                                 <label for="bitcoin-donation-shoutout-amount">Amount (in <?php echo esc_html($currency); ?>):</label>
-                                <input type="number" id="bitcoin-donation-shoutout-amount" name="amount" step="0.00000001">
+                                <input type="text" id="bitcoin-donation-shoutout-amount" name="amount" step="0.00000001">
                             </div>
 
                             <div class="shoutout-input-label">
                                 <label for="bitcoin-donation-shoutout-satoshi">Satoshi:</label>
-                                <input type="number" id="bitcoin-donation-shoutout-satoshi" name="satoshi" min="<?php echo esc_attr($min_amount); ?>">
+                                <input type="text" id="bitcoin-donation-shoutout-satoshi" name="satoshi" min="<?php echo esc_attr($min_amount); ?>">
                             </div>
                         </div>
                         <div class="bitcoin-donation-shoutout-help">
@@ -69,7 +69,6 @@ class Bitcoin_Donation_Shoutouts_Form
                 </form>
             </div>
         </div>
-
 <?php
 
         return ob_get_clean();

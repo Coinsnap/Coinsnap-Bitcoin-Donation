@@ -1,6 +1,7 @@
 #bitcoin-donation-shoutouts-form {
     border-radius: 0px;
     box-shadow: none;
+    max-width: 645px;
 }
 
 #bitcoin-donation-shoutouts-form input {
@@ -11,10 +12,18 @@
     width: 30%;
 }
 
+.shoutouts-list-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
 #bitcoin-donation-shoutouts-wrapper {
     display: flex;
     flex-direction: column;
     gap: 26px;
+    max-width: 645px;
+    width: 100%;
 }
 
 .bitcoin-donation-shoutout-top {
@@ -24,6 +33,7 @@
     align-items: center;
     padding-bottom: 12px;
     border-bottom: 1px solid #a8a8a866;
+    font-size: 18px;
 }
 
 .bitcoin-donation-shoutout-top-right {
@@ -90,7 +100,6 @@
     padding: 10px 4px;
     border: 2px solid #d6d6d687;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-
 }
 
 .shoutout-form-container {
@@ -136,4 +145,9 @@
     border: 2px solid #d6d6d687;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+#bitcoin-donation-shoutout-name {
+    padding: 8px !important;
+
 }

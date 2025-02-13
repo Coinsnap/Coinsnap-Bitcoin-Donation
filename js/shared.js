@@ -72,50 +72,65 @@ handleSnapClick = (buttonId, honeypotId, amountId, messageId, currency) => {
         event.preventDefault();
         return
     }
-    const amount = parseFloat(document.getElementById(amountId).textContent)
+    const amount = cleanAmount(document.getElementById(amountId).textContent)
     const messageField = document.getElementById(messageId)
     const message = messageField ? messageField.value : ""
-    createInvoice(amount, message, currency.toUpperCase(), undefined , 'Multi Amount Donation');
+    createInvoice(amount, message, currency.toUpperCase(), undefined, 'Multi Amount Donation');
+}
+
+const cleanAmount = (amount) => {
+    const withoutSeparators = amount?.replace(/[,.]/g, '')
+    return parseFloat(withoutSeparators)
+
 }
 
 
 const handleButtonClick = (buttonId, honeypotId, amountId, satoshiId, messageId, lastInputCurency, name) => {
-    const button = document.getElementById(buttonId)
+    event.preventDefault(); 
+
+    const button = document.getElementById(buttonId);
     button.disabled = true;
-    event.preventDefault();
-    const honeypot = document.getElementById(honeypotId)
+
+    const honeypot = document.getElementById(honeypotId);
     if (honeypot && honeypot.value) {
-        event.preventDefault();
-        return
+        return;
     }
-    const amountField = document.getElementById(amountId)
-    const fiatAmount = parseFloat(amountField.value)
+
+    const amountField = document.getElementById(amountId);
+    const fiatAmount = cleanAmount(amountField.value);
+
+    let satoshiField = null;
+    let satsAmount = null;
+
     if (satoshiId) {
-        const satoshiField = document.getElementById(satoshiId)
+        satoshiField = document.getElementById(satoshiId);
+        satsAmount = cleanAmount(satoshiField.value);
     }
-    const satsAmount = parseFloat(satoshiField.value)
 
-    if (!satsAmount || !fiatAmount) {
+    if (isNaN(fiatAmount) && isNaN(satsAmount)) {
         button.disabled = false;
-        addErrorField(amountField)
-        if (satoshiId) {
-            addErrorField(satoshiField)
-            removeBorderOnFocus(satoshiField, amountField)
-            removeBorderOnFocus(amountField, satoshiField)
+        addErrorField(amountField);
+        if (satoshiField) {
+            addErrorField(satoshiField);
+            removeBorderOnFocus(satoshiField, amountField);
+            removeBorderOnFocus(amountField, satoshiField);
         }
-        event.preventDefault();
-        return
+        return;
     }
 
-    const messageField = document.getElementById(messageId)
-    const message = messageField ? messageField.value : ""
-    const currency = lastInputCurency.toUpperCase()
-    const amount = currency == 'SATS' ? satsAmount : fiatAmount;
-    if (amount) {
-        const type = name ? 'Shoutout Donation' : 'Donation Button'
+    const messageField = document.getElementById(messageId);
+    const message = messageField ? messageField.value : "";
+
+    const currency = lastInputCurency.toUpperCase();
+    const amount = currency === 'SATS' ? satsAmount : fiatAmount;
+
+    if (!isNaN(amount) && amount > 0) {
+        const type = name ? 'Shoutout Donation' : 'Donation Button';
         createInvoice(amount, message, lastInputCurency, name, type);
+    } else {
+        button.disabled = false;
     }
-}
+};
 
 const handleButtonClickMulti = (buttonId, honeypotId, amountId, messageId, lastInputCurency, name) => {
     const button = document.getElementById(buttonId)
@@ -127,7 +142,7 @@ const handleButtonClickMulti = (buttonId, honeypotId, amountId, messageId, lastI
         return
     }
     const amountField = document.getElementById(amountId)
-    const fiatAmount = parseFloat(amountField.value)
+    const fiatAmount = cleanAmount(amountField.value)
 
     if (!fiatAmount) {
         button.disabled = false;
@@ -156,7 +171,6 @@ const updateValueField = (amount, fieldName, operation, exchangeRates, currency)
     if (fieldName == 'bitcoin-donation-shoutout-satoshi') { // Min and Premium shoutout amoutns
         const minAmount = sharedData.minimumShoutoutAmount
         const premiumAmount = sharedData.premiumShoutoutAmount
-        const shoutButton = document.getElementById('bitcoin-donation-shout')
         const satoshi = amount / currencyRate
         if (satoshi < minAmount) {
             field.style.color = '#e55e65';
@@ -171,13 +185,16 @@ const updateValueField = (amount, fieldName, operation, exchangeRates, currency)
     } else if (fieldName?.includes('bitcoin-donation-satoshi-multi') && !isNaN(amount) && currencyRate) {
         const value = operation == '*' ? amount * currencyRate : amount / currencyRate;
         const decimals = value > 1000 ? 4 : 8;
-        field.textContent = value.toFixed(operation == '*' ? decimals : 0);
+        const valueDecimal = value.toFixed(operation == '*' ? decimals : 0);
+        const newVal = addNumSeparators(valueDecimal)
+        field.textContent = newVal;
         return
     }
-
     if (!isNaN(amount) && currencyRate) {
         const value = operation == '*' ? amount * currencyRate : amount / currencyRate;
-        field.value = value.toFixed(operation == '*' ? 8 : 0);
+        const valueDecimal = value.toFixed(operation == '*' ? 8 : 0);
+        const newVal = addNumSeparators(valueDecimal)
+        field.value = newVal
     } else {
         field.value = '';
     }
@@ -366,5 +383,68 @@ const createInvoice = (amount, message, lastInputCurency, name, type) => {
             sharedData.provider == 'coinsnap',
             type
         )
+    }
+}
+
+const addNumSeparators = (amount) => {
+    var tmp = amount.replace(/,/g, '');
+    var val = Number(tmp).toLocaleString();
+
+    if (tmp == '') {
+        return '';
+    } else {
+        return val;
+    }
+
+}
+
+const NumericInput = (inputFieldName) => {
+    const inp = document.getElementById(inputFieldName)
+    if (inp) {
+        var numericKeys = '0123456789';
+
+        // restricts input to numeric keys 0-9
+        inp.addEventListener('keypress', function (e) {
+            var event = e || window.event;
+            var target = event.target;
+
+            if (event.charCode == 0) {
+                return;
+            }
+
+            if (-1 == numericKeys.indexOf(event.key)) {
+                // Could notify the user that 0-9 is only acceptable input.
+                event.preventDefault();
+                return;
+            }
+        });
+
+        // add the thousands separator when the user blurs
+        inp.addEventListener('blur', function (e) {
+            var event = e || window.event;
+            var target = event.target;
+            var tmp = target.value.replace(/,/g, '');
+            var original = tmp
+            if (inputFieldName.includes("multi")) {
+                tmp = parseFloat(tmp)
+                original = original.replace(tmp, "")
+            }
+            var val = Number(tmp).toLocaleString();
+
+            if (tmp == '') {
+                target.value = '';
+            } else {
+                target.value = inputFieldName.includes("multi") ? `${val}${original}` : val;
+            }
+        });
+
+        // strip the thousands separator when the user puts the input in focus.
+        inp.addEventListener('focus', function (e) {
+            var event = e || window.event;
+            var target = event.target;
+            var val = target.value.replace(/[,.]/g, '');
+
+            target.value = val;
+        });
     }
 }

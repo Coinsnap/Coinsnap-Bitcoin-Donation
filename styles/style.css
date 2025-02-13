@@ -20,10 +20,10 @@
 
 .bitcoin-donation-donation-form input {
   width: 100%;
-  padding: 8px;
+  padding: 8px !important;
   margin-bottom: 10px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 4px !important;
   box-sizing: border-box;
 }
 
@@ -38,6 +38,9 @@
   cursor: pointer;
   font-size: 14px;
   font-weight: bold;
+  justify-content: center;
+  align-items: center;
+  display: flex
 }
 
 .bitcoin-donation-donation-form button:hover {
@@ -47,14 +50,14 @@
 
 /* Light Theme */
 .bitcoin-donation-light-theme {
-  background-color: #f2f2f2;
-  color: #333333;
+  background-color: #f2f2f2 !important;
+  color: #333333 !important;
 }
 
 .bitcoin-donation-light-theme input {
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  color: #333;
+  background-color: #f9f9f9 !important;
+  border: 1px solid #ddd !important;
+  color: #333 !important;
 }
 
 .bitcoin-donation-light-theme textarea {
@@ -63,22 +66,27 @@
   color: #333;
 }
 
+.bitcoin-donation-light-theme textarea:focus {
+  border: 2px solid #5e5ad6d8 !important;
+  background-color: #f9f9f9;
+}
+
 /* Dark Theme */
 .bitcoin-donation-dark-theme {
-  background-color: #2c2c2cf7;
-  color: #f1f1f1;
+  background-color: #2c2c2cf7 !important;
+  color: #f1f1f1 !important;
 }
 
 .bitcoin-donation-dark-theme input {
-  background-color: #3a3a3a;
-  border: 1px solid #555;
-  color: #f1f1f1;
+  background-color: #3a3a3a !important;
+  border: 1px solid #555 !important;
+  color: #f1f1f1 !important;
 }
 
 .bitcoin-donation-dark-theme textarea {
-  background-color: #3a3a3a;
-  border: 1px solid #555;
-  color: #f1f1f1;
+  background-color: #3a3a3a !important;
+  border: 1px solid #555 !important;
+  color: #f1f1f1 !important;
 }
 
 .bitcoin-donation-message {
@@ -99,7 +107,11 @@
 
 .bitcoin-donation-title-wrapper h3 {
   font-weight: bold;
-  color: #f7a70a;
+  /* color: #f7a70a; */
+}
+
+.bitcoin-donation-dark-theme h3 {
+  color: white !important;
 }
 
 
@@ -125,6 +137,7 @@
   font-size: 11px;
   color: #9d9d9d;
   user-select: none;
+  z-index: 999;
 }
 
 .snap-button {
@@ -164,16 +177,21 @@
 }
 
 .currency-swapper {
-  padding: 4px 8px;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  background-color: #f8f8f8;
-  font-size: 12px;
+  padding: 4px 8px !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 6px !important;
+  background-color: #f8f8f8 !important;
+  font-size: 12px !important;
   font-weight: 500;
   color: #1a202c;
   cursor: pointer;
   width: 31%;
   text-align: center;
+  margin-bottom: 16px;
+}
+
+.bitcoin-donation-message {
+  min-height: 30px !important;
 }
 
 .currency-swapper:hover {
@@ -198,4 +216,3 @@
   border: 1px solid #555;
   color: #f1f1f1;
 }
-

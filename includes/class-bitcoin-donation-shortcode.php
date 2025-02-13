@@ -28,10 +28,10 @@ class Bitcoin_Donation_Shortcode
             <input type="text" id="bitcoin-donation-email" name="bitcoin-email" style="display: none;" aria-hidden="true">
 
             <label for="bitcoin-donation-amount">Amount (in <?php echo esc_html($currency); ?>):</label>
-            <input type="number" id="bitcoin-donation-amount" step="0.01">
+            <input type="text" id="bitcoin-donation-amount" step="0.01">
 
             <label for="bitcoin-donation-satoshi">Satoshi:</label>
-            <input type="number" id="bitcoin-donation-satoshi">
+            <input type="text" id="bitcoin-donation-satoshi">
 
             <label for="bitcoin-donation-message">Message:</label>
             <textarea id="bitcoin-donation-message" class="bitcoin-donation-message" rows="2"></textarea>

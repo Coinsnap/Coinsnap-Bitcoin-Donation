@@ -2,6 +2,10 @@
   margin-bottom: 0px !important;
 }
 
+.wide-form {
+  max-width: 645px;
+}
+
 .wide-form-button {
   width: 80% !important;
   height: 33px !important;
@@ -47,11 +51,15 @@
   align-self: center;
 }
 
-.mulit-wide-label-left{
+.mulit-wide-label-left {
   width: 31%;
 }
 
-.mulit-wide-label-right{
-  width: 69%; 
+.mulit-wide-label-right {
+  width: 69%;
   /* Nice */
+}
+
+#bitcoin-donation-form-wide {
+  padding: 38px 8px 8px 8px;
 }

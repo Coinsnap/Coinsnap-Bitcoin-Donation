@@ -39,7 +39,7 @@ jQuery(document).ready(function ($) {
             updateSecondaryCurrency(
                 `bitcoin-donation-pay-multi-snap${i}-primary${widePart}`,
                 `bitcoin-donation-pay-multi-snap${i}-secondary${widePart}`,
-                donationData.snap1Amount
+                donationData[`snap${i}Amount`]
             )
 
         }
@@ -51,14 +51,15 @@ jQuery(document).ready(function ($) {
         const currency = multiSecondaryCurrency == 'sats' ? multiPrimaryCurrency : multiSecondaryCurrency
         const currencyRate = exchangeRates[currency];
         const primaryField = document.getElementById(primaryId)
-        var amount = parseFloat(originalAmount)
+        var amount = cleanAmount(originalAmount)
         if (primaryId.includes("snap")) {
             primaryField.textContent = `${amount} ${multiPrimaryCurrency}`
         } else {
-            amount = parseFloat(primaryField.value)
+            amount = cleanAmount(primaryField.value)
         }
         const converted = multiPrimaryCurrency == 'sats' ? (amount * currencyRate).toFixed(8) : (amount / currencyRate).toFixed(0)
-        document.getElementById(secondaryId).textContent = `≈ ${converted} ${multiSecondaryCurrency}`
+        const withSeparators = addNumSeparators(converted)
+        document.getElementById(secondaryId).textContent = `≈ ${withSeparators} ${multiSecondaryCurrency}`
     }
 
     const handleMultiInput = (wide) => {
@@ -69,7 +70,7 @@ jQuery(document).ready(function ($) {
         if (value.trim() !== '') {
             field.value = value + ` ${multiPrimaryCurrency}`;
             updateValueField(
-                parseFloat(value),
+                cleanAmount(value),
                 `bitcoin-donation-satoshi-multi${widePart}`,
                 multiPrimaryCurrency == 'sats' ? '*' : '/',
                 exchangeRates,
@@ -81,14 +82,13 @@ jQuery(document).ready(function ($) {
             field2.textContent = 0 + " " + multiSecondaryCurrency
         }
         field.setSelectionRange(value.length, value.length);
-
     }
 
     const swapSnapCurrency = (primaryId, secondaryId) => {
         const currency = multiSecondaryCurrency == 'sats' ? multiPrimaryCurrency : multiSecondaryCurrency
         const currencyRate = exchangeRates[currency];
         const primaryField = document.getElementById(primaryId)
-        const primaryAmount = parseFloat(primaryField.textContent)
+        const primaryAmount = cleanAmount(primaryField.textContent)
         const secondaryField = document.getElementById(secondaryId)
         const convertedPrimary = (primaryAmount / currencyRate).toFixed(0)
         primaryField.textContent = `${convertedPrimary} ${multiPrimaryCurrency}`
@@ -125,7 +125,7 @@ jQuery(document).ready(function ($) {
         const fieldUpdateListener = (field1, field2, operator, currency) => {
             const amount = document.getElementById(field1).value
             lastInputCurency = currency
-            updateValueField(amount, field2, operator, exchangeRates, currency)
+            updateValueField(amount, field2, operator, exchangeRates, donationData.currency)
         }
 
         $('#bitcoin-donation-pay-wide').on('click', () =>
@@ -170,12 +170,17 @@ jQuery(document).ready(function ($) {
 
 
         $('#bitcoin-donation-amount').on('input', () => fieldUpdateListener('bitcoin-donation-amount', 'bitcoin-donation-satoshi', '/', donationData.currency));
+        NumericInput('bitcoin-donation-amount')
         $('#bitcoin-donation-satoshi').on('input', () => fieldUpdateListener('bitcoin-donation-satoshi', 'bitcoin-donation-amount', '*', 'SATS'));
+        NumericInput('bitcoin-donation-satoshi')
         $('#bitcoin-donation-amount-wide').on('input', () => fieldUpdateListener('bitcoin-donation-amount-wide', 'bitcoin-donation-satoshi-wide', '/', donationData.currency));
+        NumericInput('bitcoin-donation-amount-wide')
         $('#bitcoin-donation-satoshi-wide').on('input', () => fieldUpdateListener('bitcoin-donation-satoshi-wide', 'bitcoin-donation-amount-wide', '*', 'SATS'));
+        NumericInput('bitcoin-donation-satoshi-wide')
         $('#bitcoin-donation-amount-multi').on('input', () => { handleMultiInput(false) });
+        NumericInput('bitcoin-donation-amount-multi')
         $('#bitcoin-donation-amount-multi-wide').on('input', () => { handleMultiInput(true) });
-
+        NumericInput('bitcoin-donation-amount-multi-wide')
         $('#bitcoin-donation-amount-multi').on('click keydown', (e) => {
             const field = e.target;
             const position = field.selectionStart;
@@ -239,7 +244,7 @@ jQuery(document).ready(function ($) {
             multiSecondaryCurrency = (newCurrency === 'sats') ? donationData.multiFiat : 'sats';
 
             const amountField = $('#bitcoin-donation-amount-multi');
-            const amountValue = parseFloat(amountField.val()) || 0;
+            const amountValue = cleanAmount(amountField.val()) || 0;
             amountField.val(`${amountValue} ${multiPrimaryCurrency}`);
 
             updateSecondaryCurrency('bitcoin-donation-amount-multi', 'bitcoin-donation-satoshi-multi');
@@ -266,7 +271,7 @@ jQuery(document).ready(function ($) {
             multiSecondaryCurrency = (newCurrency === 'sats') ? donationData.multiFiat : 'sats';
 
             const amountField = $('#bitcoin-donation-amount-multi-wide');
-            const amountValue = parseFloat(amountField.val()) || 0;
+            const amountValue = cleanAmount(amountField.val()) || 0;
             amountField.val(`${amountValue} ${multiPrimaryCurrency}`);
 
             updateSecondaryCurrency('bitcoin-donation-amount-multi-wide', 'bitcoin-donation-satoshi-multi-wide');
