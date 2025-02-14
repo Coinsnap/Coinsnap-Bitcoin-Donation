@@ -52,7 +52,7 @@ class Bitcoin_Donation_Shoutouts_Form
                             </div>
                         </div>
                         <div class="bitcoin-donation-shoutout-help">
-                            <p id="bitcoin-donation-shoutout-help-info">Minimum shoutout amount is <?php echo esc_html($min_amount); ?> and Premium shoutout amount <?php echo esc_html($premium_amount); ?></p>
+                            <p id="bitcoin-donation-shoutout-help-info">Minimum shoutout amount is <?php echo esc_html($min_amount); ?> sats and Premium shoutout amount <?php echo esc_html($premium_amount); ?> sats</p>
                             <p id="bitcoin-donation-shoutout-help-premium">Selected amount will grant a premium shoutout</p>
                             <p id="bitcoin-donation-shoutout-help-minimum">Selected amount is less than minimum allowed for a shoutout</p>
                         </div>

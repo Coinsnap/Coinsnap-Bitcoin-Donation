@@ -69,13 +69,12 @@ jQuery(document).ready(function ($) {
         let value = field.value.replace(` ${multiPrimaryCurrency}`, '');
         if (value.trim() !== '') {
             field.value = value + ` ${multiPrimaryCurrency}`;
-            console.log(value)
             updateSecondaryCurrency(`bitcoin-donation-amount-multi${widePart}`, `bitcoin-donation-satoshi-multi${widePart}`, value)
         } else {
-            field.value = value;
+            field.value = 0;
             field2.textContent = 0 + " " + multiSecondaryCurrency
         }
-        field.setSelectionRange(value.length, value.length);
+        // field.setSelectionRange(value.length, value.length);
     }
 
     const swapSnapCurrency = (primaryId, secondaryId) => {

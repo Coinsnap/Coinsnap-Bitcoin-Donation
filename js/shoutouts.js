@@ -40,6 +40,36 @@ jQuery(document).ready(function ($) {
             )
         });
 
+        const updateShoutoutInfo = (fieldName) => {
+            const field = document.getElementById(fieldName);
+            const amount = cleanAmount(field.value);
+
+            const shoutButton = document.getElementById('bitcoin-donation-shout');
+            const helpMinimum = document.getElementById('bitcoin-donation-shoutout-help-minimum');
+            const helpPremium = document.getElementById('bitcoin-donation-shoutout-help-premium');
+            const helpInfo = document.getElementById('bitcoin-donation-shoutout-help-info');
+
+            if (amount < minAmount) {
+                field.style.color = '#e55e65';
+                shoutButton.disabled = true;
+                helpMinimum.style.display = 'block';
+                helpPremium.style.display = 'none';
+                helpInfo.style.display = 'none';
+            } else if (amount >= premiumAmount) {
+                field.style.color = '#f7931a';
+                shoutButton.disabled = false;
+                helpMinimum.style.display = 'none';
+                helpPremium.style.display = 'block';
+                helpInfo.style.display = 'none';
+            } else {
+                field.style.color = '';
+                shoutButton.disabled = false;
+                helpMinimum.style.display = 'none';
+                helpPremium.style.display = 'none';
+                helpInfo.style.display = 'block';
+            }
+        };
+
         $('#bitcoin-donation-shoutout-amount').on('input', function () {
             const amount = cleanAmount($(this).val());
             lastInputCurency = shoutoutsData.currency
@@ -50,30 +80,12 @@ jQuery(document).ready(function ($) {
                 exchangeRates,
                 shoutoutsData.currency
             )
+            updateShoutoutInfo('bitcoin-donation-shoutout-satoshi')
         });
         NumericInput('bitcoin-donation-shoutout-amount')
 
         $('#bitcoin-donation-shoutout-satoshi').on('input', function () {
-            const satoshi = cleanAmount($(this).val());
-            if (satoshi < minAmount) {
-                $(this).css('color', '#e55e65');
-                $('#bitcoin-donation-shout').prop('disabled', true);
-                $('#bitcoin-donation-shoutout-help-minimum').css('display', 'block');
-                $('#bitcoin-donation-shoutout-help-premium').css('display', 'none');
-                $('#bitcoin-donation-shoutout-help-info').css('display', 'none');
-            } else if (satoshi >= premiumAmount) {
-                $(this).css('color', '#f7931a');
-                $('#bitcoin-donation-shout').prop('disabled', false);
-                $('#bitcoin-donation-shoutout-help-minimum').css('display', 'none');
-                $('#bitcoin-donation-shoutout-help-premium').css('display', 'block');
-                $('#bitcoin-donation-shoutout-help-info').css('display', 'none');
-            } else {
-                $(this).css('color', '');
-                $('#bitcoin-donation-shout').prop('disabled', false);
-                $('#bitcoin-donation-shoutout-help-minimum').css('display', 'none');
-                $('#bitcoin-donation-shoutout-help-premium').css('display', 'none');
-                $('#bitcoin-donation-shoutout-help-info').css('display', 'block');
-            }
+            updateShoutoutInfo('bitcoin-donation-shoutout-satoshi')
 
             lastInputCurency = 'SATS'
             updateValueField(

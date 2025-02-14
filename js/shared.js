@@ -78,15 +78,10 @@ handleSnapClick = (buttonId, honeypotId, amountId, messageId, currency) => {
     createInvoice(amount, message, currency.toUpperCase(), undefined, 'Multi Amount Donation');
 }
 
-const cleanAmount = (amount) => {
-    const withoutSeparators = amount?.replace(/[,.]/g, '')
-    return parseFloat(withoutSeparators)
-
-}
 
 
 const handleButtonClick = (buttonId, honeypotId, amountId, satoshiId, messageId, lastInputCurency, name) => {
-    event.preventDefault(); 
+    event.preventDefault();
 
     const button = document.getElementById(buttonId);
     button.disabled = true;
@@ -387,7 +382,7 @@ const createInvoice = (amount, message, lastInputCurency, name, type) => {
 }
 
 const addNumSeparators = (amount) => {
-    var tmp = amount.replace(/,/g, '');
+    var tmp = removeThousandSeparator(amount)
     var val = Number(tmp).toLocaleString();
 
     if (tmp == '') {
@@ -398,10 +393,26 @@ const addNumSeparators = (amount) => {
 
 }
 
+const getThousandSeparator = () => {
+    return (1000).toLocaleString().replace(/\d/g, '')[0];
+}
+
+const removeThousandSeparator = (amount) => {
+    const sep = getThousandSeparator()
+    return amount?.replace(new RegExp(`\\${sep}`, 'g'), '');
+
+}
+
+const cleanAmount = (amount) => {
+    return parseFloat(removeThousandSeparator(amount))
+
+}
+
 const NumericInput = (inputFieldName) => {
     const inp = document.getElementById(inputFieldName)
     if (inp) {
-        var numericKeys = '0123456789';
+        const sep = getThousandSeparator() == "." ? "," : ".";
+        var numericKeys = `0123456789${sep}`;
 
         // restricts input to numeric keys 0-9
         inp.addEventListener('keypress', function (e) {
@@ -419,11 +430,10 @@ const NumericInput = (inputFieldName) => {
             }
         });
 
-        // add the thousands separator when the user blurs
         inp.addEventListener('blur', function (e) {
             var event = e || window.event;
             var target = event.target;
-            var tmp = target.value.replace(/,/g, '');
+            var tmp = removeThousandSeparator(target.value)
             var original = tmp
             if (inputFieldName.includes("multi")) {
                 tmp = parseFloat(tmp)
@@ -438,11 +448,10 @@ const NumericInput = (inputFieldName) => {
             }
         });
 
-        // strip the thousands separator when the user puts the input in focus.
         inp.addEventListener('focus', function (e) {
             var event = e || window.event;
             var target = event.target;
-            var val = target.value.replace(/[,.]/g, '');
+            var val = removeThousandSeparator(target.value)
 
             target.value = val;
         });
