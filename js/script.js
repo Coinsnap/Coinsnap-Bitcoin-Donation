@@ -69,14 +69,8 @@ jQuery(document).ready(function ($) {
         let value = field.value.replace(` ${multiPrimaryCurrency}`, '');
         if (value.trim() !== '') {
             field.value = value + ` ${multiPrimaryCurrency}`;
-            updateValueField(
-                cleanAmount(value),
-                `bitcoin-donation-satoshi-multi${widePart}`,
-                multiPrimaryCurrency == 'sats' ? '*' : '/',
-                exchangeRates,
-                multiPrimaryCurrency == 'sats' ? multiSecondaryCurrency : multiPrimaryCurrency
-            )
-            field2.textContent += " " + multiSecondaryCurrency
+            console.log(value)
+            updateSecondaryCurrency(`bitcoin-donation-amount-multi${widePart}`, `bitcoin-donation-satoshi-multi${widePart}`, value)
         } else {
             field.value = value;
             field2.textContent = 0 + " " + multiSecondaryCurrency
