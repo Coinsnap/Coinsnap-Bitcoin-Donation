@@ -9,7 +9,7 @@ jQuery(document).ready(function ($) {
         const amountField = $('#bitcoin-donation-shoutout-amount');
         amountField.val(shoutoutsData.defaultShoutoutAmount);
         updateValueField(
-            shoutoutsData.defaultShoutoutAmount,asd
+            shoutoutsData.defaultShoutoutAmount,
             'bitcoin-donation-shoutout-satoshi',
             '/',
             exchangeRates,
