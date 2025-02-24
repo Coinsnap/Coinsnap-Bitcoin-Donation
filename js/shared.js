@@ -121,13 +121,13 @@ const handleButtonClick = (buttonId, honeypotId, amountId, satoshiId, messageId,
 
     if (!isNaN(amount) && amount > 0) {
         const type = name ? 'Shoutout Donation' : 'Donation Button';
-        createInvoice(amount, message, lastInputCurency, name, type);
+        createInvoice(amount, message, lastInputCurrency, name, type);
     } else {
         button.disabled = false;
     }
 };
 
-const handleButtonClickMulti = (buttonId, honeypotId, amountId, messageId, lastInputCurency, name) => {
+const handleButtonClickMulti = (buttonId, honeypotId, amountId, messageId, lastInputCurrency, name) => {
     const button = document.getElementById(buttonId)
     button.disabled = true;
     event.preventDefault();
@@ -148,7 +148,7 @@ const handleButtonClickMulti = (buttonId, honeypotId, amountId, messageId, lastI
 
     const messageField = document.getElementById(messageId)
     const message = messageField ? messageField.value : ""
-    const currency = lastInputCurency.toUpperCase()
+    const currency = lastInputCurrency.toUpperCase()
     const amount = fiatAmount;
     if (amount) {
         createInvoice(amount, message, currency, name, 'Multi Amount Donation');
@@ -227,15 +227,17 @@ async function fetchCoinsnapExchangeRates() {
 
 
 
-const createActualInvoice = (amount, message, lastInputCurency, name, coinsnap, type) => {
-    deleteCookie('coinsnap_invoice_')
+const createActualInvoice = async (amount, message, lastInputCurrency, name, coinsnap, type, redirect, metadata) => {
+    deleteCookie('coinsnap_invoice_');
+
     if (window.location.href.includes("localhost")) {
-        sharedData.redirectUrl = "https://coinsnap.io"
+        sharedData.redirectUrl = "https://coinsnap.io";
     }
+
     const requestData = {
         amount: amount,
-        currency: lastInputCurency,
-        redirectUrl: sharedData.redirectUrl || window.location.href,
+        currency: lastInputCurrency,
+        redirectUrl: sharedData?.redirectUrl || window.location.href,
         redirectAutomatically: true,
         metadata: {
             orderNumber: message,
@@ -247,59 +249,69 @@ const createActualInvoice = (amount, message, lastInputCurency, name, coinsnap, 
     if (coinsnap) {
         requestData.referralCode = 'D19833';
     }
+    if (type == 'Bitcoin Voting') {
+        requestData.metadata.optionId = metadata.optionId
+        requestData.metadata.option = metadata.option
+        requestData.metadata.pollId = metadata.pollId
+        requestData.metadata.orderNumber = `Voted for ${metadata.option}`
+    }
+
     const url = coinsnap
-        ? `https://app.coinsnap.io/api/v1/stores/${sharedData.coinsnapStoreId}/invoices`
-        : `${sharedData.btcpayUrl}/api/v1/stores/${sharedData.btcpayStoreId}/invoices`;
+        ? `https://app.coinsnap.io/api/v1/stores/${sharedData?.coinsnapStoreId}/invoices`
+        : `${sharedData?.btcpayUrl}/api/v1/stores/${sharedData?.btcpayStoreId}/invoices`;
 
     const headers = coinsnap
         ? {
-            'x-api-key': sharedData.coinsnapApiKey,
+            'x-api-key': sharedData?.coinsnapApiKey,
             'Content-Type': 'application/json'
         }
         : {
-            'Authorization': `token ${sharedData.btcpayApiKey}`,
+            'Authorization': `token ${sharedData?.btcpayApiKey}`,
             'Content-Type': 'application/json'
         };
 
-
-    fetch(
-        url,
-        {
+    try {
+        const response = await fetch(url, {
             method: 'POST',
             headers: headers,
             body: JSON.stringify(requestData)
-        }
-    )
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(response => {
-            const invoiceCookieData = {
-                id: response.id,
-                amount: amount,
-                currency: lastInputCurency,
-                checkoutLink: response.checkoutLink,
-                message: message,
-                name: name
-            };
-
-            if (name) {
-                createCPT(`${amount} ${lastInputCurency}`, message, name, response.id)
-            }
-            setCookie('coinsnap_invoice_', JSON.stringify(invoiceCookieData), 15);
-            window.location.href = response.checkoutLink;
-        })
-        .catch(error => {
-            console.error('Error creating invoice:', error);
         });
 
-}
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+
+        const invoiceCookieData = {
+            id: responseData.id,
+            amount: amount,
+            currency: lastInputCurrency,
+            checkoutLink: responseData.checkoutLink,
+            message: message,
+            name: name
+        };
+
+        if (name) {
+            createCPT(`${amount} ${lastInputCurrency}`, message, name, responseData.id);
+        }
+
+        setCookie('coinsnap_invoice_', JSON.stringify(invoiceCookieData), 15);
+
+        if (redirect) {
+            window.location.href = responseData.checkoutLink;
+        }
+
+        return responseData;
+    } catch (error) {
+        console.error('Error creating invoice:', error);
+        return null;
+    }
+};
+
+const checkInvoiceStatus = async (invoiceId, amount, message, lastInputCurrency, name, coinsnap, type, redirect, metadata) => {
 
 
-function checkInvoiceStatus(invoiceId, amount, message, lastInputCurency, name, coinsnap) {
     const url = coinsnap
         ? `https://app.coinsnap.io/api/v1/stores/${sharedData.coinsnapStoreId}/invoices/${invoiceId}`
         : `${sharedData.btcpayUrl}/api/v1/stores/${sharedData.btcpayStoreId}/invoices/${invoiceId}`;
@@ -315,30 +327,36 @@ function checkInvoiceStatus(invoiceId, amount, message, lastInputCurency, name, 
             'Content-Type': 'application/json'
         };
 
-    fetch(url, {
-        method: 'GET',
-        headers: headers
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(response => {
-            if (response?.status === 'Settled') {
-                createActualInvoice(amount, message, lastInputCurency, name, coinsnap);
-            } else if (response?.status === 'New') {
-                window.location.href = response.checkoutLink;
-            }
-        })
-        .catch(error => {
-            console.error('Error checking invoice status:', error);
+
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: headers
         });
-}
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+
+        if (responseData?.status === 'Settled') {
+            return await createActualInvoice(amount, message, lastInputCurrency, name, coinsnap, type, redirect, metadata);
+        } else if (responseData?.status === 'New') {
+            if (redirect) {
+                window.location.href = responseData.checkoutLink;
+            }
+            return responseData
+        }
+
+    } catch (error) {
+        console.error('Error creating invoice:', error);
+        return null;
+    }
+};
 
 
-const createInvoice = (amount, message, lastInputCurency, name, type) => {
+const createInvoice = async (amount, message, lastInputCurrency, name, type, redirect = true, metadata) => {
     existingInvoice = getCookie('coinsnap_invoice_')
     if (existingInvoice) {
         invoiceJson = JSON.parse(existingInvoice)
@@ -346,37 +364,45 @@ const createInvoice = (amount, message, lastInputCurency, name, type) => {
             invoiceJson.id &&
             invoiceJson.checkoutLink &&
             invoiceJson.amount == amount &&
-            invoiceJson.currency == lastInputCurency &&
+            invoiceJson.currency == lastInputCurrency &&
             invoiceJson.message == message &&
             invoiceJson.name == name
         ) {
-            checkInvoiceStatus(
+            const cs = await checkInvoiceStatus(
                 invoiceJson.id,
                 amount,
                 message,
-                lastInputCurency,
-                name,
-                sharedData.provider == 'coinsnap'
-            )
-        }
-        else {
-            createActualInvoice(
-                amount,
-                message,
-                lastInputCurency,
+                lastInputCurrency,
                 name,
                 sharedData.provider == 'coinsnap',
-                type
+                type,
+                redirect,
+                metadata
+            )
+            return cs
+        }
+        else {
+            return await createActualInvoice(
+                amount,
+                message,
+                lastInputCurrency,
+                name,
+                sharedData.provider == 'coinsnap',
+                type,
+                redirect,
+                metadata
             )
         }
     } else {
-        createActualInvoice(
+        return await createActualInvoice(
             amount,
             message,
-            lastInputCurency,
+            lastInputCurrency,
             name,
             sharedData.provider == 'coinsnap',
-            type
+            type,
+            redirect,
+            metadata
         )
     }
 }

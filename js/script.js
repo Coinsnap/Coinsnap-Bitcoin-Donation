@@ -31,7 +31,7 @@ jQuery(document).ready(function ($) {
         const operation = multiPrimaryCurrency == 'sats' ? '*' : '/';
         const currency = multiPrimaryCurrency == 'sats' ? multiSecondaryCurrency : multiPrimaryCurrency
         const amountField = document.getElementById(`bitcoin-donation-amount-multi${widePart}`);
-        setDefaults(amountField, donationData.defaultMultiAmount, satoshiFieldName, `#bitcoin-donation-message-multi${widePart}`, operation, currency, false)
+        setDefaults(amountField, donationData.defaultMultiAmount, satoshiFieldName, `#bitcoin-donation-message-multi${widePart}`, operation, currency, false, donationData.defaultMultiMessage)
         const secondaryField = document.getElementById(satoshiFieldName)
         secondaryField.textContent = "≈ " + secondaryField.textContent + " " + multiSecondaryCurrency
         amountField.value += " " + multiPrimaryCurrency
@@ -100,10 +100,10 @@ jQuery(document).ready(function ($) {
         fetchCoinsnapExchangeRates().then(rates => {
             exchangeRates = rates
             if (simpleDonation) {
-                setDefaults($('#bitcoin-donation-amount'), donationData.defaultAmount, 'bitcoin-donation-satoshi', '#bitcoin-donation-message', '/', donationData.currency)
+                setDefaults($('#bitcoin-donation-amount'), donationData.defaultAmount, 'bitcoin-donation-satoshi', '#bitcoin-donation-message', '/', donationData.currency, true, donationData.defaultMessage)
             }
             if (wideDonation) {
-                setDefaults($('#bitcoin-donation-amount-wide'), donationData.defaultAmount, 'bitcoin-donation-satoshi-wide', '#bitcoin-donation-message-wide', '/', donationData.currency)
+                setDefaults($('#bitcoin-donation-amount-wide'), donationData.defaultAmount, 'bitcoin-donation-satoshi-wide', '#bitcoin-donation-message-wide', '/', donationData.currency, true, donationData.defaultMessage)
             }
             if (multiDonation) {
                 multiDefaults(false)

@@ -12,14 +12,38 @@ if (!defined('ABSPATH')) {
 
 // Plugin settings
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-post-type.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-voting-polls.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-settings.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shortcode.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shortcode-wide.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shortcode-voting.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shortcode-multi-amount.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shortcode-multi-amount-wide.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shoutouts-list.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shoutouts-form.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-webhooks.php';
+
+register_activation_hook(__FILE__, 'bitcoin_donation_create_voting_payments_table');
+
+function bitcoin_donation_create_voting_payments_table()
+{
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'voting_payments';
+    $charset_collate = $wpdb->get_charset_collate();
+
+    $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+        id BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        payment_id VARCHAR(255) NOT NULL,
+        poll_id VARCHAR(255) NOT NULL,
+        option_id INT(4) NOT NULL,
+        option_title VARCHAR(255) NOT NULL,
+        status VARCHAR(50) NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    ) $charset_collate;";
+
+    require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+    dbDelta($sql);
+}
 
 class Bitcoin_Donation
 {
@@ -36,8 +60,39 @@ class Bitcoin_Donation
         wp_enqueue_style('bitcoin-donation-shoutouts', plugin_dir_url(__FILE__) . 'styles/shoutouts.css', [], '1.0.0');
 
         wp_enqueue_script('bitcoin-donation-script', plugin_dir_url(__FILE__) . 'js/script.js', ['jquery'], '1.0.0', true);
-        $provider_options = get_option('bitcoin_donation_options');
-        $forms_options = get_option('bitcoin_donation_forms_options');
+        $provider_defaults = [
+            'provider' => 'coinsnap',
+            'coinsnap_store_id' => '',
+            'coinsnap_api_key' => '',
+            'btcpay_store_id' => '',
+            'btcpay_api_key' => '',
+            'btcpay_url' => ''
+        ];
+        $provider_options = array_merge($provider_defaults, (array) get_option('bitcoin_donation_options', []));
+
+        // Define defaults for forms options
+        $forms_defaults = [
+            'currency' => 'EUR',
+            'default_amount' => 10,
+            'default_message' => 'Thank you for your support!',
+            'redirect_url' => home_url(),
+            'multi_amount_default_snap1' => 5,
+            'multi_amount_default_snap2' => 10,
+            'multi_amount_default_snap3' => 25,
+            'multi_amount_primary_currency' => 'FIAT',
+            'multi_amount_fiat_currency' => 'EUR',
+            'multi_amount_default_amount' => 15,
+            'multi_amount_default_message' => 'Multi-currency donation',
+            'shoutout_currency' => 'EUR',
+            'shoutout_default_amount' => 20,
+            'shoutout_minimum_amount' => 5,
+            'shoutout_premium_amount' => 50,
+            'shoutout_default_message' => 'Great work!',
+            'shoutout_redirect_url' => home_url(),
+        ];
+        $forms_options = array_merge($forms_defaults, (array) get_option('bitcoin_donation_forms_options', []));
+
+        // Localize script for donationData
         wp_localize_script('bitcoin-donation-script', 'donationData', [
             'currency' => $forms_options['currency'],
             'defaultAmount' => $forms_options['default_amount'],
@@ -48,8 +103,11 @@ class Bitcoin_Donation
             'snap3Amount' => $forms_options['multi_amount_default_snap3'],
             'multiPrimary' => $forms_options['multi_amount_primary_currency'],
             'multiFiat' => $forms_options['multi_amount_fiat_currency'],
-            'defaultMultiAmount' => $forms_options['multi_amount_default_amount']
+            'defaultMultiAmount' => $forms_options['multi_amount_default_amount'],
+            'defaultMultiMessage' => $forms_options['multi_amount_default_message']
         ]);
+
+        // Localize script for shoutoutsData
         wp_enqueue_script('bitcoin-donation-shoutout-script', plugin_dir_url(__FILE__) . 'js/shoutouts.js', ['jquery'], '1.0.0', true);
         wp_localize_script('bitcoin-donation-shoutout-script', 'shoutoutsData', [
             'currency' => $forms_options['shoutout_currency'],
@@ -59,6 +117,8 @@ class Bitcoin_Donation
             'defaultShoutoutMessage' => $forms_options['shoutout_default_message'],
             'shoutoutRedirectUrl' => $forms_options['shoutout_redirect_url'],
         ]);
+
+        // Localize script for sharedData
         wp_enqueue_script('bitcoin-donation-shared-script', plugin_dir_url(__FILE__) . 'js/shared.js', ['jquery'], '1.0.0', true);
         wp_localize_script('bitcoin-donation-shared-script', 'sharedData', [
             'currency' => $forms_options['currency'],

@@ -63,3 +63,11 @@
 #bitcoin-donation-form-wide {
   padding: 38px 8px 8px 8px;
 }
+
+.wide-form .snap-primary-amount{
+  font-size: 14px;
+}
+
+.wide-form .snap-secondary-amount{
+  font-size: 12px;
+}

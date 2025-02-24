@@ -67,7 +67,8 @@ class Bitcoin_Donation_Forms
 			'bitcoin_donation_simple_donation_section',
 			[
 				'label_for' => 'button_text',
-				'type'      => 'text'
+				'type'      => 'text',
+				'required' => true
 			]
 		);
 
@@ -79,7 +80,8 @@ class Bitcoin_Donation_Forms
 			'bitcoin_donation_simple_donation_section',
 			[
 				'label_for' => 'title_text',
-				'type'      => 'text'
+				'type'      => 'text',
+				'required' => true
 			]
 		);
 
@@ -91,7 +93,8 @@ class Bitcoin_Donation_Forms
 			'bitcoin_donation_simple_donation_section',
 			[
 				'label_for' => 'default_amount',
-				'type'      => 'text'
+				'type'      => 'text',
+				'required' => true
 			]
 		);
 
@@ -171,7 +174,8 @@ class Bitcoin_Donation_Forms
 			'bitcoin_donation_shoutout_donation_section',
 			[
 				'label_for' => 'shoutout_button_text',
-				'type'      => 'text'
+				'type'      => 'text',
+				'required' => true
 			]
 		);
 
@@ -183,7 +187,8 @@ class Bitcoin_Donation_Forms
 			'bitcoin_donation_shoutout_donation_section',
 			[
 				'label_for' => 'shoutout_title_text',
-				'type'      => 'text'
+				'type'      => 'text',
+				'required' => true
 			]
 		);
 
@@ -195,7 +200,8 @@ class Bitcoin_Donation_Forms
 			'bitcoin_donation_shoutout_donation_section',
 			[
 				'label_for' => 'shoutout_default_amount',
-				'type'      => 'text'
+				'type'      => 'text',
+				'required' => true
 			]
 		);
 
@@ -219,7 +225,8 @@ class Bitcoin_Donation_Forms
 			'bitcoin_donation_shoutout_donation_section',
 			[
 				'label_for' => 'shoutout_minimum_amount',
-				'type'      => 'text'
+				'type'      => 'text',
+				'required' => true
 			]
 		);
 
@@ -231,7 +238,8 @@ class Bitcoin_Donation_Forms
 			'bitcoin_donation_shoutout_donation_section',
 			[
 				'label_for' => 'shoutout_premium_amount',
-				'type'      => 'text'
+				'type'      => 'text',
+				'required' => true
 			]
 		);
 
@@ -315,7 +323,8 @@ class Bitcoin_Donation_Forms
 			'bitcoin_donation_multi_amount_section',
 			[
 				'label_for' => 'multi_amount_button_text',
-				'type'      => 'text'
+				'type'      => 'text',
+				'required' => true
 			]
 		);
 
@@ -327,7 +336,8 @@ class Bitcoin_Donation_Forms
 			'bitcoin_donation_multi_amount_section',
 			[
 				'label_for' => 'multi_amount_title_text',
-				'type'      => 'text'
+				'type'      => 'text',
+				'required' => true
 			]
 		);
 
@@ -339,7 +349,8 @@ class Bitcoin_Donation_Forms
 			'bitcoin_donation_multi_amount_section',
 			[
 				'label_for' => 'multi_amount_default_amount',
-				'type'      => 'text'
+				'type'      => 'text',
+				'required' => true
 			]
 		);
 
@@ -376,7 +387,8 @@ class Bitcoin_Donation_Forms
 			'bitcoin_donation_multi_amount_section',
 			[
 				'label_for' => 'multi_amount_default_snap1',
-				'type'      => 'text'
+				'type'      => 'text',
+				'required' => true
 			]
 		);
 
@@ -388,7 +400,8 @@ class Bitcoin_Donation_Forms
 			'bitcoin_donation_multi_amount_section',
 			[
 				'label_for' => 'multi_amount_default_snap2',
-				'type'      => 'text'
+				'type'      => 'text',
+				'required' => true
 			]
 		);
 
@@ -400,7 +413,8 @@ class Bitcoin_Donation_Forms
 			'bitcoin_donation_multi_amount_section',
 			[
 				'label_for' => 'multi_amount_default_snap3',
-				'type'      => 'text'
+				'type'      => 'text',
+				'required' => true
 			]
 		);
 	}
@@ -624,6 +638,7 @@ class Bitcoin_Donation_Forms
                 class="regular-text"' .
 					(isset($args['readonly']) && $args['readonly'] ? ' readonly' : '') .
 					(isset($args['value']) ? ' value="' . esc_attr($args['value']) . '"' : '') .
+					(isset($args['required']) && $args['required'] ? ' required' : '') .
 					'>';
 				break;
 		}
