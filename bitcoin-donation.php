@@ -164,8 +164,10 @@ class Bitcoin_Donation
         } else if ($hook === 'toplevel_page_bitcoin_donation') {
             wp_enqueue_style('bitcoin-donation-admin-style', plugin_dir_url(__FILE__) . 'styles/admin-style.css', [], '1.0.0');
             $secret = $this->get_webhook_secret();
+            $options = get_option('bitcoin_donation_options', []);
+            $ngrok_url = isset($options['ngrok_url']) ? $options['ngrok_url'] : '';
             wp_enqueue_script('bitcoin-donation-admin-script', plugin_dir_url(__FILE__) . 'js/admin.js', ['jquery'], '1.0.0', true);
-            wp_localize_script('bitcoin-donation-admin-script', 'adminData', ['webhookSecret' => $secret]);
+            wp_localize_script('bitcoin-donation-admin-script', 'adminData', ['webhookSecret' => $secret, 'ngrokUrl' => $ngrok_url]);
         }
     }
 

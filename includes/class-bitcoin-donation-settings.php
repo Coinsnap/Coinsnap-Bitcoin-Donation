@@ -65,6 +65,13 @@ class Bitcoin_Donation_Settings
             'manage_options',
             'edit.php?post_type=bitcoin-shoutouts'
         );
+        add_submenu_page(
+            'bitcoin_donation',
+            'Polls',
+            'Polls',
+            'manage_options',
+            'edit.php?post_type=bitcoin-polls'
+        );
     }
 
     function bitcoin_donation_settings_init()
@@ -97,6 +104,22 @@ class Bitcoin_Donation_Settings
                 ]
             ]
         );
+
+        // Add ngrok field if site is running on localhost
+        if (strpos(get_site_url(), 'localhost') !== false) {
+            add_settings_field(
+                'ngrok_url',
+                'Ngrok URL',
+                [$this, 'render_field'],
+                'bitcoin_donation',
+                'bitcoin_donation_provider_section',
+                [
+                    'label_for' => 'ngrok_url',
+                    'type'      => 'text',
+                    'description' => 'Enter your ngrok URL for webhook testing (e.g., https://your-tunnel.ngrok.io)'
+                ]
+            );
+        }
 
         // Coinsnap Section
         add_settings_section(
@@ -228,6 +251,10 @@ class Bitcoin_Donation_Settings
 
         if (isset($options['btcpay_url'])) {
             $sanitized['btcpay_url'] = esc_url_raw($options['btcpay_url']);
+        }
+
+        if (isset($options['ngrok_url'])) {
+            $sanitized['ngrok_url'] = esc_url_raw($options['ngrok_url']);
         }
 
         // Check if provider is working

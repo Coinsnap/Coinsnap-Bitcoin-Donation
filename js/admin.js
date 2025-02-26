@@ -99,20 +99,17 @@
       })
     }
 
-    // Function to toggle visibility based on selected provider
     function toggleProviderSettings() {
       if (!$providerSelector || !$providerSelector.length) {
-        return; // Return if no provider element is found
+        return;
       }
       const selectedProvider = $providerSelector.val();
       $coinsnapWrapper.toggle(selectedProvider === 'coinsnap');
       $btcpayWrapper.toggle(selectedProvider === 'btcpay');
     }
 
-    // Initial toggle on page load
     toggleProviderSettings();
 
-    // Listen for changes to the provider dropdown
     $providerSelector.on('change', toggleProviderSettings);
 
     function getCookie(name) {
@@ -132,7 +129,7 @@
     async function handleCheckConnection() {
       event.preventDefault();
       var connection = false
-      const origin =  new URL(window.location.href).origin;
+      const origin = adminData.ngrokUrl ? adminData.ngrokUrl : new URL(window.location.href).origin;
       const webhookUrl = `${origin}/wp-json/bitcoin-donation/v1/webhook`
       if ($providerSelector?.val() == 'coinsnap') {
         const coinsnapStoreId = $('#coinsnap_store_id').val();

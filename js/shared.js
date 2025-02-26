@@ -80,7 +80,7 @@ handleSnapClick = (buttonId, honeypotId, amountId, messageId, currency) => {
 
 
 
-const handleButtonClick = (buttonId, honeypotId, amountId, satoshiId, messageId, lastInputCurency, name) => {
+const handleButtonClick = (buttonId, honeypotId, amountId, satoshiId, messageId, lastInputCurrency, name) => {
     event.preventDefault();
 
     const button = document.getElementById(buttonId);
@@ -116,14 +116,14 @@ const handleButtonClick = (buttonId, honeypotId, amountId, satoshiId, messageId,
     const messageField = document.getElementById(messageId);
     const message = messageField ? messageField.value : "";
 
-    const currency = lastInputCurency.toUpperCase();
+    const currency = lastInputCurrency.toUpperCase();
     const amount = currency === 'SATS' ? satsAmount : fiatAmount;
 
     if (!isNaN(amount) && amount > 0) {
         const type = name ? 'Shoutout Donation' : 'Donation Button';
         createInvoice(amount, message, lastInputCurrency, name, type);
     } else {
-        button.disabled = false;
+        button.disabled = false; 
     }
 };
 
@@ -226,7 +226,6 @@ async function fetchCoinsnapExchangeRates() {
 }
 
 
-
 const createActualInvoice = async (amount, message, lastInputCurrency, name, coinsnap, type, redirect, metadata) => {
     deleteCookie('coinsnap_invoice_');
 
@@ -246,6 +245,7 @@ const createActualInvoice = async (amount, message, lastInputCurrency, name, coi
             name: name
         }
     };
+
     if (coinsnap) {
         requestData.referralCode = 'D19833';
     }
@@ -440,7 +440,6 @@ const NumericInput = (inputFieldName) => {
         const sep = getThousandSeparator() == "." ? "," : ".";
         var numericKeys = `0123456789${sep}`;
 
-        // restricts input to numeric keys 0-9
         inp.addEventListener('keypress', function (e) {
             var event = e || window.event;
             var target = event.target;
@@ -450,7 +449,6 @@ const NumericInput = (inputFieldName) => {
             }
 
             if (-1 == numericKeys.indexOf(event.key)) {
-                // Could notify the user that 0-9 is only acceptable input.
                 event.preventDefault();
                 return;
             }

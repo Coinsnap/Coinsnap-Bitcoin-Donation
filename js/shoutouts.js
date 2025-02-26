@@ -1,4 +1,4 @@
-// js/script.js
+// js/shoutouts.js
 jQuery(document).ready(function ($) {
     var exchangeRates = {};
     var lastInputCurency = shoutoutsData.currency
