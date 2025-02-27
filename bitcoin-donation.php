@@ -59,6 +59,8 @@ class Bitcoin_Donation
         wp_enqueue_style('bitcoin-donation-style-wide', plugin_dir_url(__FILE__) . 'styles/style-wide.css', [], '1.0.0');
         wp_enqueue_style('bitcoin-donation-shoutouts', plugin_dir_url(__FILE__) . 'styles/shoutouts.css', [], '1.0.0');
 
+        wp_enqueue_script('bitcoin-donation-voting-script', plugin_dir_url(__FILE__) . 'js/voting.js', ['jquery'], '1.0.0', true);
+        
         wp_enqueue_script('bitcoin-donation-script', plugin_dir_url(__FILE__) . 'js/script.js', ['jquery'], '1.0.0', true);
         $provider_defaults = [
             'provider' => 'coinsnap',

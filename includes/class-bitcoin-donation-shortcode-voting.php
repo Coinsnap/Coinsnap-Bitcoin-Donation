@@ -85,8 +85,8 @@ class Bitcoin_Donation_Shortcode_Voting
         ?>
             <div id="bitcoin-voting-form" class="bitcoin-voting-form  <?php echo esc_attr($theme_class); ?>">
                 <div class="bitcoin-voting-form-container">
-                    <h3><?php echo esc_html($title ? $title : 'Bitcoin Voting'); ?></h3>
-                    <p><?php echo esc_html($description ? $description : 'What would you like to see more of on our blog?'); ?></p>
+                    <h3><?php echo esc_html($title ? $title : 'Voting Poll'); ?></h3>
+                    <p><?php echo esc_html($description ? $description : ''); ?></p>
                     <div id="poll-results" class="poll-results" data-end-date="<?php echo $end_date; ?>" data-poll-id="<?php echo $poll_id; ?>">
                         <?php
                         for ($i = 1; $i <= min(4, $num_options ? $num_options : 4); $i++):
@@ -96,7 +96,9 @@ class Bitcoin_Donation_Shortcode_Voting
                                     <span><?php echo esc_html($options[$i]); ?> (<span class="vote-count" data-option="<?php echo $i; ?>">0</span> votes)</span>
                                     <div class="progress">
                                         <div class="progress-bar" data-option="<?php echo $i; ?>"></div>
+                                        <span class="progress-percentage" data-option="<?php echo $i; ?>"></span>
                                     </div>
+
                                 </div>
                         <?php endif;
                         endfor; ?>
