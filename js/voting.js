@@ -59,17 +59,17 @@ jQuery(document).ready(function ($) {
                     const maxVote = Math.max(...Object.values(votes))
                     const maxVoteOption = Object.keys(votes).find(key => votes[key] === maxVote);
 
-                    document.querySelector(`.progress-bar[data-option='${maxVoteOption}']`).style['background-color'] = '#f7a70a';
+                    document.querySelector(`.voting-progress-bar[data-option='${maxVoteOption}']`).style['background-color'] = '#f7a70a';
                     document.getElementById("total-votes").textContent = `${votesDb.length}`;
 
                     Object.keys(votes).forEach(opt => {
                         let percentage = votesLen > 0 ? (votes[opt] / votesLen) * 100 : 0;
                         if (percentage > 0) {
-                            const percentageSpan = document.querySelector(`.progress-percentage[data-option='${opt}']`);
+                            const percentageSpan = document.querySelector(`.voting-progress-percentage[data-option='${opt}']`);
 
                             percentageSpan.textContent = percentage.toFixed(1) + "%";
                         }
-                        document.querySelector(`.progress-bar[data-option='${opt}']`).style.width = percentage + "%";
+                        document.querySelector(`.voting-progress-bar[data-option='${opt}']`).style.width = percentage + "%";
                         document.querySelector(`.vote-count[data-option='${opt}']`).textContent = votes[opt];
                     });
                 })
@@ -212,10 +212,10 @@ jQuery(document).ready(function ($) {
 
                                     Object.keys(votes).forEach(opt => {
                                         let percentage = votesLen > 0 ? (votes[opt] / votesLen) * 100 : 0;
-                                        const progressBar = document.querySelector(`.progress-bar[data-option='${opt}']`);
+                                        const progressBar = document.querySelector(`.voting-progress-bar[data-option='${opt}']`);
                                         opt == option ? progressBar.style['background-color'] = '#f7a70a' : progressBar.style['background-color'] = '#9d9d9d';
                                         if (percentage > 0) {
-                                            const percentageSpan = document.querySelector(`.progress-percentage[data-option='${opt}']`);
+                                            const percentageSpan = document.querySelector(`.voting-progress-percentage[data-option='${opt}']`);
                                             percentageSpan.textContent = percentage.toFixed(1) + "%";
                                         }
                                         progressBar.style.width = percentage + "%";
