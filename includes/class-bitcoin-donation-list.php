@@ -127,9 +127,6 @@ class Bitcoin_Donation_List
 	<?php
 	}
 
-
-
-
 	private function render_donation_row($donation)
 	{
 		$invoice_id = $donation['id'];

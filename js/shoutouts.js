@@ -85,8 +85,7 @@ jQuery(document).ready(function ($) {
         NumericInput('bitcoin-donation-shoutout-amount')
 
         $('#bitcoin-donation-shoutout-satoshi').on('input', function () {
-            updateShoutoutInfo('bitcoin-donation-shoutout-satoshi')
-
+            const satoshi = cleanAmount($(this).val());
             lastInputCurency = 'SATS'
             updateValueField(
                 satoshi,
@@ -95,11 +94,10 @@ jQuery(document).ready(function ($) {
                 exchangeRates,
                 shoutoutsData.currency
             )
-
+            updateShoutoutInfo('bitcoin-donation-shoutout-satoshi')
         });
         NumericInput('bitcoin-donation-shoutout-satoshi')
 
     }
-
 
 });

@@ -8,8 +8,9 @@
 
 .wide-form-button {
   width: 80% !important;
-  height: 33px !important;
+  height: 40px !important;
   align-self: flex-end !important;
+  margin-top: 0px !important;
 }
 
 .amount-field {
@@ -64,10 +65,10 @@
   padding: 38px 8px 8px 8px;
 }
 
-.wide-form .snap-primary-amount{
+.wide-form .snap-primary-amount {
   font-size: 14px;
 }
 
-.wide-form .snap-secondary-amount{
+.wide-form .snap-secondary-amount {
   font-size: 12px;
 }

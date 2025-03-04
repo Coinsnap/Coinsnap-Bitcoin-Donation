@@ -75,7 +75,8 @@
   font-size: 12px;
   margin-bottom: 16px;
 }
-.shortcode_text_wrapper_disabled{
+
+.shortcode_text_wrapper_disabled {
   display: none;
 }
 
@@ -111,6 +112,6 @@
   /* Adjust for InvoiceId column */
 }
 
-.form-table th{
- width: 240px
+.form-table th {
+  width: 240px
 }

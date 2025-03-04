@@ -3,21 +3,17 @@ if (!defined('ABSPATH')) {
 	exit;
 }
 
-class Bitcoin_Donation_Metabox
+class Bitcoin_Donation_Shoutout_Metabox
 {
 	public function __construct()
 	{
-		// Register custom post type
 		add_action('init', [$this, 'register_shoutouts_post_type']);
 		add_action('init', [$this, 'register_custom_meta_fields']);
 
-		// Add meta boxes
 		add_action('add_meta_boxes', [$this, 'add_shoutouts_metaboxes']);
 
-		// Save meta box data
 		add_action('save_post', [$this, 'save_shoutouts_meta'], 10, 2);
 
-		// Add custom columns to admin list
 		add_filter('manage_bitcoin-shoutouts_posts_columns', [$this, 'add_custom_columns']);
 		add_action('manage_bitcoin-shoutouts_posts_custom_column', [$this, 'populate_custom_columns'], 10, 2);
 	}
@@ -80,6 +76,13 @@ class Bitcoin_Donation_Metabox
 			'single' => true,
 			'show_in_rest' => true,
 		]);
+
+		register_meta('post', '_bitcoin_donation_shoutouts_provider', [
+			'object_subtype' => 'bitcoin-shoutouts',
+			'type' => 'string',
+			'single' => true,
+			'show_in_rest' => true,
+		]);
 	}
 
 	public function add_shoutouts_metaboxes()
@@ -104,6 +107,7 @@ class Bitcoin_Donation_Metabox
 		$message = get_post_meta($post->ID, '_bitcoin_donation_shoutouts_message', true);
 		$amount = get_post_meta($post->ID, '_bitcoin_donation_shoutouts_amount', true);
 		$invoice_id = get_post_meta($post->ID, '_bitcoin_donation_shoutouts_invoice_id', true);
+		$provider = get_post_meta($post->ID, '_bitcoin_donation_shoutouts_provider', true);
 
 ?>
 		<table class="form-table">
@@ -160,6 +164,20 @@ class Bitcoin_Donation_Metabox
 
 				</td>
 			</tr>
+			<tr>
+				<th scope="row">
+					<label for="bitcoin_donation_shoutouts_provider"><?php echo esc_html_e('Provider', 'bitcoin-donation-shoutouts') ?></label>
+				</th>
+				<td>
+					<input
+						type="text"
+						id="bitcoin_donation_shoutouts_provider"
+						name="bitcoin_donation_shoutouts_provider"
+						class="regular-text"
+						readonly
+						value="<?php echo esc_attr($provider); ?>">
+				</td>
+			</tr>
 		</table>
 <?php
 	}
@@ -196,6 +214,7 @@ class Bitcoin_Donation_Metabox
 		$fields = [
 			'bitcoin_donation_shoutouts_name'     => 'text',
 			'bitcoin_donation_shoutouts_amount'   => 'text',
+			'bitcoin_donation_shoutouts_provider' => 'text',
 			'bitcoin_donation_shoutouts_invoice_id' => 'text',
 			'bitcoin_donation_shoutouts_message'    => 'text',
 		];
@@ -237,19 +256,17 @@ class Bitcoin_Donation_Metabox
 		}
 	}
 
-
 	public function add_custom_columns($columns)
 	{
-		$new_columns = [];
-		foreach ($columns as $key => $title) {
-			$new_columns[$key] = $title;
-			if ($key === 'title') {
-				$new_columns['name'] = 'Name';
-				$new_columns['amount'] = 'Amount';
-				$new_columns['invoice_id'] = 'Invoice id';
-				$new_columns['message'] = 'Message';
-			}
-		}
+		$new_columns = [
+			'cb' => $columns['cb'],
+			'title' => $columns['title'],
+			'name' => 'Name',
+			'amount' => 'Amount',
+			'invoice_id' => 'Invoice id',
+			'message' => 'Message'
+		];
+
 		return $new_columns;
 	}
 
@@ -263,7 +280,14 @@ class Bitcoin_Donation_Metabox
 				echo esc_html(get_post_meta($post_id, '_bitcoin_donation_shoutouts_amount', true) ?: '');
 				break;
 			case 'invoice_id':
-				echo esc_html(get_post_meta($post_id, '_bitcoin_donation_shoutouts_invoice_id', true) ?: '');
+				$invoice_id = get_post_meta($post_id, '_bitcoin_donation_shoutouts_invoice_id', true) ?: '';
+				if (!empty($invoice_id)) {
+					$provider = get_post_meta($post_id, '_bitcoin_donation_shoutouts_provider', true) ?: '';
+					$url = $provider === 'btcpay' ? 'https://btcpay.coincharge.io/invoices/' : 'https://app.coinsnap.io/td/';
+					$href = $url . esc_attr($invoice_id);
+					echo '<a href="' . esc_url($href) . '" class="button button-small" target="_blank" rel="noopener noreferrer">' .
+						esc_html($invoice_id) . '</a>';
+				}
 				break;
 			case 'message':
 				$message = get_post_meta($post_id, '_bitcoin_donation_shoutouts_message', true) ?: '';
@@ -274,4 +298,4 @@ class Bitcoin_Donation_Metabox
 	}
 }
 
-new Bitcoin_Donation_Metabox();
+new Bitcoin_Donation_Shoutout_Metabox();

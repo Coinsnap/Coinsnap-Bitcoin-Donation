@@ -16,8 +16,7 @@ function setCookie(name, value, minutes) {
     document.cookie = name + "=" + value + ";" + expires + ";path=/";
 }
 
-
-async function createCPT(amount, message, name, invoiceId) {
+async function createCPT(amount, message, name, invoiceId, provider) {
     const nonce = sharedData.nonce;
     const data = {
         title: `Shoutout from ${name}`,
@@ -29,6 +28,7 @@ async function createCPT(amount, message, name, invoiceId) {
             _bitcoin_donation_shoutouts_amount: amount,
             _bitcoin_donation_shoutouts_invoice_id: invoiceId,
             _bitcoin_donation_shoutouts_message: message,
+            _bitcoin_donation_shoutouts_provider: provider,
         }
     };
 
@@ -78,8 +78,6 @@ handleSnapClick = (buttonId, honeypotId, amountId, messageId, currency) => {
     createInvoice(amount, message, currency.toUpperCase(), undefined, 'Multi Amount Donation');
 }
 
-
-
 const handleButtonClick = (buttonId, honeypotId, amountId, satoshiId, messageId, lastInputCurrency, name) => {
     event.preventDefault();
 
@@ -118,12 +116,13 @@ const handleButtonClick = (buttonId, honeypotId, amountId, satoshiId, messageId,
 
     const currency = lastInputCurrency.toUpperCase();
     const amount = currency === 'SATS' ? satsAmount : fiatAmount;
+    console.log(satsAmount, fiatAmount)
 
     if (!isNaN(amount) && amount > 0) {
         const type = name ? 'Shoutout Donation' : 'Donation Button';
         createInvoice(amount, message, lastInputCurrency, name, type);
     } else {
-        button.disabled = false; 
+        button.disabled = false;
     }
 };
 
@@ -155,7 +154,7 @@ const handleButtonClickMulti = (buttonId, honeypotId, amountId, messageId, lastI
     }
 }
 
-const updateValueField = (amount, fieldName, operation, exchangeRates, currency) => {
+const updateValueField = (amount, fieldName, operation, exchangeRates, currency, multi = false) => {
     const currencyRate = exchangeRates[currency?.toUpperCase()];
     const field = document.getElementById(fieldName);
 
@@ -177,7 +176,7 @@ const updateValueField = (amount, fieldName, operation, exchangeRates, currency)
             field.style.color = '';
             premiumAmount.disabled = false
         }
-    } else if (fieldName?.includes('bitcoin-donation-satoshi-multi') && !isNaN(amount) && currencyRate) {
+    } else if (multi && !isNaN(amount) && currencyRate) {
         const value = operation == '*' ? amount * currencyRate : amount / currencyRate;
         const decimals = value > 1000 ? 4 : 8;
         const valueDecimal = value.toFixed(operation == '*' ? decimals : 0);
@@ -225,18 +224,12 @@ async function fetchCoinsnapExchangeRates() {
     }
 }
 
-
 const createActualInvoice = async (amount, message, lastInputCurrency, name, coinsnap, type, redirect, metadata) => {
     deleteCookie('coinsnap_invoice_');
-
-    if (window.location.href.includes("localhost")) {
-        sharedData.redirectUrl = "https://coinsnap.io";
-    }
 
     const requestData = {
         amount: amount,
         currency: lastInputCurrency,
-        redirectUrl: sharedData?.redirectUrl || window.location.href,
         redirectAutomatically: true,
         metadata: {
             orderNumber: message,
@@ -246,14 +239,26 @@ const createActualInvoice = async (amount, message, lastInputCurrency, name, coi
         }
     };
 
-    if (coinsnap) {
-        requestData.referralCode = 'D19833';
-    }
-    if (type == 'Bitcoin Voting') {
+    if (type == 'Donation Button') {
+        requestData.redirectUrl = sharedData?.redirectUrl || window.location.href
+    } else if (type == 'Bitcoin Shoutout') {
+        requestData.redirectUrl = sharedData?.shoutoutRedirectUrl || window.location.href
+    } else if (type == 'Multi Amount Donation') {
+        requestData.redirectUrl = sharedData?.multiRedirectUrl || window.location.href
+    } else if (type == 'Bitcoin Voting') {
         requestData.metadata.optionId = metadata.optionId
         requestData.metadata.option = metadata.option
         requestData.metadata.pollId = metadata.pollId
         requestData.metadata.orderNumber = `Voted for ${metadata.option}`
+        redirectAutomatically = false //TODO test
+    }
+
+    if (window.location.href.includes("localhost")) {
+        requestData.redirectUrl = "https://coinsnap.io";
+    }
+
+    if (coinsnap) {
+        requestData.referralCode = 'D19833';
     }
 
     const url = coinsnap
@@ -293,7 +298,7 @@ const createActualInvoice = async (amount, message, lastInputCurrency, name, coi
         };
 
         if (name) {
-            createCPT(`${amount} ${lastInputCurrency}`, message, name, responseData.id);
+            createCPT(`${amount} ${lastInputCurrency}`, message, name, responseData.id, coinsnap ? 'coinsnap' : 'btcpay');
         }
 
         setCookie('coinsnap_invoice_', JSON.stringify(invoiceCookieData), 15);
@@ -311,7 +316,6 @@ const createActualInvoice = async (amount, message, lastInputCurrency, name, coi
 
 const checkInvoiceStatus = async (invoiceId, amount, message, lastInputCurrency, name, coinsnap, type, redirect, metadata) => {
 
-
     const url = coinsnap
         ? `https://app.coinsnap.io/api/v1/stores/${sharedData.coinsnapStoreId}/invoices/${invoiceId}`
         : `${sharedData.btcpayUrl}/api/v1/stores/${sharedData.btcpayStoreId}/invoices/${invoiceId}`;
@@ -326,7 +330,6 @@ const checkInvoiceStatus = async (invoiceId, amount, message, lastInputCurrency,
             'Authorization': `token ${sharedData.btcpayApiKey}`,
             'Content-Type': 'application/json'
         };
-
 
     try {
         const response = await fetch(url, {
@@ -354,7 +357,6 @@ const checkInvoiceStatus = async (invoiceId, amount, message, lastInputCurrency,
         return null;
     }
 };
-
 
 const createInvoice = async (amount, message, lastInputCurrency, name, type, redirect = true, metadata) => {
     existingInvoice = getCookie('coinsnap_invoice_')
@@ -459,16 +461,14 @@ const NumericInput = (inputFieldName) => {
             var target = event.target;
             var tmp = removeThousandSeparator(target.value)
             var original = tmp
-            if (inputFieldName.includes("multi")) {
-                tmp = parseFloat(tmp)
-                original = original.replace(tmp, "")
-            }
+            tmp = parseFloat(tmp)
+            original = original.replace(tmp, "")
             var val = Number(tmp).toLocaleString();
 
             if (tmp == '') {
                 target.value = '';
             } else {
-                target.value = inputFieldName.includes("multi") ? `${val}${original}` : val;
+                target.value = `${val}${original}`
             }
         });
 
@@ -479,5 +479,24 @@ const NumericInput = (inputFieldName) => {
 
             target.value = val;
         });
+    }
+}
+
+const limitCursorMovement = (e, primaryCurrency) => {
+    const field = e.target;
+    const position = field.selectionStart;
+    const satsOffset = primaryCurrency === 'sats' ? 5 : 4;
+    const satsStart = field.value.length - satsOffset;
+
+    if (field.value.includes(primaryCurrency)) {
+        if (e.type === 'click' && position >= satsStart) {
+            let value = field.value.replace(` ${primaryCurrency}`, '');
+            field.setSelectionRange(value.length, value.length);
+        }
+
+        if (e.type === 'keydown' && (e.key === 'ArrowRight' || e.key === 'End') && position >= satsStart) {
+            e.preventDefault();
+            field.setSelectionRange(satsStart, satsStart);
+        }
     }
 }

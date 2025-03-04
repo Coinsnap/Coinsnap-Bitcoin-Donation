@@ -108,13 +108,6 @@ class Bitcoin_Donation_Polls_Metabox
             'show_in_rest' => true,
         ]);
 
-        register_meta('post', '_bitcoin_donation_polls_dark_mode', [
-            'object_subtype' => 'bitcoin-polls',
-            'type' => 'boolean',
-            'single' => true,
-            'show_in_rest' => true,
-        ]);
-
         register_meta('post', '_bitcoin_donation_polls_active', [
             'object_subtype' => 'bitcoin-polls',
             'type' => 'boolean',
@@ -155,7 +148,6 @@ class Bitcoin_Donation_Polls_Metabox
         $starting_date = get_post_meta($post->ID, '_bitcoin_donation_polls_starting_date', true);
         $ending_date = get_post_meta($post->ID, '_bitcoin_donation_polls_ending_date', true);
         $thank_you_message = get_post_meta($post->ID, '_bitcoin_donation_polls_thank_you_message', true);
-        $dark_mode = get_post_meta($post->ID, '_bitcoin_donation_polls_dark_mode', true);
         $active = get_post_meta($post->ID, '_bitcoin_donation_polls_active', true);
         if ($active === '') {
             $active = '1';
@@ -208,6 +200,22 @@ class Bitcoin_Donation_Polls_Metabox
                     <br>
                 </td>
             </tr>
+            <tr>
+                <th scope="row">One Vote Per User</th>
+                <td>
+                    <label>
+                        <input
+                            type="checkbox"
+                            name="bitcoin_donation_polls_one_vote"
+                            value="1"
+                            <?php checked($one_vote, '1'); ?>>
+                        Enable
+                    </label>
+                    <br>
+                </td>
+            </tr>
+            <tr>
+            <tr>
             <tr>
                 <th scope="row">
                     <label for="bitcoin_donation_polls_description"><?php echo esc_html_e('Description', 'bitcoin-donation-polls') ?></label>
@@ -358,41 +366,18 @@ class Bitcoin_Donation_Polls_Metabox
 
                 </td>
             </tr>
-            <tr>
-                <th scope="row">Settings</th>
-                <td>
-                    <label>
-                        <input
-                            type="checkbox"
-                            name="bitcoin_donation_polls_dark_mode"
-                            value="1"
-                            <?php checked($dark_mode, '1'); ?>>
-                        Dark Mode
-                    </label>
-                    <br>
-                    <label>
-                        <input
-                            type="checkbox"
-                            name="bitcoin_donation_polls_one_vote"
-                            value="1"
-                            <?php checked($one_vote, '1'); ?>>
-                        One Vote Per User
-                    </label>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">
-                    <label for="shortcode"><?php echo esc_html_e('Shortcode', 'bitcoin-donation-polls') ?></label>
-                </th>
-                <td>
-                    <input
-                        type="text"
-                        id="shortcode"
-                        name="shortcode"
-                        class="regular-text"
-                        readonly
-                        value='[bitcoin_voting id="<?php echo esc_html($post->ID); ?>"]'>
-                </td>
+            <th scope="row">
+                <label for="shortcode"><?php echo esc_html_e('Shortcode', 'bitcoin-donation-polls') ?></label>
+            </th>
+            <td>
+                <input
+                    type="text"
+                    id="shortcode"
+                    name="shortcode"
+                    class="regular-text"
+                    readonly
+                    value='[bitcoin_voting id="<?php echo esc_html($post->ID); ?>"]'>
+            </td>
             </tr>
 
         </table>
@@ -434,7 +419,6 @@ class Bitcoin_Donation_Polls_Metabox
             'bitcoin_donation_polls_starting_date' => 'text',
             'bitcoin_donation_polls_ending_date'   => 'text',
             'bitcoin_donation_polls_thank_you_message' => 'text',
-            'bitcoin_donation_polls_dark_mode'   => 'boolean',
             'bitcoin_donation_polls_active'      => 'boolean',
             'bitcoin_donation_polls_one_vote'    => 'boolean',
         ];
@@ -519,24 +503,19 @@ class Bitcoin_Donation_Polls_Metabox
 
     public function add_custom_columns($columns)
     {
-        $new_columns = [];
-        foreach ($columns as $key => $title) {
-            $new_columns[$key] = $title;
-            if ($key === 'title') {
-                $new_columns['description'] = 'Description';
-                $new_columns['option_1'] = 'Option 1';
-                $new_columns['option_2'] = 'Option 2';
-                $new_columns['option_3'] = 'Option 3';
-                $new_columns['option_4'] = 'Option 4';
-                $new_columns['amount'] = 'Amount (satoshis)';
-                $new_columns['starting_date'] = 'Starting Date';
-                $new_columns['ending_date'] = 'Ending Date';
-                $new_columns['thank_you_message'] = 'Thank You Message';
-                $new_columns['dark_mode'] = 'Dark Mode';
-                $new_columns['active'] = 'Active';
-                $new_columns['one_vote'] = 'One Vote';
-            }
-        }
+
+        $new_columns = [
+            'cb' => $columns['cb'],
+            'title' => $columns['title'],
+            'shortcode' => 'Shortcode',
+            'amount' => 'Amount (satoshis)',
+            'starting_date' => 'Starting Date',
+            'ending_date' => 'Ending Date',
+            'thank_you_message' => 'Thank You Message',
+            'active' => 'Active',
+            'one_vote' => 'One Vote',
+        ];
+
         return $new_columns;
     }
 
@@ -573,14 +552,14 @@ class Bitcoin_Donation_Polls_Metabox
             case 'thank_you_message':
                 echo esc_html(get_post_meta($post_id, '_bitcoin_donation_polls_thank_you_message', true) ?: '');
                 break;
-            case 'dark_mode':
-                echo get_post_meta($post_id, '_bitcoin_donation_polls_dark_mode', true) ? '✓' : '✗';
-                break;
             case 'active':
                 echo get_post_meta($post_id, '_bitcoin_donation_polls_active', true) ? '✓' : '✗';
                 break;
             case 'one_vote':
                 echo get_post_meta($post_id, '_bitcoin_donation_polls_one_vote', true) ? '✓' : '✗';
+                break;
+            case 'shortcode':
+                echo '[bitcoin_voting id="' . esc_html($post_id) . '"]';
                 break;
         }
     }

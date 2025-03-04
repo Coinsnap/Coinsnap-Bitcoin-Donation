@@ -105,6 +105,22 @@ class Bitcoin_Donation_Settings
             ]
         );
 
+        add_settings_field(
+            'theme',
+            'Theme',
+            [$this, 'render_field'],
+            'bitcoin_donation',
+            'bitcoin_donation_provider_section',
+            [
+                'label_for' => 'theme',
+                'type'      => 'select',
+                'options'   => [
+                    'light' => 'Light',
+                    'dark'   => 'Dark'
+                ]
+            ]
+        );
+
         // Add ngrok field if site is running on localhost
         if (strpos(get_site_url(), 'localhost') !== false) {
             add_settings_field(
@@ -166,7 +182,6 @@ class Bitcoin_Donation_Settings
 
             ]
         );
-
 
         // BTCPay Section
         add_settings_section(
@@ -231,6 +246,10 @@ class Bitcoin_Donation_Settings
 
         if (isset($options['provider'])) {
             $sanitized['provider'] = sanitize_text_field($options['provider']);
+        }
+
+        if (isset($options['theme'])) {
+            $sanitized['theme'] = sanitize_text_field($options['theme']);
         }
 
         if (isset($options['coinsnap_store_id'])) {
@@ -306,7 +325,6 @@ class Bitcoin_Donation_Settings
             ],
         ]);
 
-
         if (is_wp_error($response)) {
             add_settings_error(
                 'bitcoin_donation_settings',
@@ -329,7 +347,6 @@ class Bitcoin_Donation_Settings
         }
     }
 
-
     // Optional section callbacks for additional descriptions
     public function provider_section_callback()
     {
@@ -345,7 +362,6 @@ class Bitcoin_Donation_Settings
     {
         echo esc_html_e('Enter your BTCPay credentials here if you selected BTCPay as your payment provider.', 'bitcoin_donation');
     }
-
 
     function bitcoin_donation_section_general_callback()
     {
@@ -421,7 +437,6 @@ class Bitcoin_Donation_Settings
                 echo '<div >' . '<button id="' . esc_attr($id) . '_button">Check</button>' . '<span style="" id="' . esc_attr($id) .  '">' . '</span>' . '</div>';
                 break;
 
-
                 break;
 
             case 'text':
@@ -440,8 +455,6 @@ class Bitcoin_Donation_Settings
             echo '<p class="description">' . esc_html($args['description']) . '</p>';
         }
     }
-
-
 
     public function bitcoin_donation_options_page()
     {

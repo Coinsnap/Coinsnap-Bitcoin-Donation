@@ -49,7 +49,6 @@ class Bitcoin_Donation_Webhooks
         ]);
     }
 
-
     function get_results($request)
     {
         $poll_id = $request['poll_id'];
@@ -64,7 +63,6 @@ class Bitcoin_Donation_Webhooks
 
         return ['results' => $results];
     }
-
 
     function get_payment_status_long_poll($request)
     {
@@ -137,7 +135,6 @@ class Bitcoin_Donation_Webhooks
         return true;
     }
 
-
     public function handle_webhook(WP_REST_Request $request)
     {
         $payload_data = $request->get_json_params();
@@ -156,7 +153,7 @@ class Bitcoin_Donation_Webhooks
                 ),
                 'posts_per_page' => 1,
             );
-
+            
             if (isset($payload_data['metadata']['type']) && $payload_data['metadata']['type'] == "Bitcoin Voting") {
                 global $wpdb;
                 $invoiceId = $payload_data['invoiceId'];

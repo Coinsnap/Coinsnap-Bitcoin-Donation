@@ -12,12 +12,15 @@ class Bitcoin_Donation_Shoutouts_List
 
     function bitcoin_donation_render_shortcode()
     {
+        $options_general = get_option('bitcoin_donation_options');
         $options = get_option('bitcoin_donation_forms_options');
-        $theme_class = isset($options['shoutout_theme']) && $options['shoutout_theme'] === 'dark' ? 'bitcoin-donation-dark-theme' : 'bitcoin-donation-light-theme';
+
+        $theme_class = $options_general['theme'] === 'dark' ? 'bitcoin-donation-dark-theme' : 'bitcoin-donation-light-theme';
         $args = array(
             'post_type'      => 'bitcoin-shoutouts',
             'post_status'    => 'publish',
         );
+        $active = $options['shoutout_donation_active'] ?? '1';
 
         $query = new WP_Query($args);
 
@@ -46,15 +49,26 @@ class Bitcoin_Donation_Shoutouts_List
             <div id="bitcoin-donation-shoutouts-wrapper">
 
                 <?php
-                if (empty($shoutouts)) {
-                    $this->render_empty_donation_row($theme_class);
-                } else {
-                    foreach ($shoutouts as $shoutout) {
-                        $this->render_donation_row($shoutout, $theme_class);
+                if ($active) {
+                    if (empty($shoutouts)) {
+                        $this->render_empty_donation_row($theme_class);
+                    } else {
+                        foreach ($shoutouts as $shoutout) {
+                            $this->render_donation_row($shoutout, $theme_class);
+                        }
                     }
+                } else {
+                ?>
+                    <div class="bitcoin-donation-donation-form <?php echo esc_attr($theme_class); ?>">
+                        <div class="shoutout-form-wrapper"
+                            style="display: flex;justify-content: center; flex-direction: column; align-items: center; margin: 0">
+                            <h3>Shoutouts List</h3>
+                            <h4 style="text-align: center;">This form is not active</h4>
+                        </div>
+                    </div>
+                <?php
                 }
                 ?>
-
 
             </div>
         </div>
@@ -109,7 +123,6 @@ class Bitcoin_Donation_Shoutouts_List
         } else {
             $daysAgo = $interval->days . ' days ago';
         }
-
 
     ?>
         <div class="bitcoin-donation-shoutout <?php echo esc_attr($theme); ?> <?php echo $highlight ? 'highlight-shoutout' : ''; ?>">

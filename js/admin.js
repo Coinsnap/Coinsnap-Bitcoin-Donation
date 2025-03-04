@@ -18,17 +18,6 @@
         tab.classList.add("nav-tab-active");
         const target = tab.getAttribute("data-tab");
         document.getElementById(target).classList.add("active");
-
-        document.getElementById('simple_donation_shortcodes').style.display = 'none';
-        document.getElementById('shoutout_donation_shortcodes').style.display = 'none';
-        document.getElementById('multi_amount_shortcodes').style.display = 'none';
-        if (tab.text == 'Shoutout Donation') {
-          document.getElementById('shoutout_donation_shortcodes').style.display = 'block';
-        } else if (tab.text == 'Donation Button') {
-          document.getElementById('simple_donation_shortcodes').style.display = 'block';
-        } else if (tab.text == 'Multi Amount Donation') {
-          document.getElementById('multi_amount_shortcodes').style.display = 'block';
-        }
         localStorage.setItem('activeTab', target);
       });
     });
@@ -124,7 +113,6 @@
       const expires = "expires=" + d.toUTCString();
       document.cookie = name + "=" + value + ";" + expires + ";path=/";
     }
-
 
     async function handleCheckConnection() {
       event.preventDefault();

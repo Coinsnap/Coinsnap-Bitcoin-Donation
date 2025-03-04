@@ -10,19 +10,35 @@ class Bitcoin_Donation_Shoutouts_Form
         add_shortcode('shoutout_form', [$this, 'bitcoin_donation_render_shortcode']);
     }
 
-
     function bitcoin_donation_render_shortcode()
     {
         $options = get_option('bitcoin_donation_forms_options');
         $options = is_array($options) ? $options : [];
-        $theme_class = isset($options['shoutout_theme']) && $options['shoutout_theme'] === 'dark' ? 'bitcoin-donation-dark-theme' : 'bitcoin-donation-light-theme';
+        $options_general = get_option('bitcoin_donation_options');
+        $theme_class = $options_general['theme'] === 'dark' ? 'bitcoin-donation-dark-theme' : 'bitcoin-donation-light-theme';
         $currency = $options['shoutout_currency'] ?? 'USD';
-        $butoon_text = $options['shoutout_button_text'] ?? 'Shoutout';
+        $button_text = $options['shoutout_button_text'] ?? 'Shoutout';
         $title_text = $options['shoutout_title_text'] ?? 'Bitcoin Shoutouts';
         $min_amount = (int)$options['shoutout_minimum_amount'] ?? 21;
         $premium_amount = (int)$options['shoutout_premium_amount'] ?? 21000;
-        ob_start();
+        $active = $options['shoutout_donation_active'] ?? '1';
+        if (!$active) {
+            ob_start();
 ?>
+            <div class="bitcoin-donation-donation-form <?php echo esc_attr($theme_class); ?>">
+                <div class="shoutout-form-wrapper"
+                    style="display: flex;justify-content: center; flex-direction: column; align-items: center; margin: 0">
+                    <h3><?php echo esc_html($title_text); ?></h3>
+                    <h4 style="text-align: center;">This form is not active</h4>
+                </div>
+
+            </div>
+        <?php
+            return ob_get_clean();
+        }
+
+        ob_start();
+        ?>
         <div id="bitcoin-donation-shoutouts-form" class="bitcoin-donation-donation-form">
             <div class="shoutout-form-wrapper <?php echo esc_attr($theme_class); ?>">
                 <form method="post">
@@ -64,7 +80,7 @@ class Bitcoin_Donation_Shoutouts_Form
                         </div>
                     </div>
                     <div class="shoutout-button-container">
-                        <button id="bitcoin-donation-shout" type="submit" name="submit_shoutout" onclick="return false;"><?php echo esc_html($butoon_text); ?></button>
+                        <button id="bitcoin-donation-shout" type="submit" name="submit_shoutout" onclick="return false;"><?php echo esc_html($button_text); ?></button>
                     </div>
                 </form>
             </div>

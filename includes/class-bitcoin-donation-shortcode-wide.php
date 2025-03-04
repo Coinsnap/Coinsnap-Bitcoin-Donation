@@ -14,35 +14,60 @@ class Bitcoin_Donation_Shortcode_Wide
     {
         $options = get_option('bitcoin_donation_forms_options');
         $options = is_array($options) ? $options : [];
-        $theme_class = isset($options['theme']) && $options['theme'] === 'dark' ? 'bitcoin-donation-dark-theme' : 'bitcoin-donation-light-theme';
+        $options_general = get_option('bitcoin_donation_options');
+        $theme_class = $options_general['theme'] === 'dark' ? 'bitcoin-donation-dark-theme' : 'bitcoin-donation-light-theme';
         $currency = $options['currency'] ?? 'USD';
-        $butoon_text = $options['button_text'] ?? 'Donate';
+        $button_text = $options['button_text'] ?? 'Donate';
         $title_text = $options['title_text'] ?? 'Donate with Bitcoin';
+        $active = $options['simple_donation_active'] ?? '1';
+        if (!$active) {
+            ob_start();
+?>
+            <div style="padding: 30px;" class="bitcoin-donation-donation-form <?php echo esc_attr($theme_class); ?> wide-form">
+                <div class="bitcoin-donation-title-wrapper"
+                    style="display: flex;justify-content: center; flex-direction: column; align-items: center; margin: 0">
+                    <h3><?php echo esc_html($title_text); ?></h3>
+                </div>
+                <h4 style="text-align: center;">This form is not active</h4>
+
+            </div>
+        <?php
+            return ob_get_clean();
+        }
 
         ob_start();
-?>
+        ?>
         <div id="bitcoin-donation-form-wide" class="bitcoin-donation-donation-form <?php echo esc_attr($theme_class); ?> wide-form">
             <div class="bitcoin-donation-title-wrapper">
                 <h3><?php echo esc_html($title_text); ?></h3>
-
+                <select style="max-width: 172px;" id="bitcoin-donation-swap-wide" class="currency-swapper">
+                    <option value="EUR">EUR</option>
+                    <option value="USD">USD</option>
+                    <option value="CAD">CAD</option>
+                    <option value="JPY">JPY</option>
+                    <option value="GBP">GBP</option>
+                    <option value="sats">SATS</option>
+                    <option value="CHF">CHF</option>
+                </select>
             </div>
             <input type="text" id="bitcoin-donation-email-wide" name="bitcoin-email" style="display: none;" aria-hidden="true">
             <div class="bitcoin-donation-wide-field-wrapper">
                 <div class="bitcoin-donation-wide-up">
 
                     <div class="shoutout-input-label">
-                        <label for="bitcoin-donation-amount">Amount (in <?php echo esc_html($currency); ?>)</label>
-                        <input type="text" id="bitcoin-donation-amount-wide" step="0.01">
+                        <label for="bitcoin-donation-amount-wide">Amount (in <?php echo esc_html($currency); ?>)</label>
+                        <div class="amount-wrapper">
+                            <input type="text" id="bitcoin-donation-amount-wide">
+                            <div class="secondary-amount">
+                                <span id="bitcoin-donation-satoshi-wide"></span>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="shoutout-input-label">
-                        <label for="bitcoin-donation-satoshi">Satoshi</label>
-                        <input type="text" id="bitcoin-donation-satoshi-wide">
-                    </div>
-                    <button class="wide-form-button" id="bitcoin-donation-pay-wide"><?php echo esc_html($butoon_text); ?></button>
+                    <button class="wide-form-button" id="bitcoin-donation-pay-wide"><?php echo esc_html($button_text); ?></button>
                 </div>
                 <div class="bitcoin-donation-wide-down">
-                    <label for="bitcoin-donation-message">Message</label>
+                    <label for="bitcoin-donation-message-wide">Message</label>
                     <textarea id="bitcoin-donation-message-wide" class="bitcoin-donation-message wide-message-text-area" required name="message" rows="2"></textarea>
                 </div>
 

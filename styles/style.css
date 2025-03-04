@@ -8,8 +8,14 @@
 }
 
 .narrow-form {
-  max-width: 220px;
-  padding: 30px;
+  /* max-width: 220px;
+  padding: 30px; */
+  max-width: 268px;
+  padding: 42px 30px;
+}
+
+.narrow-form .currency-swapper {
+  width: 32%;
 }
 
 .bitcoin-donation-donation-form label {
@@ -67,7 +73,7 @@
 }
 
 .bitcoin-donation-light-theme textarea:focus {
-  border: 2px solid #5e5ad6d8 !important;
+  /* border: 2px solid #5e5ad6d8 !important; */
   background-color: #f9f9f9;
 }
 
@@ -96,25 +102,38 @@
   border-radius: 4px;
   padding: 8px;
   box-sizing: border-box;
+  min-height: 30px !important;
+
+}
+
+.narrow-form .bitcoin-donation-message {
+  min-height: 100px !important;
 }
 
 .bitcoin-donation-title-wrapper {
   display: flex;
   width: 100%;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
+  margin-bottom: 22px;
+}
+
+.wide-form .bitcoin-donation-title-wrapper {
+  padding-left: 30px;
+  padding-right: 30px;
+  width: auto !important;
 }
 
 .bitcoin-donation-title-wrapper h3 {
   font-weight: bold;
+  margin: 0;
+  max-width: 67%;
   /* color: #f7a70a; */
 }
 
 .bitcoin-donation-dark-theme h3 {
   color: white !important;
 }
-
-
 
 /* Multi amount */
 
@@ -162,6 +181,7 @@
 
 .snap-title-container h4 {
   font-weight: bold;
+  font-size: 16px !important;
   margin-bottom: 4px;
   margin-top: 8px;
 
@@ -180,18 +200,22 @@
   padding: 4px 8px !important;
   border: 1px solid #e2e8f0 !important;
   border-radius: 6px !important;
-  background-color: #f8f8f8 !important;
+  background-color: #f3f3f3 !important;
   font-size: 12px !important;
   font-weight: 500;
-  color: #1a202c;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  position: relative;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path fill="black" d="M7 10l5 5 5-5H7z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+  color: #1a202cc6;
   cursor: pointer;
   width: 31%;
   text-align: center;
-  margin-bottom: 16px;
-}
-
-.bitcoin-donation-message {
-  min-height: 30px !important;
+  margin: 0;
 }
 
 .currency-swapper:hover {
@@ -209,6 +233,8 @@
   background-color: #3a3a3a !important;
   border: 1px solid #555 !important;
   color: #f1f1f1 !important;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path fill="white" d="M7 10l5 5 5-5H7z"/></svg>');
+
 }
 
 .bitcoin-donation-dark-theme .currency-swapper:hover {
@@ -230,9 +256,8 @@
   cursor: pointer;
   background: #f2f2f2;
   color: #3d3d3d;
-  /* border: 2px solid #6d6d6d; */
+  font-weight: bold;
   outline: 1px solid rgba(61, 61, 61, 0.5);
-  /* border: 1px solid #3d3d3d; */
   border: none !important;
   text-align: left;
   border-radius: 5px;
@@ -251,7 +276,7 @@
   margin-bottom: 10px;
 }
 
-.progress {
+.voting-progress {
   position: relative;
   width: 100%;
   height: 20px;
@@ -260,7 +285,7 @@
   overflow: hidden;
 }
 
-.progress-bar {
+.voting-progress-bar {
   height: 100%;
   background: #9d9d9d;
   width: 0;
@@ -268,25 +293,23 @@
   position: relative;
 }
 
-.progress-percentage {
-  position: absolute;
-  font-weight: bold;
-  right: 12px;
-  top: 50%;
-  transform: translate(0, -50%);
-  color: #818181;
+.voting-progress-percentage {
   font-size: 14px;
+}
+
+.poll-result-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .bitcoin-voting-form-container {
   max-width: 645px;
   width: 100%;
-  /* border: 2px solid #c0c0c0; */
   padding: 32px;
   border-radius: 20px;
   box-sizing: border-box;
   background-color: #fafafa;
-  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
   box-shadow: 1px 2px 12px -4px rgba(0, 0, 0, 0.75);
   padding-bottom: 20px;
 
@@ -313,12 +336,12 @@
   background: white;
   padding: 58px 28px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  z-index: 1000;
+  z-index: 99999;
   border-radius: 8px;
   text-align: center;
   flex-direction: column;
   align-items: center;
-  min-width: 300px;
+  width: 300px;
   gap: 12px;
 }
 
@@ -376,7 +399,14 @@
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-  color: #777777;
+  color: #3d3d3d;
+}
+
+.qr-address-title {
+  font-weight: bold;
+  text-align: left;
+  color: #3d3d3d;
+
 }
 
 .qr-copy-icon {
@@ -423,6 +453,7 @@
 
 .qr-dropdown {
   display: inline-block;
+  font-size: 8px;
 }
 
 @keyframes slideDown {
@@ -465,11 +496,33 @@
   display: none;
 }
 
+.qr-code-btc {
+  display: none;
+  width: 42px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#thank-you-popup {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.checkmark-img {
+  display: flex;
+  width: 120px;
+}
+
 .check-results {
   border: none;
   padding: 2px 8px;
   border-radius: 3px;
-  color: #585858;
+  color: #3d3d3d;
+  outline: 1px solid rgba(61, 61, 61, 0.5);
+  background-color: #f2f2f2;
 }
 
 .check-results:hover {
@@ -484,13 +537,14 @@
 .return-button {
   height: 18px;
   border: none;
-  background-color: #585858;
   padding: 0px 12px;
   border-radius: 8px;
-  color: white;
   justify-content: center;
   align-items: center;
   padding-bottom: 1px;
+  color: #3d3d3d;
+  outline: 1px solid rgba(61, 61, 61, 0.24);
+  background-color: #f2f2f2;
 }
 
 .return-buton-visible {
@@ -502,8 +556,13 @@
 }
 
 .return-button:hover {
-  background-color: #838383;
+  background-color: #dadada;
   transition: 0.3s;
+}
+
+.dark-theme .qr-lightning-container,
+.dark-theme .qr-address-title {
+  color: #f2f2f2;
 }
 
 .dark-theme .bitcoin-voting-form-container,
@@ -524,19 +583,27 @@
   color: white;
 }
 
-.dark-theme .poll-option {
+.dark-theme .poll-option,
+.dark-theme .check-results,
+.dark-theme .return-button {
   background: #3a3a3a;
   color: white;
 }
 
-.dark-theme .poll-option:hover {
+.dark-theme .poll-option:hover,
+.dark-theme .check-results:hover,
+.dark-theme .return-button:hover {
   background: #4a4a4a;
 }
 
-.dark-theme .check-results {
-  background-color: 585858 !important;
-}
-
-.dark-theme .check-results:hover {
-  background-color: #4a4a4a;
+.blur-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  backdrop-filter: blur(4px);
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 9999;
 }
