@@ -4,10 +4,10 @@ jQuery(document).ready(function ($) {
     var lastInputCurency = bitcoinDonationData.currency // Used to detrmine if invoice should be created in by fiat or crypto
 
     const setDefaults = () => {
-        const amountField = $('#bitcoin-donation-amount');
+        const amountField = $('#coinsnap-bitcoin-donation-amount');
         amountField.val(bitcoinDonationData.defaultAmount);
         updateSatoshiField(bitcoinDonationData.defaultAmount);
-        const messageField = $('#bitcoin-donation-message');
+        const messageField = $('#coinsnap-bitcoin-donation-message');
         messageField.val(bitcoinDonationData.defaultMessage);
     }
 
@@ -180,7 +180,7 @@ jQuery(document).ready(function ($) {
 
     const updateSatoshiField = (amount) => {
         const currencyRate = exchangeRates[bitcoinDonationData.currency?.toUpperCase()];
-        const satoshiField = $('#bitcoin-donation-satoshi');
+        const satoshiField = $('#coinsnap-bitcoin-donation-satoshi');
         if (!isNaN(amount) && currencyRate) {
             const satoshiValue = amount / currencyRate;
             satoshiField.val(satoshiValue.toFixed(0));
@@ -191,7 +191,7 @@ jQuery(document).ready(function ($) {
 
     const updateAmountField = (satoshi) => {
         const currencyRate = exchangeRates[bitcoinDonationData.currency?.toUpperCase()];
-        const amountField = $('#bitcoin-donation-amount');
+        const amountField = $('#coinsnap-bitcoin-donation-amount');
 
         if (!isNaN(satoshi) && currencyRate) {
             const amountValue = satoshi * currencyRate;
@@ -219,10 +219,10 @@ jQuery(document).ready(function ($) {
     }
 
     // Event listeners
-    $('#bitcoin-donation-pay').on('click', function () {
-        const amountField = $('#bitcoin-donation-amount');
-        const satoshiField = $('#bitcoin-donation-satoshi');
-        const messageField = $('#bitcoin-donation-message');
+    $('#coinsnap-bitcoin-donation-pay').on('click', function () {
+        const amountField = $('#coinsnap-bitcoin-donation-amount');
+        const satoshiField = $('#coinsnap-bitcoin-donation-satoshi');
+        const messageField = $('#coinsnap-bitcoin-donation-message');
         const satsAmount = parseFloat(satoshiField.val())
         const message = messageField.val()
         const amount = lastInputCurency == 'SATS' ? satsAmount : parseFloat(amountField.val());
@@ -231,13 +231,13 @@ jQuery(document).ready(function ($) {
         }
     });
 
-    $('#bitcoin-donation-amount').on('input', function () {
+    $('#coinsnap-bitcoin-donation-amount').on('input', function () {
         const amount = parseFloat($(this).val());
         lastInputCurency = bitcoinDonationData.currency
         updateSatoshiField(amount);
     });
 
-    $('#bitcoin-donation-satoshi').on('input', function () {
+    $('#coinsnap-bitcoin-donation-satoshi').on('input', function () {
         const satoshi = parseFloat($(this).val());
         lastInputCurency = 'SATS'
         updateAmountField(satoshi);

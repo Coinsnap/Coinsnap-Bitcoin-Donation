@@ -1,4 +1,4 @@
-=== Bitcoin Donation ===
+=== Coinsnap Bitcoin Donation ===
 
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, donation, BTCPay
@@ -7,7 +7,7 @@ Stable tag: 1.0.0
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Instant Bitcoin/Sats donations on Wordpress website directly to your wallet
+Accept Bitcoin donations and shoutouts in WordPress. Offer freely adjustable or pre-set donation amounts.
 
 == Description ==
 

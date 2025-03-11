@@ -1,5 +1,5 @@
 /* Common Styles */
-#bitcoin-donation-donation-form-wide {
+#coinsnap-bitcoin-donation-form-wide {
   max-width: 800px;
   margin: 20px auto;
   padding: 30px;
@@ -9,20 +9,20 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-#bitcoin-donation-donation-form-wide label {
+#coinsnap-bitcoin-donation-form-wide label {
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
 }
 
-#bitcoin-donation-donation-form-wide input {
+#coinsnap-bitcoin-donation-form-wide input {
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
 }
 
-#bitcoin-donation-donation-form-wide button {
+#coinsnap-bitcoin-donation-form-wide button {
   width: 70%;
   padding: 10px;
   background-color: #6393c7;
@@ -38,7 +38,7 @@
   width: 140px;
 }
 
-#bitcoin-donation-donation-form-wide button:hover {
+#coinsnap-bitcoin-donation-form-wide button:hover {
   transition: 250ms;
   background-color: #f7a70a;
 }

@@ -1,6 +1,9 @@
 <?php
-class Bitcoin_Donation_List
-{
+if (! defined('ABSPATH')) {
+    exit;
+}
+
+class Coinsnap_Bitcoin_Donation_List {
 
 	public function __construct()
 	{
@@ -14,11 +17,11 @@ class Bitcoin_Donation_List
 	public function add_donations_submenu()
 	{
 		add_submenu_page(
-			'bitcoin_donation',          // Parent slug
+			'coinsnap_bitcoin_donation',        // Parent slug
 			'Donation List',                    // Page title
 			'Donation List',                    // Menu title
 			'manage_options',                   // Capability
-			'bitcoin-donation-donation-list',               // Menu slug
+			'coinsnap-bitcoin-donation-list',  // Menu slug
 			array($this, 'render_donation_page') // Callback function
 		);
 	}
@@ -115,7 +118,7 @@ class Bitcoin_Donation_List
 
 	private function fetch_donations_from_api()
 	{
-		$options = get_option('bitcoin_donation_options');
+		$options = get_option('coinsnap_bitcoin_donation_options');
 		$provider = $options['provider'];
 		switch ($provider) {
 			case 'coinsnap':
@@ -151,10 +154,10 @@ class Bitcoin_Donation_List
 			throw new Exception('Invalid API response');
 		}
 
-		// Filter the invoices where metadata.referralCode equals BITCOIN_DONATION_REFERRAL_CODE
+		// Filter the invoices where metadata.referralCode equals COINSNAP_BITCOIN_DONATION_REFERRAL_CODE
 		$filtered_invoices = array_filter($invoices, function ($invoice) {
 			return isset($invoice['metadata']['referralCode'])
-				&& $invoice['metadata']['referralCode'] === BITCOIN_DONATION_REFERRAL_CODE
+				&& $invoice['metadata']['referralCode'] === COINSNAP_BITCOIN_DONATION_REFERRAL_CODE
 				&& $invoice['status'] === 'Settled';
 		});
 		// error_log('Coinsnap Response Body: ' . print_r($filtered_invoices, true));
@@ -195,10 +198,10 @@ class Bitcoin_Donation_List
 			throw new Exception('Invalid API response');
 		}
 
-		// Filter the invoices where metadata.referralCode equals BITCOIN_DONATION_REFERRAL_CODE
+		// Filter the invoices where metadata.referralCode equals COINSNAP_BITCOIN_DONATION_REFERRAL_CODE
 		$filtered_invoices = array_filter($invoices, function ($invoice) {
 			return isset($invoice['metadata']['referralCode'])
-				&& $invoice['metadata']['referralCode'] === BITCOIN_DONATION_REFERRAL_CODE
+				&& $invoice['metadata']['referralCode'] === COINSNAP_BITCOIN_DONATION_REFERRAL_CODE
 				&& $invoice['status'] === 'Settled';
 		});
 		// error_log('BTCPay Response Body: ' . print_r($filtered_invoices, true));
@@ -211,7 +214,7 @@ class Bitcoin_Donation_List
         // Check if we're rendering from database or API response
             $is_db_record = isset($donation->created_at);
             $invoice_id = $is_db_record ? $donation->invoice_id : $donation['id'];
-            $options = get_option('bitcoin_donation_options');
+            $options = get_option('coinsnap_bitcoin_donation_options');
             $provider = $options['provider'];
             $isBtcpay = $provider === 'btcpay';
             $href = ($isBtcpay)
@@ -230,4 +233,4 @@ class Bitcoin_Donation_List
 <?php
 	}
 }
-new Bitcoin_Donation_List();
+new Coinsnap_Bitcoin_Donation_List();
