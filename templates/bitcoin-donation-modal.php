@@ -18,9 +18,6 @@
             <label for="<?php echo esc_html($prefix); ?>address<?php echo esc_html($sufix); ?>">Address</label>
             <input <?php echo $address ? 'required' : ''; ?> type="text" id="<?php echo esc_html($prefix); ?>address<?php echo esc_html($sufix); ?>" placeholder="<?php echo $address ? 'Required' : 'Optional'; ?>">
 
-            <label for="<?php echo esc_html($prefix); ?>donor-message<?php echo esc_html($sufix); ?>">Message</label>
-            <input <?php echo $message ? 'required' : ''; ?> type="text" id="<?php echo esc_html($prefix); ?>donor-message<?php echo esc_html($sufix); ?>" placeholder="<?php echo $message ? 'Required' : 'Optional'; ?>">
-
             <div class="opt-out-wrapper">
                 <label for="<?php echo esc_html($prefix); ?>opt-out<?php echo esc_html($sufix); ?>">Don't display my information</label>
                 <input type="checkbox" id="<?php echo esc_html($prefix); ?>opt-out<?php echo esc_html($sufix); ?>">

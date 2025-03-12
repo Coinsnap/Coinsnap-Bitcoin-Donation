@@ -77,14 +77,13 @@ const addPopupListener = (prefix, sufix, type, exchangeRates) => {
         const lastNameField = document.getElementById(`${prefix}last-name${sufix}`);
         const emailField = document.getElementById(`${prefix}donor-email${sufix}`);
         const addressField = document.getElementById(`${prefix}address${sufix}`);
-        const donorMessageField = document.getElementById(`${prefix}donor-message${sufix}`);
         const optOutField = document.getElementById(`${prefix}opt-out${sufix}`);
         const validForm = !publicDonor || checkRequiredFieds([firstNameField, lastNameField, emailField, addressField]);
         const metadata = {
             donorName: `${firstNameField.value} ${lastNameField.value}`,
             donorEmail: emailField.value,
             donorAddress: addressField.value,
-            donorMessage: donorMessageField.value,
+            donorMessage: message,
             donorOptOut: optOutField.checked,
             formType: type,
             amount: `${amount} ${currency}`,
