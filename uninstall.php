@@ -6,7 +6,9 @@ if (!defined('WP_UNINSTALL_PLUGIN')) {
 
 global $wpdb;
 $tables = array(
-    $wpdb->prefix . 'voting_payments'
+    $wpdb->prefix . 'voting_payments',
+    $wpdb->prefix . 'donation_payments'
+
 );
 
 foreach ($tables as $table) {

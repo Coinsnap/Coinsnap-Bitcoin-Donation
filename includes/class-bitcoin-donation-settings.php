@@ -29,7 +29,7 @@ class Bitcoin_Donation_Settings
             'manage_options',
             'bitcoin_donation',
             [$this, 'bitcoin_donation_options_page'],
-            plugin_dir_url(__FILE__) . 'assets/bitcoin.svg',
+            plugin_dir_url(dirname(__FILE__)) . 'assets/bitcoin.svg',
 
             100
         );

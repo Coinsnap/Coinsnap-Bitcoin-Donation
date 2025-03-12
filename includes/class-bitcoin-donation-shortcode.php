@@ -10,15 +10,34 @@ class Bitcoin_Donation_Shortcode
         add_shortcode('bitcoin_donation', [$this, 'bitcoin_donation_render_shortcode']);
     }
 
+    private function get_template($template_name, $args = [])
+    {
+        if ($args && is_array($args)) {
+            extract($args);
+        }
+
+        $template = plugin_dir_path(__FILE__) . '../templates/' . $template_name . '.php';
+
+        if (file_exists($template)) {
+            include $template;
+        }
+    }
+
+
     function bitcoin_donation_render_shortcode()
     {
         $options = get_option('bitcoin_donation_forms_options');
         $options = is_array($options) ? $options : [];
         $options_general = get_option('bitcoin_donation_options');
         $theme_class = $options_general['theme'] === 'dark' ? 'bitcoin-donation-dark-theme' : 'bitcoin-donation-light-theme';
-        $currency = $options['currency'] ?? 'USD';
         $button_text = $options['button_text'] ?? 'Donate';
         $title_text = $options['title_text'] ?? 'Donate with Bitcoin';
+        $first_name = $options['simple_donation_first_name'];
+        $last_name = $options['simple_donation_last_name'];
+        $email = $options['simple_donation_email'];
+        $address = $options['simple_donation_address'];
+        $message = $options['simple_donation_message'];
+        $public_donors = $options['simple_donation_public_donors'];
         $active = $options['simple_donation_active'] ?? '1';
         if (!$active) {
             ob_start();
@@ -61,20 +80,25 @@ class Bitcoin_Donation_Shortcode
                 </div>
             </div>
 
-            <!-- <label for="bitcoin-donation-amount">Amount (in <?php echo esc_html($currency); ?>):</label>
-            <input type="text" id="bitcoin-donation-amount" step="0.01"> -->
-
-            <!-- <label for="bitcoin-donation-satoshi">Satoshi:</label>
-            <input type="text" id="bitcoin-donation-satoshi"> -->
-
             <label for="bitcoin-donation-message">Message:</label>
             <textarea id="bitcoin-donation-message" class="bitcoin-donation-message" rows="2"></textarea>
-
             <button id="bitcoin-donation-pay"><?php echo esc_html($button_text); ?></button>
+            <div id="bitcoin-donation-blur-overlay" class="blur-overlay"></div>
+            <?php
+            $this->get_template('bitcoin-donation-modal', [
+                'prefix' => 'bitcoin-donation-',
+                'sufix' => '',
+                'first_name' => $first_name == 'mandatory' ? true : false,
+                'last_name' => $last_name == 'mandatory' ? true : false,
+                'email' => $email == 'mandatory' ? true : false,
+                'address' => $address == 'mandatory' ? true : false,
+                'message' => $message == 'mandatory' ? true : false,
+                'public_donors' => $public_donors,
+            ]);
+            ?>
         </div>
 
 <?php
-
         return ob_get_clean();
     }
 }

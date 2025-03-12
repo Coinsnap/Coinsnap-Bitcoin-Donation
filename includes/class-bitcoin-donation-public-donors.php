@@ -88,6 +88,27 @@ class Bitcoin_Donation_Public_Donors
             'single' => true,
             'show_in_rest' => true,
         ]);
+
+        register_meta('post', '_bitcoin_donation_email', [
+            'object_subtype' => 'bitcoin-pds',
+            'type' => 'string',
+            'single' => true,
+            'show_in_rest' => true,
+        ]);
+
+        register_meta('post', '_bitcoin_donation_address', [
+            'object_subtype' => 'bitcoin-pds',
+            'type' => 'string',
+            'single' => true,
+            'show_in_rest' => true,
+        ]);
+
+        register_meta('post', '_bitcoin_donation_payment_id', [
+            'object_subtype' => 'bitcoin-pds',
+            'type' => 'string',
+            'single' => true,
+            'show_in_rest' => true,
+        ]);
     }
 
     public function add_public_donors_metaboxes()
@@ -112,6 +133,9 @@ class Bitcoin_Donation_Public_Donors
         $form_type = get_post_meta($post->ID, '_bitcoin_donation_form_type', true);
         $dont_show = get_post_meta($post->ID, '_bitcoin_donation_dont_show', true);
         $hide = get_post_meta($post->ID, '_bitcoin_donation_hide', true);
+        $email = get_post_meta($post->ID, '_bitcoin_donation_email', true);
+        $address = get_post_meta($post->ID, '_bitcoin_donation_address', true);
+        $payment_id = get_post_meta($post->ID, '_bitcoin_donation_payment_id', true);
 ?>
         <table class="form-table">
             <tr>
@@ -164,6 +188,30 @@ class Bitcoin_Donation_Public_Donors
                     </label>
                 </td>
             </tr>
+            <tr>
+                <th scope="row">
+                    <label for="bitcoin_donation_email"><?php echo esc_html_e('Email', 'bitcoin-donation') ?></label>
+                </th>
+                <td>
+                    <input type="email" id="bitcoin_donation_email" name="bitcoin_donation_email" class="regular-text" value="<?php echo esc_attr($email); ?>">
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">
+                    <label for="bitcoin_donation_address"><?php echo esc_html_e('Address', 'bitcoin-donation') ?></label>
+                </th>
+                <td>
+                    <input type="text" id="bitcoin_donation_address" name="bitcoin_donation_address" class="regular-text" value="<?php echo esc_attr($address); ?>">
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">
+                    <label for="bitcoin_donation_payment_id"><?php echo esc_html_e('Payment ID', 'bitcoin-donation') ?></label>
+                </th>
+                <td>
+                    <input type="text" id="bitcoin_donation_payment_id" name="bitcoin_donation_payment_id" class="regular-text" value="<?php echo esc_attr($payment_id); ?>">
+                </td>
+            </tr>
         </table>
 <?php
     }
@@ -190,6 +238,9 @@ class Bitcoin_Donation_Public_Donors
             'bitcoin_donation_form_type' => 'text',
             'bitcoin_donation_dont_show' => 'boolean',
             'bitcoin_donation_hide' => 'boolean',
+            'bitcoin_donation_email' => 'text',
+            'bitcoin_donation_address' => 'text',
+            'bitcoin_donation_payment_id' => 'text',
         ];
 
         foreach ($fields as $field => $type) {
@@ -208,8 +259,11 @@ class Bitcoin_Donation_Public_Donors
             'cb' => $columns['cb'],
             'title' => $columns['title'],
             'name' => 'Name',
+            'email' => 'Email',
             'amount' => 'Amount',
             'message' => 'Message',
+            'address' => 'Address',
+            'payment_id' => 'Payment ID',
             'form_type' => 'Form Type',
             'dont_show' => 'Don\'t Show',
             'hide' => 'Hide'
@@ -236,6 +290,15 @@ class Bitcoin_Donation_Public_Donors
                 break;
             case 'hide':
                 echo get_post_meta($post_id, '_bitcoin_donation_hide', true) ? '✓' : '✗';
+                break;
+            case 'email':
+                echo esc_html(get_post_meta($post_id, '_bitcoin_donation_email', true));
+                break;
+            case 'address':
+                echo esc_html(get_post_meta($post_id, '_bitcoin_donation_address', true));
+                break;
+            case 'payment_id':
+                echo esc_html(get_post_meta($post_id, '_bitcoin_donation_payment_id', true));
                 break;
         }
     }

@@ -10,6 +10,19 @@ class Bitcoin_Donation_Shortcode_Wide
         add_shortcode('bitcoin_donation_wide', [$this, 'bitcoin_donation_render_shortcode_wide']);
     }
 
+    private function get_template($template_name, $args = [])
+    {
+        if ($args && is_array($args)) {
+            extract($args);
+        }
+
+        $template = plugin_dir_path(__FILE__) . '../templates/' . $template_name . '.php';
+
+        if (file_exists($template)) {
+            include $template;
+        }
+    }
+
     function bitcoin_donation_render_shortcode_wide()
     {
         $options = get_option('bitcoin_donation_forms_options');
@@ -20,6 +33,12 @@ class Bitcoin_Donation_Shortcode_Wide
         $button_text = $options['button_text'] ?? 'Donate';
         $title_text = $options['title_text'] ?? 'Donate with Bitcoin';
         $active = $options['simple_donation_active'] ?? '1';
+        $first_name = $options['simple_donation_first_name'];
+        $last_name = $options['simple_donation_last_name'];
+        $email = $options['simple_donation_email'];
+        $address = $options['simple_donation_address'];
+        $message = $options['simple_donation_message'];
+        $public_donors = $options['simple_donation_public_donors'];
         if (!$active) {
             ob_start();
 ?>
@@ -70,8 +89,22 @@ class Bitcoin_Donation_Shortcode_Wide
                     <label for="bitcoin-donation-message-wide">Message</label>
                     <textarea id="bitcoin-donation-message-wide" class="bitcoin-donation-message wide-message-text-area" required name="message" rows="2"></textarea>
                 </div>
-
             </div>
+            <div id="bitcoin-donation-blur-overlay-wide" class="blur-overlay"></div>
+
+            <?php
+            $this->get_template('bitcoin-donation-modal', [
+                'prefix' => 'bitcoin-donation-',
+                'sufix' => '-wide',
+                'first_name' => $first_name == 'mandatory' ? true : false,
+                'last_name' => $last_name == 'mandatory' ? true : false,
+                'email' => $email == 'mandatory' ? true : false,
+                'address' => $address == 'mandatory' ? true : false,
+                'message' => $message == 'mandatory' ? true : false,
+                'public_donors' => $public_donors,
+            ]);
+            ?>
+
         </div>
 
 <?php

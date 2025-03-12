@@ -179,7 +179,7 @@ class Bitcoin_Donation_Shortcode_Voting
                 <p class="qr-fiat" id="qr-fiat"></p>
                 <div style="position: relative;">
                     <img class="qr-code" style="display: none;" id="qrCode" alt="QR Code">
-                    <img class="qr-code-btc" id="qrCodeBtc" alt="QR Code Btc" src="<?php echo plugin_dir_url(__FILE__) . 'assets/bitcoinqr.svg'; ?>">
+                    <img class="qr-code-btc" id="qrCodeBtc" alt="QR Code Btc" src="<?php echo plugin_dir_url(dirname(__FILE__)) . 'assets/bitcoinqr.svg'; ?>">
                 </div>
                 <details open class="qr-details">
                     <summary id="qr-summary" class="qr-summary">Details <span class="qr-dropdown">&#9660;</span></summary>
@@ -213,7 +213,7 @@ class Bitcoin_Donation_Shortcode_Voting
             </div>
             <div id="thank-you-popup" class="qr-container">
                 <div class="close-popup">×</div>
-                <img class="checkmark-img" id="checkmark" alt="Checkmark" src="<?php echo plugin_dir_url(__FILE__) . 'assets/checkmark.svg'; ?>">
+                <img class="checkmark-img" id="checkmark" alt="Checkmark" src="<?php echo plugin_dir_url(dirname(__FILE__)) . 'assets/checkmark.svg'; ?>">
                 <h3 style="margin: 10px 0 0 0;">Your vote has been recorded.</h3>
                 <p style="margin: 0px;"><?php echo esc_html($thank_you) ?></p>
             </div>

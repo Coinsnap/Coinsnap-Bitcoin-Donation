@@ -162,21 +162,7 @@ const updateValueField = (amount, fieldName, operation, exchangeRates, currency,
         console.error(`Field with ID "${fieldName}" not found.`);
         return;
     }
-    if (fieldName == 'bitcoin-donation-shoutout-satoshi') { // Min and Premium shoutout amoutns
-        const minAmount = sharedData.minimumShoutoutAmount
-        const premiumAmount = sharedData.premiumShoutoutAmount
-        const satoshi = amount / currencyRate
-        if (satoshi < minAmount) {
-            field.style.color = '#e55e65';
-            premiumAmount.disabled = true
-        } else if (satoshi >= premiumAmount) {
-            field.style.color = '#f7931a';
-            premiumAmount.disabled = false
-        } else {
-            field.style.color = '';
-            premiumAmount.disabled = false
-        }
-    } else if (multi && !isNaN(amount) && currencyRate) {
+    if (multi && !isNaN(amount) && currencyRate) {
         const value = operation == '*' ? amount * currencyRate : amount / currencyRate;
         const decimals = value > 1000 ? 4 : 8;
         const valueDecimal = value.toFixed(operation == '*' ? decimals : 0);
@@ -235,7 +221,8 @@ const createActualInvoice = async (amount, message, lastInputCurrency, name, coi
             orderNumber: message,
             referralCode: 'D19833',
             type: type,
-            name: name
+            name: name,
+            ...metadata //TEST with voting
         }
     };
 
@@ -246,9 +233,9 @@ const createActualInvoice = async (amount, message, lastInputCurrency, name, coi
     } else if (type == 'Multi Amount Donation') {
         requestData.redirectUrl = sharedData?.multiRedirectUrl || window.location.href
     } else if (type == 'Bitcoin Voting') {
-        requestData.metadata.optionId = metadata.optionId
-        requestData.metadata.option = metadata.option
-        requestData.metadata.pollId = metadata.pollId
+        // requestData.metadata.optionId = metadata.optionId
+        // requestData.metadata.option = metadata.option
+        // requestData.metadata.pollId = metadata.pollId
         requestData.metadata.orderNumber = `Voted for ${metadata.option}`
         redirectAutomatically = false //TODO test
     }
@@ -499,4 +486,21 @@ const limitCursorMovement = (e, primaryCurrency) => {
             field.setSelectionRange(satsStart, satsStart);
         }
     }
+}
+
+const hideElementById = (id, prefix = '', sufix = '') => {
+    document.getElementById(`${prefix}${id}${sufix}`).style.display = 'none'
+}
+const hideElementsById = (ids, prefix = '', sufix = '') => {
+    ids.forEach(id => {
+        hideElementById(id, prefix, sufix)
+    })
+}
+const showElementById = (id, display, prefix = '', sufix = '') => {
+    document.getElementById(`${prefix}${id}${sufix}`).style.display = display
+}
+const showElementsById = (ids, display, prefix = '', sufix = '') => {
+    ids.forEach(id => {
+        showElementById(id, display, prefix, sufix)
+    })
 }

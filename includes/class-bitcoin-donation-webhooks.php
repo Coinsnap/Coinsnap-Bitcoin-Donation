@@ -7,6 +7,7 @@ class Bitcoin_Donation_Webhooks
         add_action('rest_api_init', [$this, 'register_webhook_endpoint']);
         add_action('rest_api_init', [$this, 'register_poll_check_endpoint']);
         add_action('rest_api_init', [$this, 'register_poll_results_endpoint']);
+        add_action('rest_api_init', [$this, 'register_check_payment_endpoint']);
     }
 
     public function register_poll_results_endpoint()
@@ -43,6 +44,23 @@ class Bitcoin_Donation_Webhooks
                     'required' => true,
                     'validate_callback' => function ($param) {
                         return is_numeric($param) && $param > 0;
+                    }
+                ]
+            ]
+        ]);
+    }
+
+    public function register_check_payment_endpoint()
+    {
+        register_rest_route('my-plugin/v1', '/check-payment-status/(?P<payment_id>[a-zA-Z0-9]+)', [
+            'methods' => 'GET',
+            'callback' => [$this, 'get_check_payment_status'],
+            'permission_callback' => '__return_true', // TODO: Add proper permissions later
+            'args' => [
+                'payment_id' => [
+                    'required' => true,
+                    'validate_callback' => function ($param) {
+                        return !empty($param);
                     }
                 ]
             ]
@@ -91,6 +109,28 @@ class Bitcoin_Donation_Webhooks
         // Timeout
         return ['status' => 'pending'];
     }
+
+    function get_check_payment_status($request)
+    {
+        $payment_id = $request['payment_id'];
+        $start_time = time();
+        $timeout = 5;
+
+        while (time() - $start_time < $timeout) {
+            global $wpdb;
+            $status = $wpdb->get_var($wpdb->prepare(
+                "SELECT status FROM {$wpdb->prefix}donation_payments WHERE payment_id = %s",
+                $payment_id
+            ));
+            if ($status === 'completed') {
+                return ['status' => 'completed'];
+            }
+            sleep(1);
+        }
+        // Timeout
+        return ['status' => 'pending'];
+    }
+
 
     private function get_webhook_secret()
     {
@@ -153,7 +193,7 @@ class Bitcoin_Donation_Webhooks
                 ),
                 'posts_per_page' => 1,
             );
-            
+
             if (isset($payload_data['metadata']['type']) && $payload_data['metadata']['type'] == "Bitcoin Voting") {
                 global $wpdb;
                 $invoiceId = $payload_data['invoiceId'];
@@ -178,7 +218,48 @@ class Bitcoin_Donation_Webhooks
                         '%s'
                     ]
                 );
-            } else {
+            } else if (isset($payload_data['metadata']['modal'])) {
+                global $wpdb;
+                $invoiceId = $payload_data['invoiceId'];
+                $wpdb->insert(
+                    "{$wpdb->prefix}donation_payments",
+                    [
+                        'payment_id' => $invoiceId,
+                        'status'     => 'completed'
+                    ],
+                    ['%s', '%s']
+                );
+                if (isset($payload_data['metadata']['publicDonor']) && $payload_data['metadata']['publicDonor'] == '1') {
+
+                    $name = $payload_data['metadata']['donorName'];
+                    $email = $payload_data['metadata']['donorEmail'];
+                    $address = $payload_data['metadata']['donorAddress'];
+                    $message = $payload_data['metadata']['donorMessage'];
+                    $opt_out = $payload_data['metadata']['donorOptOut'];
+                    $type = $payload_data['metadata']['formType'];
+                    $amount = $payload_data['metadata']['amount'];
+                    $opt_out_value = filter_var($opt_out, FILTER_VALIDATE_BOOLEAN) ? '1' : '0';
+                    $post_data = array(
+                        'post_title'    => $name,
+                        'post_status'   => 'publish',
+                        'post_type'     => 'bitcoin-pds',
+                        'post_content'  => $message
+                    );
+
+                    $post_id = wp_insert_post($post_data);
+
+                    if ($post_id) {
+                        update_post_meta($post_id, '_bitcoin_donation_donor_name', sanitize_text_field($name));
+                        update_post_meta($post_id, '_bitcoin_donation_amount', sanitize_text_field($amount));
+                        update_post_meta($post_id, '_bitcoin_donation_message', sanitize_text_field($message));
+                        update_post_meta($post_id, '_bitcoin_donation_form_type', sanitize_text_field($type));
+                        update_post_meta($post_id, '_bitcoin_donation_dont_show', $opt_out_value);
+                        update_post_meta($post_id, '_bitcoin_donation_email', sanitize_email($email));
+                        update_post_meta($post_id, '_bitcoin_donation_address', sanitize_text_field($address));
+                        update_post_meta($post_id, '_bitcoin_donation_payment_id', sanitize_text_field($invoiceId));
+                    }
+                }
+            } if(isset($payload_data['metadata']['type']) && $payload_data['metadata']['type'] == "Bitcoin Shoutout") {
 
                 $query = new WP_Query($args);
 

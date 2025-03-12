@@ -197,6 +197,23 @@ class Bitcoin_Donation_Forms
 			]
 		);
 
+		add_settings_field(
+			'simple_donation_message',
+			'Message',
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_simple_donation_section',
+			[
+				'label_for' => 'simple_donation_message',
+				'type'      => 'select',
+				'options'   => [
+					'optional' => 'Optional',
+					'mandatory' => 'Mandatory'
+				],
+				'class' => 'public-donor-field simple-donation'
+			]
+		);
+
 		//Shoutout Section
 		add_settings_section(
 			'bitcoin_donation_shoutout_donation_section',
@@ -397,6 +414,23 @@ class Bitcoin_Donation_Forms
 			'bitcoin_donation_shoutout_donation_section',
 			[
 				'label_for' => 'shoutout_address',
+				'type'      => 'select',
+				'options'   => [
+					'optional' => 'Optional',
+					'mandatory' => 'Mandatory'
+				],
+				'class' => 'public-donor-field shoutout'
+			]
+		);
+
+		add_settings_field(
+			'shoutout_message',
+			'Message',
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_shoutout_donation_section',
+			[
+				'label_for' => 'shoutout_message',
 				'type'      => 'select',
 				'options'   => [
 					'optional' => 'Optional',
@@ -641,14 +675,31 @@ class Bitcoin_Donation_Forms
 				'class' => 'public-donor-field multi-amount'
 			]
 		);
+
+		add_settings_field(
+			'multi_amount_message',
+			'Message',
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_message',
+				'type'      => 'select',
+				'options'   => [
+					'optional' => 'Optional',
+					'mandatory' => 'Mandatory'
+				],
+				'class' => 'public-donor-field multi-amount'
+			]
+		);
 	}
 
 	public function sanitize_forms_options($options)
 	{
 		$sanitized = [];
-		
+
 		$sections = ['simple_donation', 'shoutout', 'multi_amount'];
-		$public_donor_fields = ['first_name', 'last_name', 'email', 'address'];
+		$public_donor_fields = ['first_name', 'last_name', 'email', 'address', 'message'];
 		$simple_donation_fields = ['currency', 'button_text', 'title_text', 'default_amount', 'default_message', 'redirect_url'];
 		$shoutout_fields = ['currency', 'button_text', 'title_text', 'default_amount', 'default_message', 'minimum_amount', 'premium_amount', 'redirect_url'];
 		$multi_amount_fields = ['primary_currency', 'fiat_currency', 'button_text', 'title_text', 'default_amount', 'default_message', 'redirect_url', 'default_snap1', 'default_snap2', 'default_snap3'];

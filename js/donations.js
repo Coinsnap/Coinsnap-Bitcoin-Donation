@@ -43,8 +43,14 @@ jQuery(document).ready(function ($) {
 
         fetchCoinsnapExchangeRates().then(rates => {
             exchangeRates = rates
-            if (simpleDonation) { setDefaults(false) }
-            if (wideDonation) { setDefaults(true) }
+            if (simpleDonation) {
+                setDefaults(false)
+                addPopupListener('bitcoin-donation-', '', 'Bitcoin Donation', exchangeRates)
+            }
+            if (wideDonation) {
+                setDefaults(true)
+                addPopupListener('bitcoin-donation-', '-wide', 'Bitcoin Donation', exchangeRates)
+            }
         });
 
         const updateSecondaryCurrency = (wide, primaryId, secondaryId) => {
@@ -91,26 +97,6 @@ jQuery(document).ready(function ($) {
             amountField.val(`${amountValue} ${wide ? selectedCurrencyWide : selectedCurrency}`);
             updateSecondaryCurrency(wide, `bitcoin-donation-amount${widePart}`, `bitcoin-donation-satoshi${widePart}`);
         }
-
-        // Event listeners
-        $('#bitcoin-donation-pay-wide').on('click', () =>
-            handleButtonClickMulti(
-                'bitcoin-donation-pay-wide',
-                'bitcoin-donation-email-wide',
-                'bitcoin-donation-amount-wide',
-                'bitcoin-donation-message-wide',
-                selectedCurrencyWide
-            ));
-
-        $('#bitcoin-donation-pay').on('click', () =>
-            handleButtonClickMulti(
-                'bitcoin-donation-pay',
-                'bitcoin-donation-email',
-                'bitcoin-donation-amount',
-                'bitcoin-donation-message',
-                selectedCurrency
-            ));
-
         // Update secondary values
         $('#bitcoin-donation-amount').on('input', () => handleAmountInput(false));
         $('#bitcoin-donation-amount-wide').on('input', () => handleAmountInput(true));
@@ -126,6 +112,7 @@ jQuery(document).ready(function ($) {
         // Handle currency change
         $('#bitcoin-donation-swap').on('change', () => { handleChangeCurrency(false); });
         $('#bitcoin-donation-swap-wide').on('change', () => { handleChangeCurrency(true); });
+
     }
 
 });

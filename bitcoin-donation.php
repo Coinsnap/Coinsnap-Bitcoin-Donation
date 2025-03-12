@@ -26,6 +26,7 @@ require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shouto
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-webhooks.php';
 
 register_activation_hook(__FILE__, 'bitcoin_donation_create_voting_payments_table');
+register_activation_hook(__FILE__, 'bitcoin_donation_create_donation_payments_table');
 register_deactivation_hook(__FILE__, 'bitcoin_donation_deactivate');
 
 function bitcoin_donation_deactivate()
@@ -52,6 +53,24 @@ function bitcoin_donation_create_voting_payments_table()
     require_once ABSPATH . 'wp-admin/includes/upgrade.php';
     dbDelta($sql);
 }
+
+function bitcoin_donation_create_donation_payments_table()
+{
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'donation_payments';
+    $charset_collate = $wpdb->get_charset_collate();
+
+    $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+        id BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        payment_id VARCHAR(255) NOT NULL,
+        status VARCHAR(50) NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    ) $charset_collate;";
+
+    require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+    dbDelta($sql);
+}
+
 
 class Bitcoin_Donation
 {
@@ -150,6 +169,14 @@ class Bitcoin_Donation
         //Localize script for donationData
         wp_enqueue_script('bitcoin-donation-form-script', plugin_dir_url(__FILE__) . 'js/donations.js', ['jquery'], '1.0.0', true);
         wp_localize_script('bitcoin-donation-form-script', 'formData', [
+            'currency' => $forms_options['currency'],
+            'defaultAmount' => $forms_options['default_amount'],
+            'defaultMessage' => $forms_options['default_message'],
+        ]);
+
+        //Localize script for popupData
+        wp_enqueue_script('bitcoin-donation-popup-script', plugin_dir_url(__FILE__) . 'js/popup.js', ['jquery'], '1.0.0', true);
+        wp_localize_script('bitcoin-donation-popup-script', 'popupData', [
             'currency' => $forms_options['currency'],
             'defaultAmount' => $forms_options['default_amount'],
             'defaultMessage' => $forms_options['default_message'],

@@ -4,23 +4,6 @@ jQuery(document).ready(function ($) {
         var exchangeRates = {};
         var retryId = '';
 
-        const hideElementById = (id) => {
-            document.getElementById(id).style.display = 'none'
-        }
-        const hideElementsById = (ids) => {
-            ids.forEach(id => {
-                hideElementById(id)
-            })
-        }
-        const showElementById = (id, display) => {
-            document.getElementById(id).style.display = display
-        }
-        const showElementsById = (ids, display) => {
-            ids.forEach(id => {
-                showElementById(id, display)
-            })
-        }
-
         if (document.getElementById('bitcoin-voting-form')) {
             fetchCoinsnapExchangeRates().then(rates => {
                 exchangeRates = rates
