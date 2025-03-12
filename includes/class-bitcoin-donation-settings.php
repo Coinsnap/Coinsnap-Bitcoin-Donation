@@ -72,20 +72,6 @@ class Bitcoin_Donation_Settings
             'manage_options',
             'edit.php?post_type=bitcoin-polls'
         );
-        add_submenu_page(
-            'bitcoin_donation',
-            'Crowdfundings',
-            'Crowdfundings',
-            'manage_options',
-            'edit.php?post_type=bitcoin-cfs'
-        );
-        add_submenu_page(
-            'bitcoin_donation',
-            'Public Donors',
-            'Public Donors',
-            'manage_options',
-            'edit.php?post_type=bitcoin-pds'
-        );
     }
 
     function bitcoin_donation_settings_init()

@@ -117,86 +117,6 @@ class Bitcoin_Donation_Forms
 			]
 		);
 
-		add_settings_field(
-			'simple_donation_public_donors',
-			'Public Donors',
-			[$this, 'render_field'],
-			'bitcoin_donation',
-			'bitcoin_donation_simple_donation_section',
-			[
-				'label_for' => 'simple_donation_public_donors',
-				'type'      => 'checkbox'
-			]
-		);
-
-		add_settings_field(
-			'simple_donation_first_name',
-			'First Name',
-			[$this, 'render_field'],
-			'bitcoin_donation',
-			'bitcoin_donation_simple_donation_section',
-			[
-				'label_for' => 'simple_donation_first_name',
-				'type'      => 'select',
-				'options'   => [
-					'optional' => 'Optional',
-					'mandatory' => 'Mandatory'
-				],
-				'class' => 'public-donor-field simple-donation'
-			]
-		);
-
-		add_settings_field(
-			'simple_donation_last_name',
-			'Last Name',
-			[$this, 'render_field'],
-			'bitcoin_donation',
-			'bitcoin_donation_simple_donation_section',
-			[
-				'label_for' => 'simple_donation_last_name',
-				'type'      => 'select',
-				'options'   => [
-					'optional' => 'Optional',
-					'mandatory' => 'Mandatory'
-				],
-				'class' => 'public-donor-field simple-donation'
-			]
-		);
-
-		add_settings_field(
-			'simple_donation_email',
-			'Email',
-			[$this, 'render_field'],
-			'bitcoin_donation',
-			'bitcoin_donation_simple_donation_section',
-			[
-				'label_for' => 'simple_donation_email',
-				'type'      => 'select',
-				'options'   => [
-					'optional' => 'Optional',
-					'mandatory' => 'Mandatory'
-				],
-				'class' => 'public-donor-field simple-donation'
-			]
-		);
-
-		add_settings_field(
-			'simple_donation_address',
-			'Address',
-			[$this, 'render_field'],
-			'bitcoin_donation',
-			'bitcoin_donation_simple_donation_section',
-			[
-				'label_for' => 'simple_donation_address',
-				'type'      => 'select',
-				'options'   => [
-					'optional' => 'Optional',
-					'mandatory' => 'Mandatory'
-				],
-				'class' => 'public-donor-field simple-donation'
-			]
-		);
-
 		//Shoutout Section
 		add_settings_section(
 			'bitcoin_donation_shoutout_donation_section',
@@ -323,86 +243,6 @@ class Bitcoin_Donation_Forms
 			[
 				'label_for' => 'shoutout_redirect_url',
 				'type'      => 'text'
-			]
-		);
-
-		add_settings_field(
-			'shoutout_public_donors',
-			'Public Donors',
-			[$this, 'render_field'],
-			'bitcoin_donation',
-			'bitcoin_donation_shoutout_donation_section',
-			[
-				'label_for' => 'shoutout_public_donors',
-				'type'      => 'checkbox'
-			]
-		);
-
-		add_settings_field(
-			'shoutout_first_name',
-			'First Name',
-			[$this, 'render_field'],
-			'bitcoin_donation',
-			'bitcoin_donation_shoutout_donation_section',
-			[
-				'label_for' => 'shoutout_first_name',
-				'type'      => 'select',
-				'options'   => [
-					'optional' => 'Optional',
-					'mandatory' => 'Mandatory'
-				],
-				'class' => 'public-donor-field shoutout'
-			]
-		);
-
-		add_settings_field(
-			'shoutout_last_name',
-			'Last Name',
-			[$this, 'render_field'],
-			'bitcoin_donation',
-			'bitcoin_donation_shoutout_donation_section',
-			[
-				'label_for' => 'shoutout_last_name',
-				'type'      => 'select',
-				'options'   => [
-					'optional' => 'Optional',
-					'mandatory' => 'Mandatory'
-				],
-				'class' => 'public-donor-field shoutout'
-			]
-		);
-
-		add_settings_field(
-			'shoutout_email',
-			'Email',
-			[$this, 'render_field'],
-			'bitcoin_donation',
-			'bitcoin_donation_shoutout_donation_section',
-			[
-				'label_for' => 'shoutout_email',
-				'type'      => 'select',
-				'options'   => [
-					'optional' => 'Optional',
-					'mandatory' => 'Mandatory'
-				],
-				'class' => 'public-donor-field shoutout'
-			]
-		);
-
-		add_settings_field(
-			'shoutout_address',
-			'Address',
-			[$this, 'render_field'],
-			'bitcoin_donation',
-			'bitcoin_donation_shoutout_donation_section',
-			[
-				'label_for' => 'shoutout_address',
-				'type'      => 'select',
-				'options'   => [
-					'optional' => 'Optional',
-					'mandatory' => 'Mandatory'
-				],
-				'class' => 'public-donor-field shoutout'
 			]
 		);
 
@@ -563,132 +403,112 @@ class Bitcoin_Donation_Forms
 				'required' => true
 			]
 		);
-
-		// Add public donors checkbox for multi amount
-		add_settings_field(
-			'multi_amount_public_donors',
-			'Public Donors',
-			[$this, 'render_field'],
-			'bitcoin_donation',
-			'bitcoin_donation_multi_amount_section',
-			[
-				'label_for' => 'multi_amount_public_donors',
-				'type'      => 'checkbox'
-			]
-		);
-
-		add_settings_field(
-			'multi_amount_first_name',
-			'First Name',
-			[$this, 'render_field'],
-			'bitcoin_donation',
-			'bitcoin_donation_multi_amount_section',
-			[
-				'label_for' => 'multi_amount_first_name',
-				'type'      => 'select',
-				'options'   => [
-					'optional' => 'Optional',
-					'mandatory' => 'Mandatory'
-				],
-				'class' => 'public-donor-field multi-amount'
-			]
-		);
-		add_settings_field(
-			'multi_amount_last_name',
-			'Last Name',
-			[$this, 'render_field'],
-			'bitcoin_donation',
-			'bitcoin_donation_multi_amount_section',
-			[
-				'label_for' => 'multi_amount_last_name',
-				'type'      => 'select',
-				'options'   => [
-					'optional' => 'Optional',
-					'mandatory' => 'Mandatory'
-				],
-				'class' => 'public-donor-field multi-amount'
-			]
-		);
-		add_settings_field(
-			'multi_amount_email',
-			'Email',
-			[$this, 'render_field'],
-			'bitcoin_donation',
-			'bitcoin_donation_multi_amount_section',
-			[
-				'label_for' => 'multi_amount_email',
-				'type'      => 'select',
-				'options'   => [
-					'optional' => 'Optional',
-					'mandatory' => 'Mandatory'
-				],
-				'class' => 'public-donor-field multi-amount'
-			]
-		);
-		add_settings_field(
-			'multi_amount_address',
-			'Address',
-			[$this, 'render_field'],
-			'bitcoin_donation',
-			'bitcoin_donation_multi_amount_section',
-			[
-				'label_for' => 'multi_amount_address',
-				'type'      => 'select',
-				'options'   => [
-					'optional' => 'Optional',
-					'mandatory' => 'Mandatory'
-				],
-				'class' => 'public-donor-field multi-amount'
-			]
-		);
 	}
 
 	public function sanitize_forms_options($options)
 	{
 		$sanitized = [];
-		
-		$sections = ['simple_donation', 'shoutout', 'multi_amount'];
-		$public_donor_fields = ['first_name', 'last_name', 'email', 'address'];
-		$simple_donation_fields = ['currency', 'button_text', 'title_text', 'default_amount', 'default_message', 'redirect_url'];
-		$shoutout_fields = ['currency', 'button_text', 'title_text', 'default_amount', 'default_message', 'minimum_amount', 'premium_amount', 'redirect_url'];
-		$multi_amount_fields = ['primary_currency', 'fiat_currency', 'button_text', 'title_text', 'default_amount', 'default_message', 'redirect_url', 'default_snap1', 'default_snap2', 'default_snap3'];
 
-		foreach ($simple_donation_fields as $field) {
-			$field_name = "{$field}";
-			if (isset($options[$field_name])) {
-				$sanitized[$field_name] = sanitize_text_field($options[$field_name]);
-			}
-		}
-
-		foreach ($shoutout_fields as $field) {
-			$field_name = "shoutout_{$field}";
-			if (isset($options[$field_name])) {
-				$sanitized[$field_name] = sanitize_text_field($options[$field_name]);
-			}
-		}
-
-		foreach ($multi_amount_fields as $field) {
-			$field_name = "multi_amount_{$field}";
-			if (isset($options[$field_name])) {
-				$sanitized[$field_name] = sanitize_text_field($options[$field_name]);
-			}
-		}
-
-		foreach ($sections as $section) {
-			foreach ($public_donor_fields as $field) {
-				$field_name = "{$section}_{$field}";
-				if (isset($options[$field_name])) {
-					$sanitized[$field_name] = sanitize_text_field($options[$field_name]);
-				}
-			}
-		}
-
-		$sanitized['simple_donation_public_donors'] = isset($options['simple_donation_public_donors']) ? true : false;
+		// Add sanitization for active checkboxes
 		$sanitized['simple_donation_active'] = isset($options['simple_donation_active']) ? true : false;
-		$sanitized['shoutout_public_donors'] = isset($options['shoutout_public_donors']) ? true : false;
 		$sanitized['shoutout_donation_active'] = isset($options['shoutout_donation_active']) ? true : false;
-		$sanitized['multi_amount_public_donors'] = isset($options['multi_amount_public_donors']) ? true : false;
 		$sanitized['multi_amount_donation_active'] = isset($options['multi_amount_donation_active']) ? true : false;
+
+		if (isset($options['currency'])) {
+			$sanitized['currency'] = sanitize_text_field($options['currency']);
+		}
+
+		if (isset($options['button_text'])) {
+			$sanitized['button_text'] = sanitize_text_field($options['button_text']);
+		}
+
+		if (isset($options['title_text'])) {
+			$sanitized['title_text'] = sanitize_text_field($options['title_text']);
+		}
+
+		if (isset($options['default_amount'])) {
+			$sanitized['default_amount'] = sanitize_text_field($options['default_amount']);
+		}
+
+		if (isset($options['default_message'])) {
+			$sanitized['default_message'] = sanitize_text_field($options['default_message']);
+		}
+
+		if (isset($options['redirect_url'])) {
+			$sanitized['redirect_url'] = sanitize_text_field($options['redirect_url']);
+		}
+
+		if (isset($options['shoutout_currency'])) {
+			$sanitized['shoutout_currency'] = sanitize_text_field($options['shoutout_currency']);
+		}
+
+		if (isset($options['shoutout_button_text'])) {
+			$sanitized['shoutout_button_text'] = sanitize_text_field($options['shoutout_button_text']);
+		}
+
+		if (isset($options['shoutout_title_text'])) {
+			$sanitized['shoutout_title_text'] = sanitize_text_field($options['shoutout_title_text']);
+		}
+
+		if (isset($options['shoutout_default_amount'])) {
+			$sanitized['shoutout_default_amount'] = sanitize_text_field($options['shoutout_default_amount']);
+		}
+
+		if (isset($options['shoutout_default_message'])) {
+			$sanitized['shoutout_default_message'] = sanitize_text_field($options['shoutout_default_message']);
+		}
+
+		if (isset($options['shoutout_minimum_amount'])) {
+			$sanitized['shoutout_minimum_amount'] = sanitize_text_field($options['shoutout_minimum_amount']);
+		}
+
+		if (isset($options['shoutout_premium_amount'])) {
+			$sanitized['shoutout_premium_amount'] = sanitize_text_field($options['shoutout_premium_amount']);
+		}
+
+		if (isset($options['shoutout_redirect_url'])) {
+			$sanitized['shoutout_redirect_url'] = sanitize_text_field($options['shoutout_redirect_url']);
+		}
+
+		if (isset($options['multi_amount_primary_currency'])) {
+			$sanitized['multi_amount_primary_currency'] = sanitize_text_field($options['multi_amount_primary_currency']);
+		}
+
+		if (isset($options['multi_amount_fiat_currency'])) {
+			$sanitized['multi_amount_fiat_currency'] = sanitize_text_field($options['multi_amount_fiat_currency']);
+		}
+
+		if (isset($options['multi_amount_button_text'])) {
+			$sanitized['multi_amount_button_text'] = sanitize_text_field($options['multi_amount_button_text']);
+		}
+
+		if (isset($options['multi_amount_title_text'])) {
+			$sanitized['multi_amount_title_text'] = sanitize_text_field($options['multi_amount_title_text']);
+		}
+
+		if (isset($options['multi_amount_default_amount'])) {
+			$sanitized['multi_amount_default_amount'] = sanitize_text_field($options['multi_amount_default_amount']);
+		}
+
+		if (isset($options['multi_amount_default_message'])) {
+			$sanitized['multi_amount_default_message'] = sanitize_text_field($options['multi_amount_default_message']);
+		}
+
+		if (isset($options['multi_amount_redirect_url'])) {
+			$sanitized['multi_amount_redirect_url'] = sanitize_text_field($options['multi_amount_redirect_url']);
+		}
+
+		if (isset($options['multi_amount_default_snap1'])) {
+			$sanitized['multi_amount_default_snap1'] = sanitize_text_field($options['multi_amount_default_snap1']);
+		}
+
+		if (isset($options['multi_amount_default_snap2'])) {
+			$sanitized['multi_amount_default_snap2'] = sanitize_text_field($options['multi_amount_default_snap2']);
+		}
+
+		if (isset($options['multi_amount_default_snap3'])) {
+			$sanitized['multi_amount_default_snap3'] = sanitize_text_field($options['multi_amount_default_snap3']);
+		}
 
 		return $sanitized;
 	}
@@ -879,30 +699,6 @@ class Bitcoin_Donation_Forms
 				?>
 			</form>
 		</div>
-		<script type="text/javascript">
-			jQuery(document).ready(function($) {
-				function togglePublicDonorFields(section) {
-					var isChecked = $('#' + section + '_public_donors').is(':checked');
-					$('.public-donor-field.' + section.replace(/_/g, '-')).closest('tr').toggle(isChecked);
-				}
-
-				// Initial state
-				togglePublicDonorFields('simple_donation');
-				togglePublicDonorFields('shoutout');
-				togglePublicDonorFields('multi_amount');
-
-				// Change handlers
-				$('#simple_donation_public_donors').change(function() {
-					togglePublicDonorFields('simple_donation');
-				});
-				$('#shoutout_public_donors').change(function() {
-					togglePublicDonorFields('shoutout');
-				});
-				$('#multi_amount_public_donors').change(function() {
-					togglePublicDonorFields('multi_amount');
-				});
-			});
-		</script>
 <?php
 	}
 }

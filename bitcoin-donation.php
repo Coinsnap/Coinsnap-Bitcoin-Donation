@@ -13,8 +13,6 @@ if (!defined('ABSPATH')) {
 // Plugin settings
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shoutout-posts.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-voting-polls.php';
-require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-crowdfundings.php';
-require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-public-donors.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-settings.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shortcode.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shortcode-wide.php';
