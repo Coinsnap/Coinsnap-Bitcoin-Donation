@@ -29,6 +29,7 @@ class Bitcoin_Donation_Shortcode_Multi_Amount_Wide
         $options_general = get_option('bitcoin_donation_options');
         $options = is_array($options) ? $options : [];
         $theme_class = $options_general['theme'] === 'dark' ? 'bitcoin-donation-dark-theme' : 'bitcoin-donation-light-theme';
+        $modal_theme = $options_general['theme'] === 'dark' ? 'dark-theme' : 'light-theme';
         $button_text = $options['multi_amount_button_text'] ?? 'Donate';
         $title_text = $options['multi_amount_title_text'] ?? 'Donate with Bitcoin';
         $snap1 = $options['multi_amount_default_snap1'] ?? '1';
@@ -58,7 +59,7 @@ class Bitcoin_Donation_Shortcode_Multi_Amount_Wide
 
         ob_start();
         ?>
-        <div class="bitcoin-donation-donation-form <?php echo esc_attr($theme_class); ?> wide-form">
+        <div class="bitcoin-donation-donation-form <?php echo esc_attr($theme_class); echo " ". esc_attr($modal_theme); ?> wide-form">
             <div class="bitcoin-donation-multi-wide-wrapper">
                 <div class="bitcoin-donation-title-wrapper">
                     <h3><?php echo esc_html($title_text); ?></h3>

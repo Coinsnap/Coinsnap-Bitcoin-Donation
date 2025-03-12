@@ -30,6 +30,7 @@ class Bitcoin_Donation_Shortcode
         $options = is_array($options) ? $options : [];
         $options_general = get_option('bitcoin_donation_options');
         $theme_class = $options_general['theme'] === 'dark' ? 'bitcoin-donation-dark-theme' : 'bitcoin-donation-light-theme';
+        $modal_theme = $options_general['theme'] === 'dark' ? 'dark-theme' : 'light-theme';
         $button_text = $options['button_text'] ?? 'Donate';
         $title_text = $options['title_text'] ?? 'Donate with Bitcoin';
         $first_name = $options['simple_donation_first_name'];
@@ -56,7 +57,7 @@ class Bitcoin_Donation_Shortcode
 
         ob_start();
         ?>
-        <div class="bitcoin-donation-donation-form <?php echo esc_attr($theme_class); ?> narrow-form">
+        <div class="bitcoin-donation-donation-form <?php echo esc_attr($theme_class); echo " ". esc_attr($modal_theme) ?> narrow-form">
             <div class="bitcoin-donation-title-wrapper">
                 <h3><?php echo esc_html($title_text); ?></h3>
                 <select id="bitcoin-donation-swap" class="currency-swapper">

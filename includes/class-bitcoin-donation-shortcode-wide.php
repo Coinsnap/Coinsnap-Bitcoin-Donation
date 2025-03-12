@@ -29,7 +29,7 @@ class Bitcoin_Donation_Shortcode_Wide
         $options = is_array($options) ? $options : [];
         $options_general = get_option('bitcoin_donation_options');
         $theme_class = $options_general['theme'] === 'dark' ? 'bitcoin-donation-dark-theme' : 'bitcoin-donation-light-theme';
-        $currency = $options['currency'] ?? 'USD';
+        $modal_theme = $options_general['theme'] === 'dark' ? 'dark-theme' : 'light-theme';
         $button_text = $options['button_text'] ?? 'Donate';
         $title_text = $options['title_text'] ?? 'Donate with Bitcoin';
         $active = $options['simple_donation_active'] ?? '1';
@@ -56,7 +56,7 @@ class Bitcoin_Donation_Shortcode_Wide
 
         ob_start();
         ?>
-        <div id="bitcoin-donation-form-wide" class="bitcoin-donation-donation-form <?php echo esc_attr($theme_class); ?> wide-form">
+        <div id="bitcoin-donation-form-wide" class="bitcoin-donation-donation-form <?php echo esc_attr($theme_class); echo " ". esc_attr($modal_theme) ?> wide-form">
             <div class="bitcoin-donation-title-wrapper">
                 <h3><?php echo esc_html($title_text); ?></h3>
                 <select style="max-width: 172px;" id="bitcoin-donation-swap-wide" class="currency-swapper">
@@ -74,7 +74,7 @@ class Bitcoin_Donation_Shortcode_Wide
                 <div class="bitcoin-donation-wide-up">
 
                     <div class="shoutout-input-label">
-                        <label for="bitcoin-donation-amount-wide">Amount (in <?php echo esc_html($currency); ?>)</label>
+                        <label for="bitcoin-donation-amount-wide">Amount</label>
                         <div class="amount-wrapper">
                             <input type="text" id="bitcoin-donation-amount-wide">
                             <div class="secondary-amount">
