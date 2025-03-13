@@ -662,6 +662,22 @@
   font-weight: normal;
 }
 
-.qr-container button{
-  width: 100%!important;
+.qr-container button {
+  width: 100% !important;
+}
+
+.public-donor-list-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.bitcoin-donation-pagination {
+  text-align: right;
+  margin-top: 12px;
+}
+
+.bitcoin-donation-pagination .current{
+  color: #3498db;
 }
