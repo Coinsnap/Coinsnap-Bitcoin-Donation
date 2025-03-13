@@ -140,7 +140,8 @@ class Bitcoin_Donation_Forms
 				'type'      => 'select',
 				'options'   => [
 					'optional' => 'Optional',
-					'mandatory' => 'Mandatory'
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
 				],
 				'class' => 'public-donor-field simple-donation'
 			]
@@ -157,7 +158,8 @@ class Bitcoin_Donation_Forms
 				'type'      => 'select',
 				'options'   => [
 					'optional' => 'Optional',
-					'mandatory' => 'Mandatory'
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
 				],
 				'class' => 'public-donor-field simple-donation'
 			]
@@ -174,7 +176,8 @@ class Bitcoin_Donation_Forms
 				'type'      => 'select',
 				'options'   => [
 					'optional' => 'Optional',
-					'mandatory' => 'Mandatory'
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
 				],
 				'class' => 'public-donor-field simple-donation'
 			]
@@ -191,7 +194,8 @@ class Bitcoin_Donation_Forms
 				'type'      => 'select',
 				'options'   => [
 					'optional' => 'Optional',
-					'mandatory' => 'Mandatory'
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
 				],
 				'class' => 'public-donor-field simple-donation'
 			]
@@ -349,7 +353,8 @@ class Bitcoin_Donation_Forms
 				'type'      => 'select',
 				'options'   => [
 					'optional' => 'Optional',
-					'mandatory' => 'Mandatory'
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
 				],
 				'class' => 'public-donor-field shoutout'
 			]
@@ -366,7 +371,8 @@ class Bitcoin_Donation_Forms
 				'type'      => 'select',
 				'options'   => [
 					'optional' => 'Optional',
-					'mandatory' => 'Mandatory'
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
 				],
 				'class' => 'public-donor-field shoutout'
 			]
@@ -383,7 +389,8 @@ class Bitcoin_Donation_Forms
 				'type'      => 'select',
 				'options'   => [
 					'optional' => 'Optional',
-					'mandatory' => 'Mandatory'
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
 				],
 				'class' => 'public-donor-field shoutout'
 			]
@@ -400,7 +407,8 @@ class Bitcoin_Donation_Forms
 				'type'      => 'select',
 				'options'   => [
 					'optional' => 'Optional',
-					'mandatory' => 'Mandatory'
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
 				],
 				'class' => 'public-donor-field shoutout'
 			]
@@ -588,7 +596,8 @@ class Bitcoin_Donation_Forms
 				'type'      => 'select',
 				'options'   => [
 					'optional' => 'Optional',
-					'mandatory' => 'Mandatory'
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
 				],
 				'class' => 'public-donor-field multi-amount'
 			]
@@ -604,7 +613,8 @@ class Bitcoin_Donation_Forms
 				'type'      => 'select',
 				'options'   => [
 					'optional' => 'Optional',
-					'mandatory' => 'Mandatory'
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
 				],
 				'class' => 'public-donor-field multi-amount'
 			]
@@ -620,7 +630,8 @@ class Bitcoin_Donation_Forms
 				'type'      => 'select',
 				'options'   => [
 					'optional' => 'Optional',
-					'mandatory' => 'Mandatory'
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
 				],
 				'class' => 'public-donor-field multi-amount'
 			]
@@ -636,7 +647,8 @@ class Bitcoin_Donation_Forms
 				'type'      => 'select',
 				'options'   => [
 					'optional' => 'Optional',
-					'mandatory' => 'Mandatory'
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
 				],
 				'class' => 'public-donor-field multi-amount'
 			]
@@ -956,7 +968,7 @@ class Bitcoin_Donation_Forms
 				<a href="#coinsnap" class="nav-tab" data-tab="simple-donation">Donation Button</a>
 				<a href="#btcpay" class="nav-tab" data-tab="shoutout-donation">Shoutout Donation</a>
 				<a href="#multi" class="nav-tab" data-tab="multi-amount-donation">Multi Amount Donation</a>
-				<a href="#donor-wall" class="nav-tab" data-tab="donor-wall">Public Donor Wall</a>
+				<!-- <a href="#donor-wall" class="nav-tab" data-tab="donor-wall">Public Donor Wall</a> -->
 			</h2>
 
 			<form method="post" action="options.php">

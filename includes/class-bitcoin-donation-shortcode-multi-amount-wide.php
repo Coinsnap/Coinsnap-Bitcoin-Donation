@@ -59,7 +59,8 @@ class Bitcoin_Donation_Shortcode_Multi_Amount_Wide
 
         ob_start();
         ?>
-        <div class="bitcoin-donation-donation-form <?php echo esc_attr($theme_class); echo " ". esc_attr($modal_theme); ?> wide-form">
+        <div class="bitcoin-donation-donation-form <?php echo esc_attr($theme_class);
+                                                    echo " " . esc_attr($modal_theme); ?> wide-form">
             <div class="bitcoin-donation-multi-wide-wrapper">
                 <div class="bitcoin-donation-title-wrapper">
                     <h3><?php echo esc_html($title_text); ?></h3>
@@ -126,11 +127,11 @@ class Bitcoin_Donation_Shortcode_Multi_Amount_Wide
             $this->get_template('bitcoin-donation-modal', [
                 'prefix' => 'bitcoin-donation-',
                 'sufix' => '-multi-wide',
-                'first_name' => $first_name == 'mandatory' ? true : false,
-                'last_name' => $last_name == 'mandatory' ? true : false,
-                'email' => $email == 'mandatory' ? true : false,
-                'address' => $address == 'mandatory' ? true : false,
-                'message' => $message == 'mandatory' ? true : false,
+                'first_name' => $first_name,
+                'last_name' => $last_name,
+                'email' => $email,
+                'address' => $address,
+                'message' => $message,
                 'public_donors' => $public_donors,
             ]);
             ?>

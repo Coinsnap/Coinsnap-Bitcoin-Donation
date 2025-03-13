@@ -57,7 +57,8 @@ class Bitcoin_Donation_Shortcode
 
         ob_start();
         ?>
-        <div class="bitcoin-donation-donation-form <?php echo esc_attr($theme_class); echo " ". esc_attr($modal_theme) ?> narrow-form">
+        <div class="bitcoin-donation-donation-form <?php echo esc_attr($theme_class);
+                                                    echo " " . esc_attr($modal_theme) ?> narrow-form">
             <div class="bitcoin-donation-title-wrapper">
                 <h3><?php echo esc_html($title_text); ?></h3>
                 <select id="bitcoin-donation-swap" class="currency-swapper">
@@ -89,11 +90,11 @@ class Bitcoin_Donation_Shortcode
             $this->get_template('bitcoin-donation-modal', [
                 'prefix' => 'bitcoin-donation-',
                 'sufix' => '',
-                'first_name' => $first_name == 'mandatory' ? true : false,
-                'last_name' => $last_name == 'mandatory' ? true : false,
-                'email' => $email == 'mandatory' ? true : false,
-                'address' => $address == 'mandatory' ? true : false,
-                'message' => $message == 'mandatory' ? true : false,
+                'first_name' => $first_name,
+                'last_name' => $last_name,
+                'email' => $email,
+                'address' => $address,
+                'message' => $message,
                 'public_donors' => $public_donors,
             ]);
             ?>

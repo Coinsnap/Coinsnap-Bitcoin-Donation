@@ -60,7 +60,8 @@ class Bitcoin_Donation_Shoutouts_Form
         ob_start();
         ?>
         <div id="bitcoin-donation-shoutouts-form" class="bitcoin-donation-donation-form">
-            <div class="shoutout-form-wrapper <?php echo esc_attr($theme_class); echo " ". esc_attr($modal_theme) ?>">
+            <div class="shoutout-form-wrapper <?php echo esc_attr($theme_class);
+                                                echo " " . esc_attr($modal_theme) ?>">
                 <form method="post">
                     <?php wp_nonce_field('shoutout_nonce', 'shoutout_nonce'); ?>
                     <input type="hidden" name="shoutout_submitted" value="1">
@@ -118,11 +119,11 @@ class Bitcoin_Donation_Shoutouts_Form
             $this->get_template('bitcoin-donation-modal', [
                 'prefix' => 'bitcoin-donation-shoutout-',
                 'sufix' => '',
-                'first_name' => $first_name == 'mandatory' ? true : false,
-                'last_name' => $last_name == 'mandatory' ? true : false,
-                'email' => $email == 'mandatory' ? true : false,
-                'address' => $address == 'mandatory' ? true : false,
-                'message' => $message == 'mandatory' ? true : false,
+                'first_name' => $first_name,
+                'last_name' => $last_name,
+                'email' => $email,
+                'address' => $address,
+                'message' => $message,
                 'public_donors' => $public_donors,
             ]);
             ?>

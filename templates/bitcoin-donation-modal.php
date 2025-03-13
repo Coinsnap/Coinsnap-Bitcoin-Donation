@@ -6,27 +6,45 @@
     <div id="<?php echo esc_html($prefix); ?>public-donor-popup<?php echo esc_html($sufix); ?>" class="public-donor-popup">
         <h3 style="margin-bottom: 24px; font-weight: bold">Donor Information</h3>
         <form class="public-donor-form">
-            <label for="<?php echo esc_html($prefix); ?>first-name<?php echo esc_html($sufix); ?>">First Name</label>
-            <input <?php echo $first_name ? 'required' : ''; ?> type="text" id="<?php echo esc_html($prefix); ?>first-name<?php echo esc_html($sufix); ?>" placeholder="<?php echo $first_name ? 'Required' : 'Optional'; ?>">
+            <?php if ($first_name !== 'hidden'): ?>
+                <label for="<?php echo esc_html($prefix); ?>first-name<?php echo esc_html($sufix); ?>">First Name</label>
+                <input <?php echo $first_name === 'mandatory' ? 'required' : ''; ?>
+                    type="text"
+                    id="<?php echo esc_html($prefix); ?>first-name<?php echo esc_html($sufix); ?>"
+                    placeholder="<?php echo $first_name === 'mandatory' ? 'Required' : 'Optional'; ?>">
+            <?php endif; ?>
 
-            <label for="<?php echo esc_html($prefix); ?>last-name<?php echo esc_html($sufix); ?>">Last Name</label>
-            <input <?php echo $last_name ? 'required' : ''; ?> type="text" id="<?php echo esc_html($prefix); ?>last-name<?php echo esc_html($sufix); ?>" placeholder="<?php echo $last_name ? 'Required' : 'Optional'; ?>">
+            <?php if ($last_name !== 'hidden'): ?>
+                <label for="<?php echo esc_html($prefix); ?>last-name<?php echo esc_html($sufix); ?>">Last Name</label>
+                <input <?php echo $last_name === 'mandatory' ? 'required' : ''; ?>
+                    type="text"
+                    id="<?php echo esc_html($prefix); ?>last-name<?php echo esc_html($sufix); ?>"
+                    placeholder="<?php echo $last_name === 'mandatory' ? 'Required' : 'Optional'; ?>">
+            <?php endif; ?>
 
-            <label for="<?php echo esc_html($prefix); ?>donor-email<?php echo esc_html($sufix); ?>">Email</label>
-            <input <?php echo $email ? 'required' : ''; ?> type="text" id="<?php echo esc_html($prefix); ?>donor-email<?php echo esc_html($sufix); ?>" placeholder="<?php echo $email ? 'Required' : 'Optional'; ?>">
+            <?php if ($email !== 'hidden'): ?>
+                <label for="<?php echo esc_html($prefix); ?>donor-email<?php echo esc_html($sufix); ?>">Email</label>
+                <input <?php echo $email === 'mandatory' ? 'required' : ''; ?>
+                    type="email"
+                    id="<?php echo esc_html($prefix); ?>donor-email<?php echo esc_html($sufix); ?>"
+                    placeholder="<?php echo $email === 'mandatory' ? 'Required' : 'Optional'; ?>">
+            <?php endif; ?>
 
-            <label for="<?php echo esc_html($prefix); ?>address<?php echo esc_html($sufix); ?>">Address</label>
-            <input <?php echo $address ? 'required' : ''; ?> type="text" id="<?php echo esc_html($prefix); ?>address<?php echo esc_html($sufix); ?>" placeholder="<?php echo $address ? 'Required' : 'Optional'; ?>">
+            <?php if ($address !== 'hidden'): ?>
+                <label for="<?php echo esc_html($prefix); ?>address<?php echo esc_html($sufix); ?>">Address</label>
+                <input <?php echo $address === 'mandatory' ? 'required' : ''; ?>
+                    type="text"
+                    id="<?php echo esc_html($prefix); ?>address<?php echo esc_html($sufix); ?>"
+                    placeholder="<?php echo $address === 'mandatory' ? 'Required' : 'Optional'; ?>">
+            <?php endif; ?>
 
             <div class="opt-out-wrapper">
                 <label for="<?php echo esc_html($prefix); ?>opt-out<?php echo esc_html($sufix); ?>">Don't display my information</label>
                 <input type="checkbox" id="<?php echo esc_html($prefix); ?>opt-out<?php echo esc_html($sufix); ?>">
             </div>
 
-
             <button type="submit" id="<?php echo esc_html($prefix); ?>public-donors-pay<?php echo esc_html($sufix); ?>">Pay</button>
         </form>
-
     </div>
     <div id="<?php echo esc_html($prefix); ?>payment-loading<?php echo esc_html($sufix); ?>" class="payment-loading">
         <div id="<?php echo esc_html($prefix); ?>qr-spinner<?php echo esc_html($sufix); ?>" class="loader qr-spinner"></div>
