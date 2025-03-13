@@ -43,11 +43,11 @@ jQuery(document).ready(function ($) {
             exchangeRates = rates
             if (multiDonation) {
                 multiDefaults(false)
-                addPopupListener('bitcoin-donation-', '-multi', 'Multi Amount Donation', exchangeRates)
+                addPopupListener('bitcoin-donation-', '-multi', 'Multi Amount Donation', exchangeRates, multiData.redirectUrl)
             }
             if (wideMultiDonation) {
                 multiDefaults(true)
-                addPopupListener('bitcoin-donation-', '-multi-wide', 'Multi Amount Donation', exchangeRates)
+                addPopupListener('bitcoin-donation-', '-multi-wide', 'Multi Amount Donation', exchangeRates, multiData.redirectUrl)
             }
         });
 

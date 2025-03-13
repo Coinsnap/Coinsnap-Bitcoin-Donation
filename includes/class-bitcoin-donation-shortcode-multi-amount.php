@@ -41,6 +41,8 @@ class Bitcoin_Donation_Shortcode_Multi_Amount
         $email = $options['multi_amount_email'];
         $address = $options['multi_amount_address'];
         $message = $options['multi_amount_message'];
+        $custom = $options['multi_amount_custom_field_visibility'];
+        $custom_name = $options['multi_amount_custom_field_name'];
         $public_donors = $options['multi_amount_public_donors'];
         if (!$active) {
             ob_start();
@@ -125,6 +127,8 @@ class Bitcoin_Donation_Shortcode_Multi_Amount
                 'address' => $address,
                 'message' => $message,
                 'public_donors' => $public_donors,
+                'custom' => $custom,
+                'custom_name' => $custom_name,
             ]);
             ?>
 

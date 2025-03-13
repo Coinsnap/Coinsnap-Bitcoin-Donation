@@ -132,7 +132,8 @@ class Bitcoin_Donation
             'multiPrimary' => $forms_options['multi_amount_primary_currency'],
             'multiFiat' => $forms_options['multi_amount_fiat_currency'],
             'defaultMultiAmount' => $forms_options['multi_amount_default_amount'],
-            'defaultMultiMessage' => $forms_options['multi_amount_default_message']
+            'defaultMultiMessage' => $forms_options['multi_amount_default_message'],
+            'redirectUrl' => $forms_options['multi_amount_redirect_url']
         ]);
 
         // Localize script for shoutoutsData
@@ -143,6 +144,7 @@ class Bitcoin_Donation
             'minimumShoutoutAmount' => $forms_options['shoutout_minimum_amount'],
             'premiumShoutoutAmount' => $forms_options['shoutout_premium_amount'],
             'defaultShoutoutMessage' => $forms_options['shoutout_default_message'],
+            'redirectUrl' => $forms_options['shoutout_redirect_url']
         ]);
 
         // Localize script for sharedData
@@ -173,15 +175,11 @@ class Bitcoin_Donation
             'currency' => $forms_options['currency'],
             'defaultAmount' => $forms_options['default_amount'],
             'defaultMessage' => $forms_options['default_message'],
+            'redirectUrl' => $forms_options['redirect_url'],
         ]);
 
         //Localize script for popupData
         wp_enqueue_script('bitcoin-donation-popup-script', plugin_dir_url(__FILE__) . 'js/popup.js', ['jquery'], '1.0.0', true);
-        wp_localize_script('bitcoin-donation-popup-script', 'popupData', [
-            'currency' => $forms_options['currency'],
-            'defaultAmount' => $forms_options['default_amount'],
-            'defaultMessage' => $forms_options['default_message'],
-        ]);
     }
 
     private function get_webhook_secret()

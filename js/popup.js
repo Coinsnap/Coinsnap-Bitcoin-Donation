@@ -2,7 +2,7 @@
 const checkRequiredFieds = (fields) => {
     let valid = true;
     fields.forEach((field) => {
-        if (field.required && !field.value.trim()) {
+        if (field && field.required && !field.value.trim()) {
             valid = false;
             field.classList.add('error');
             setTimeout(() => {
@@ -13,7 +13,7 @@ const checkRequiredFieds = (fields) => {
     return valid;
 }
 
-const addPopupListener = (prefix, sufix, type, exchangeRates) => {
+const addPopupListener = (prefix, sufix, type, exchangeRates, redirect) => {
     let walletHandler = null;
 
     const resetPopup = (prefix, sufix) => {
@@ -76,15 +76,24 @@ const addPopupListener = (prefix, sufix, type, exchangeRates) => {
         const firstNameField = document.getElementById(`${prefix}first-name${sufix}`);
         const lastNameField = document.getElementById(`${prefix}last-name${sufix}`);
         const emailField = document.getElementById(`${prefix}donor-email${sufix}`);
-        const addressField = document.getElementById(`${prefix}address${sufix}`);
+        const streetField = document.getElementById(`${prefix}street${sufix}`);
+        const houseNumberField = document.getElementById(`${prefix}house-number${sufix}`);
+        const postalCodeField = document.getElementById(`${prefix}postal${sufix}`);
+        const cityField = document.getElementById(`${prefix}town${sufix}`);
+        const countryField = document.getElementById(`${prefix}country${sufix}`);
+        const address = `${streetField?.value ?? ''} ${houseNumberField?.value ?? ''}, ${postalCodeField?.value ?? ''} ${cityField?.value ?? ''}, ${countryField?.value ?? ''}`;
         const optOutField = document.getElementById(`${prefix}opt-out${sufix}`);
-        const validForm = !publicDonor || checkRequiredFieds([firstNameField, lastNameField, emailField, addressField]);
+        const customField = document.getElementById(`${prefix}custom${sufix}`);
+        const customNameField = document.getElementById(`${prefix}custom-name${sufix}`);
+
+        const validForm = !publicDonor || checkRequiredFieds([firstNameField, lastNameField, emailField, streetField, houseNumberField, postalCodeField, cityField, countryField, customField]);
         const metadata = {
-            donorName: `${firstNameField.value} ${lastNameField.value}`,
-            donorEmail: emailField.value,
-            donorAddress: addressField.value,
+            donorName: `${firstNameField.value} ${lastNameField?.value ?? ''}`,
+            donorEmail: emailField?.value,
+            donorAddress: address,
             donorMessage: message,
             donorOptOut: optOutField.checked,
+            donorCustom: `${customNameField?.textContent}: ${customField?.value}`,
             formType: type,
             amount: `${amount} ${currency}`,
             publicDonor: publicDonor || 0,
@@ -153,7 +162,10 @@ const addPopupListener = (prefix, sufix, type, exchangeRates) => {
                             showElementById('thank-you-popup', 'flex', prefix, sufix)
                             hideElementById('payment-popup', prefix, sufix)
                             setTimeout(() => {
-                                resetPopup(prefix, sufix)
+                                resetPopup(prefix, sufix);
+                                if (redirect) {
+                                    window.location.href = redirect;
+                                }
                             }, 2000);
 
                         } else if (qrContainer.style.display != 'flex') {

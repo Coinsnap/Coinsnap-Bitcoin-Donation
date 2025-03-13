@@ -38,6 +38,8 @@ class Bitcoin_Donation_Shortcode_Wide
         $email = $options['simple_donation_email'];
         $address = $options['simple_donation_address'];
         $message = $options['simple_donation_message'];
+        $custom = $options['simple_donation_custom_field_visibility'];
+        $custom_name = $options['simple_donation_custom_field_name'];
         $public_donors = $options['simple_donation_public_donors'];
         if (!$active) {
             ob_start();
@@ -103,6 +105,8 @@ class Bitcoin_Donation_Shortcode_Wide
                 'address' => $address,
                 'message' => $message,
                 'public_donors' => $public_donors,
+                'custom' => $custom,
+                'custom_name' => $custom_name,
             ]);
             ?>
 

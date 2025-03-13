@@ -39,7 +39,7 @@ jQuery(document).ready(function ($) {
         fetchCoinsnapExchangeRates().then(rates => {
             exchangeRates = rates
             setDefaults()
-            addPopupListener('bitcoin-donation-shoutout-', '', 'Bitcoin Shoutout', exchangeRates, )
+            addPopupListener('bitcoin-donation-shoutout-', '', 'Bitcoin Shoutout', exchangeRates, shoutoutsData.redirectUrl)
         });
 
         const updateShoutoutInfo = (fieldName) => {

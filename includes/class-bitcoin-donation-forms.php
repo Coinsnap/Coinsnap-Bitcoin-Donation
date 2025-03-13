@@ -201,6 +201,37 @@ class Bitcoin_Donation_Forms
 			]
 		);
 
+		add_settings_field(
+			'simple_donation_custom_field_name',
+			'Custom Field Name',
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_simple_donation_section',
+			[
+				'label_for' => 'simple_donation_custom_field_name',
+				'type'      => 'text',
+				'class' => 'public-donor-field simple-donation'
+			]
+		);
+
+		add_settings_field(
+			'simple_donation_custom_field_visibility',
+			'Custom Field Visibility',
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_simple_donation_section',
+			[
+				'label_for' => 'simple_donation_custom_field_visibility',
+				'type'      => 'select',
+				'options'   => [
+					'optional' => 'Optional',
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
+				],
+				'class' => 'public-donor-field simple-donation'
+			]
+		);
+
 		//Shoutout Section
 		add_settings_section(
 			'bitcoin_donation_shoutout_donation_section',
@@ -404,6 +435,37 @@ class Bitcoin_Donation_Forms
 			'bitcoin_donation_shoutout_donation_section',
 			[
 				'label_for' => 'shoutout_address',
+				'type'      => 'select',
+				'options'   => [
+					'optional' => 'Optional',
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
+				],
+				'class' => 'public-donor-field shoutout'
+			]
+		);
+
+		add_settings_field(
+			'shoutout_custom_field_name',
+			'Custom Field Name',
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_shoutout_donation_section',
+			[
+				'label_for' => 'shoutout_custom_field_name',
+				'type'      => 'text',
+				'class' => 'public-donor-field shoutout'
+			]
+		);
+
+		add_settings_field(
+			'shoutout_custom_field_visibility',
+			'Custom Field Visibility',
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_shoutout_donation_section',
+			[
+				'label_for' => 'shoutout_custom_field_visibility',
 				'type'      => 'select',
 				'options'   => [
 					'optional' => 'Optional',
@@ -654,6 +716,37 @@ class Bitcoin_Donation_Forms
 			]
 		);
 
+		add_settings_field(
+			'multi_amount_custom_field_name',
+			'Custom Field Name',
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_custom_field_name',
+				'type'      => 'text',
+				'class' => 'public-donor-field multi-amount'
+			]
+		);
+
+		add_settings_field(
+			'multi_amount_custom_field_visibility',
+			'Custom Field Visibility',
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_custom_field_visibility',
+				'type'      => 'select',
+				'options'   => [
+					'optional' => 'Optional',
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
+				],
+				'class' => 'public-donor-field multi-amount'
+			]
+		);
+
 		// Public Donor Wall Section
 		add_settings_section(
 			'bitcoin_donation_donor_wall_section',
@@ -741,7 +834,7 @@ class Bitcoin_Donation_Forms
 		$sanitized = [];
 
 		$sections = ['simple_donation', 'shoutout', 'multi_amount'];
-		$public_donor_fields = ['first_name', 'last_name', 'email', 'address'];
+		$public_donor_fields = ['first_name', 'last_name', 'email', 'address', 'custom_field_name', 'custom_field_visibility'];
 		$simple_donation_fields = ['currency', 'button_text', 'title_text', 'default_amount', 'default_message', 'redirect_url'];
 		$shoutout_fields = ['currency', 'button_text', 'title_text', 'default_amount', 'default_message', 'minimum_amount', 'premium_amount', 'redirect_url'];
 		$multi_amount_fields = ['primary_currency', 'fiat_currency', 'button_text', 'title_text', 'default_amount', 'default_message', 'redirect_url', 'default_snap1', 'default_snap2', 'default_snap3'];
@@ -902,7 +995,28 @@ class Bitcoin_Donation_Forms
 			'donor_wall_per_page' => 10,
 			'donor_wall_name' => 'show',
 			'donor_wall_amount' => 'show',
-			'donor_wall_message' => 'show'
+			'donor_wall_message' => 'show',
+			'simple_donation_public_donors' => false,
+			'shoutout_public_donors' => false,
+			'multi_amount_public_donors' => false,
+			'simple_donation_first_name' => 'optional',
+			'simple_donation_last_name' => 'optional',
+			'simple_donation_email' => 'optional',
+			'simple_donation_address' => 'optional',
+			'simple_donation_custom_field_name' => 'Custom Field',
+			'simple_donation_custom_field_visibility' => 'hidden',
+			'shoutout_first_name' => 'optional',
+			'shoutout_last_name' => 'optional',
+			'shoutout_email' => 'optional',
+			'shoutout_address' => 'optional',
+			'shoutout_custom_field_name' => 'Custom Field',
+			'shoutout_custom_field_visibility' => 'hidden',
+			'multi_amount_first_name' => 'optional',
+			'multi_amount_last_name' => 'optional',
+			'multi_amount_email' => 'optional',
+			'multi_amount_address' => 'optional',
+			'multi_amount_custom_field_name' => 'Custom Field',
+			'multi_amount_custom_field_visibility' => 'hidden',
 		];
 		if ($field_type == 'text') {
 			$field_value = isset($options[$field_id]) ? $options[$field_id] : ($defaults[$field_id] ?? '');

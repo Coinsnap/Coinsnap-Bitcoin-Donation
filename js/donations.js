@@ -45,11 +45,11 @@ jQuery(document).ready(function ($) {
             exchangeRates = rates
             if (simpleDonation) {
                 setDefaults(false)
-                addPopupListener('bitcoin-donation-', '', 'Bitcoin Donation', exchangeRates)
+                addPopupListener('bitcoin-donation-', '', 'Bitcoin Donation', exchangeRates, formData.redirectUrl)
             }
             if (wideDonation) {
                 setDefaults(true)
-                addPopupListener('bitcoin-donation-', '-wide', 'Bitcoin Donation', exchangeRates)
+                addPopupListener('bitcoin-donation-', '-wide', 'Bitcoin Donation', exchangeRates, formData.redirectUrl)
             }
         });
 

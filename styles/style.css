@@ -341,7 +341,7 @@
   text-align: center;
   flex-direction: column;
   align-items: center;
-  width: 300px;
+  width: 340px;
   gap: 12px;
 }
 
@@ -678,6 +678,23 @@
   margin-top: 12px;
 }
 
-.bitcoin-donation-pagination .current{
+.bitcoin-donation-pagination .current {
   color: #3498db;
+}
+
+.address-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.address-row {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.qr-container .public-donor-popup .public-donor-form .address-row input {
+  margin-bottom: 0px !important;
 }

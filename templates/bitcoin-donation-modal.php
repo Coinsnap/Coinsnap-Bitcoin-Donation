@@ -31,11 +31,47 @@
             <?php endif; ?>
 
             <?php if ($address !== 'hidden'): ?>
-                <label for="<?php echo esc_html($prefix); ?>address<?php echo esc_html($sufix); ?>">Address</label>
-                <input <?php echo $address === 'mandatory' ? 'required' : ''; ?>
+                <label>Address</label>
+                <div class="address-grid">
+                    <div class="address-row">
+                        <input <?php echo $address === 'mandatory' ? 'required' : ''; ?>
+                            type="text"
+                            id="<?php echo esc_html($prefix); ?>street<?php echo esc_html($sufix); ?>"
+                            placeholder="Street"
+                            style="width: 50%;">
+                        <input <?php echo $address === 'mandatory' ? 'required' : ''; ?>
+                            type="text"
+                            id="<?php echo esc_html($prefix); ?>house-number<?php echo esc_html($sufix); ?>"
+                            placeholder="No."
+                            style="width: 24%;">
+                        <input <?php echo $address === 'mandatory' ? 'required' : ''; ?>
+                            type="text"
+                            id="<?php echo esc_html($prefix); ?>postal<?php echo esc_html($sufix); ?>"
+                            placeholder="ZIP"
+                            style="width: 26%;">
+
+                    </div>
+                    <div class="address-row">
+                        <input <?php echo $address === 'mandatory' ? 'required' : ''; ?>
+                            type="text"
+                            id="<?php echo esc_html($prefix); ?>town<?php echo esc_html($sufix); ?>"
+                            placeholder="Town"
+                            style="width: 50%;">
+                        <input <?php echo $address === 'mandatory' ? 'required' : ''; ?>
+                            type="text"
+                            id="<?php echo esc_html($prefix); ?>country<?php echo esc_html($sufix); ?>"
+                            placeholder="Country"
+                            style="width: 50%;">
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($custom !== 'hidden'): ?>
+                <label id="<?php echo esc_html($prefix); ?>custom-name<?php echo esc_html($sufix); ?>" for="<?php echo esc_html($prefix); ?>custom<?php echo esc_html($sufix); ?>"><?php echo esc_html($custom_name); ?></label>
+                <input <?php echo $custom === 'mandatory' ? 'required' : ''; ?>
                     type="text"
-                    id="<?php echo esc_html($prefix); ?>address<?php echo esc_html($sufix); ?>"
-                    placeholder="<?php echo $address === 'mandatory' ? 'Required' : 'Optional'; ?>">
+                    id="<?php echo esc_html($prefix); ?>custom<?php echo esc_html($sufix); ?>"
+                    placeholder="<?php echo $custom === 'mandatory' ? 'Required' : 'Optional'; ?>">
             <?php endif; ?>
 
             <div class="opt-out-wrapper">

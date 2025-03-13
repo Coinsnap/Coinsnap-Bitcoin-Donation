@@ -40,6 +40,8 @@ class Bitcoin_Donation_Shoutouts_Form
         $email = $options['shoutout_donation_email'];
         $address = $options['shoutout_donation_address'];
         $message = $options['shoutout_donation_message'];
+        $custom = $options['shoutout_donation_custom_field_visibility'];
+        $custom_name = $options['shoutout_donation_custom_field_name'];
         $public_donors = $options['shoutout_public_donors'];
 
         if (!$active) {
@@ -125,6 +127,8 @@ class Bitcoin_Donation_Shoutouts_Form
                 'address' => $address,
                 'message' => $message,
                 'public_donors' => $public_donors,
+                'custom' => $custom,
+                'custom_name' => $custom_name,
             ]);
             ?>
         </div>

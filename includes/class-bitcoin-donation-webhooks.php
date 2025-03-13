@@ -236,6 +236,7 @@ class Bitcoin_Donation_Webhooks
                     $address = $payload_data['metadata']['donorAddress'];
                     $message = $payload_data['metadata']['donorMessage'];
                     $opt_out = $payload_data['metadata']['donorOptOut'];
+                    $custom = $payload_data['metadata']['donorCustom'];
                     $type = $payload_data['metadata']['formType'];
                     $amount = $payload_data['metadata']['amount'];
                     $opt_out_value = filter_var($opt_out, FILTER_VALIDATE_BOOLEAN) ? '1' : '0';
@@ -257,6 +258,7 @@ class Bitcoin_Donation_Webhooks
                         update_post_meta($post_id, '_bitcoin_donation_email', sanitize_email($email));
                         update_post_meta($post_id, '_bitcoin_donation_address', sanitize_text_field($address));
                         update_post_meta($post_id, '_bitcoin_donation_payment_id', sanitize_text_field($invoiceId));
+                        update_post_meta($post_id, '_bitcoin_donation_custom_field', sanitize_text_field($custom));
                     }
                 }
             } if(isset($payload_data['metadata']['type']) && $payload_data['metadata']['type'] == "Bitcoin Shoutout") {
