@@ -82,7 +82,7 @@ const addPopupListener = (prefix, sufix, type, exchangeRates, redirect) => {
         const cityField = document.getElementById(`${prefix}town${sufix}`);
         const countryField = document.getElementById(`${prefix}country${sufix}`);
         const address = `${streetField?.value ?? ''} ${houseNumberField?.value ?? ''}, ${postalCodeField?.value ?? ''} ${cityField?.value ?? ''}, ${countryField?.value ?? ''}`;
-        const optOutField = document.getElementById(`${prefix}opt-out${sufix}`);
+        // const optOutField = document.getElementById(`${prefix}opt-out${sufix}`);
         const customField = document.getElementById(`${prefix}custom${sufix}`);
         const customNameField = document.getElementById(`${prefix}custom-name${sufix}`);
 
@@ -92,7 +92,7 @@ const addPopupListener = (prefix, sufix, type, exchangeRates, redirect) => {
             donorEmail: emailField?.value,
             donorAddress: address,
             donorMessage: message,
-            donorOptOut: optOutField.checked,
+            // donorOptOut: optOutField.checked,
             donorCustom: `${customNameField?.textContent}: ${customField?.value}`,
             formType: type,
             amount: `${amount} ${currency}`,
