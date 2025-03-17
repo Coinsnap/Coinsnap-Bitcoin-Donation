@@ -19,9 +19,9 @@ class Bitcoin_Donation_Public_Donors
     {
         register_post_type('bitcoin-pds', [
             'labels' => [
-                'name'               => 'Public Donors',
-                'singular_name'      => 'Public Donor',
-                'menu_name'          => 'Public Donors',
+                'name'               => 'Donor Information',
+                'singular_name'      => 'Donor Information',
+                'menu_name'          => 'Donor Information',
                 'add_new'            => 'Add New',
                 'add_new_item'       => 'Add New Donor',
                 'edit_item'          => 'Edit Donor',
@@ -108,7 +108,7 @@ class Bitcoin_Donation_Public_Donors
     {
         add_meta_box(
             'bitcoin_donation_public_donors_details',
-            'Public Donor Details',
+            'Donor Details',
             [$this, 'render_public_donors_metabox'],
             'bitcoin-pds',
             'normal',

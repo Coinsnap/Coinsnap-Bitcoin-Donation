@@ -119,7 +119,7 @@ class Bitcoin_Donation_Forms
 
 		add_settings_field(
 			'simple_donation_public_donors',
-			'Public Donors',
+			'Collect donor information',
 			[$this, 'render_field'],
 			'bitcoin_donation',
 			'bitcoin_donation_simple_donation_section',
@@ -363,7 +363,7 @@ class Bitcoin_Donation_Forms
 
 		add_settings_field(
 			'shoutout_public_donors',
-			'Public Donors',
+			'Donor Information',
 			[$this, 'render_field'],
 			'bitcoin_donation',
 			'bitcoin_donation_shoutout_donation_section',
@@ -634,10 +634,10 @@ class Bitcoin_Donation_Forms
 			]
 		);
 
-		// Add public donors checkbox for multi amount
+		// Add Collect donor information checkbox for multi amount
 		add_settings_field(
 			'multi_amount_public_donors',
-			'Public Donors',
+			'Collect donor information',
 			[$this, 'render_field'],
 			'bitcoin_donation',
 			'bitcoin_donation_multi_amount_section',
@@ -746,87 +746,6 @@ class Bitcoin_Donation_Forms
 				'class' => 'public-donor-field multi-amount'
 			]
 		);
-
-		// Public Donor Wall Section
-		add_settings_section(
-			'bitcoin_donation_donor_wall_section',
-			'Public Donor Wall Settings',
-			[$this, 'donor_wall_section_callback'],
-			'bitcoin_donation'
-		);
-
-		add_settings_field(
-			'donor_wall_active',
-			'Active',
-			[$this, 'render_field'],
-			'bitcoin_donation',
-			'bitcoin_donation_donor_wall_section',
-			[
-				'label_for' => 'donor_wall_active',
-				'type'      => 'checkbox'
-			]
-		);
-
-		add_settings_field(
-			'donor_wall_name',
-			'Name',
-			[$this, 'render_field'],
-			'bitcoin_donation',
-			'bitcoin_donation_donor_wall_section',
-			[
-				'label_for' => 'donor_wall_name',
-				'type'      => 'select',
-				'options'   => [
-					'show' => 'Show',
-					'hide' => 'Hide'
-				]
-			]
-		);
-
-		add_settings_field(
-			'donor_wall_amount',
-			'Amount',
-			[$this, 'render_field'],
-			'bitcoin_donation',
-			'bitcoin_donation_donor_wall_section',
-			[
-				'label_for' => 'donor_wall_amount',
-				'type'      => 'select',
-				'options'   => [
-					'show' => 'Show',
-					'hide' => 'Hide'
-				]
-			]
-		);
-
-		add_settings_field(
-			'donor_wall_message',
-			'Message',
-			[$this, 'render_field'],
-			'bitcoin_donation',
-			'bitcoin_donation_donor_wall_section',
-			[
-				'label_for' => 'donor_wall_message',
-				'type'      => 'select',
-				'options'   => [
-					'show' => 'Show',
-					'hide' => 'Hide'
-				]
-			]
-		);
-
-		add_settings_field(
-			'donor_wall_per_page',
-			'Donations Per Page',
-			[$this, 'render_field'],
-			'bitcoin_donation',
-			'bitcoin_donation_donor_wall_section',
-			[
-				'label_for' => 'donor_wall_per_page',
-				'type'      => 'text',
-				'required' => true
-			]
-		);
 	}
 
 	public function sanitize_forms_options($options)
@@ -875,16 +794,6 @@ class Bitcoin_Donation_Forms
 		$sanitized['shoutout_donation_active'] = isset($options['shoutout_donation_active']) ? true : false;
 		$sanitized['multi_amount_public_donors'] = isset($options['multi_amount_public_donors']) ? true : false;
 		$sanitized['multi_amount_donation_active'] = isset($options['multi_amount_donation_active']) ? true : false;
-
-		// Add donor wall sanitization
-		$donor_wall_fields = ['name', 'amount', 'message', 'per_page'];
-		foreach ($donor_wall_fields as $field) {
-			$field_name = "donor_wall_{$field}";
-			if (isset($options[$field_name])) {
-				$sanitized[$field_name] = sanitize_text_field($options[$field_name]);
-			}
-		}
-		$sanitized['donor_wall_active'] = isset($options['donor_wall_active']) ? true : false;
 
 		return $sanitized;
 	}
@@ -959,11 +868,6 @@ class Bitcoin_Donation_Forms
 		echo esc_html_e('Configure multi amount donation form.', 'bitcoin_donation');
 	}
 
-	public function donor_wall_section_callback()
-	{
-		echo esc_html_e('Configure public donor wall settings.', 'bitcoin_donation');
-	}
-
 	public function render_field($args)
 	{
 		$options     = get_option('bitcoin_donation_forms_options', []);
@@ -991,11 +895,6 @@ class Bitcoin_Donation_Forms
 			'simple_donation_active' => true,
 			'shoutout_donation_active' => true,
 			'multi_amount_donation_active' => true,
-			'donor_wall_active' => true,
-			'donor_wall_per_page' => 10,
-			'donor_wall_name' => 'show',
-			'donor_wall_amount' => 'show',
-			'donor_wall_message' => 'show',
 			'simple_donation_public_donors' => false,
 			'shoutout_public_donors' => false,
 			'multi_amount_public_donors' => false,
@@ -1082,7 +981,6 @@ class Bitcoin_Donation_Forms
 				<a href="#coinsnap" class="nav-tab" data-tab="simple-donation">Donation Button</a>
 				<a href="#btcpay" class="nav-tab" data-tab="shoutout-donation">Shoutout Donation</a>
 				<a href="#multi" class="nav-tab" data-tab="multi-amount-donation">Multi Amount Donation</a>
-				<!-- <a href="#donor-wall" class="nav-tab" data-tab="donor-wall">Public Donor Wall</a> -->
 			</h2>
 
 			<form method="post" action="options.php">
@@ -1099,9 +997,6 @@ class Bitcoin_Donation_Forms
 				echo '</div>';
 				echo '<div id="multi-amount-donation" class="tab-content">';
 				$this->render_section('bitcoin_donation_multi_amount_section');
-				echo '</div>';
-				echo '<div id="donor-wall" class="tab-content">';
-				$this->render_section('bitcoin_donation_donor_wall_section');
 				echo '</div>';
 				?>
 				<?php

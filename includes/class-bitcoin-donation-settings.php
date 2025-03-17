@@ -81,8 +81,8 @@ class Bitcoin_Donation_Settings
         );
         add_submenu_page(
             'bitcoin_donation',
-            'Public Donors',
-            'Public Donors',
+            'Donor Information',
+            'Donor Information',
             'manage_options',
             'edit.php?post_type=bitcoin-pds'
         );
