@@ -75,20 +75,6 @@ class Bitcoin_Donation_Public_Donors
             'show_in_rest' => true,
         ]);
 
-        register_meta('post', '_bitcoin_donation_dont_show', [
-            'object_subtype' => 'bitcoin-pds',
-            'type' => 'boolean',
-            'single' => true,
-            'show_in_rest' => true,
-        ]);
-
-        register_meta('post', '_bitcoin_donation_hide', [
-            'object_subtype' => 'bitcoin-pds',
-            'type' => 'boolean',
-            'single' => true,
-            'show_in_rest' => true,
-        ]);
-
         register_meta('post', '_bitcoin_donation_email', [
             'object_subtype' => 'bitcoin-pds',
             'type' => 'string',
@@ -138,8 +124,6 @@ class Bitcoin_Donation_Public_Donors
         $amount = get_post_meta($post->ID, '_bitcoin_donation_amount', true);
         $message = get_post_meta($post->ID, '_bitcoin_donation_message', true);
         $form_type = get_post_meta($post->ID, '_bitcoin_donation_form_type', true);
-        $dont_show = get_post_meta($post->ID, '_bitcoin_donation_dont_show', true);
-        $hide = get_post_meta($post->ID, '_bitcoin_donation_hide', true);
         $email = get_post_meta($post->ID, '_bitcoin_donation_email', true);
         $address = get_post_meta($post->ID, '_bitcoin_donation_address', true);
         $payment_id = get_post_meta($post->ID, '_bitcoin_donation_payment_id', true);
@@ -210,25 +194,6 @@ class Bitcoin_Donation_Public_Donors
                     <input type="text" id="bitcoin_donation_custom_field" name="bitcoin_donation_custom_field" class="regular-text" value="<?php echo esc_attr($custom_field); ?>" readonly>
                 </td>
             </tr>
-            <tr>
-                <th scope="row"><?php echo esc_html_e('Don\'t Show', 'bitcoin-donation') ?></th>
-                <td>
-                    <label>
-                        <input type="checkbox" onclick="return false" name="bitcoin_donation_dont_show" value="1" <?php checked($dont_show, '1'); ?> readonly>
-                        Enable
-                    </label>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row"><?php echo esc_html_e('Hide', 'bitcoin-donation') ?></th>
-                <td>
-                    <label>
-                        <input type="checkbox" name="bitcoin_donation_hide" value="1" <?php checked($hide, '1'); ?>>
-                        Enable
-                    </label>
-                </td>
-            </tr>
-
         </table>
 <?php
     }
@@ -253,8 +218,6 @@ class Bitcoin_Donation_Public_Donors
             'bitcoin_donation_amount' => 'text',
             'bitcoin_donation_message' => 'text',
             'bitcoin_donation_form_type' => 'text',
-            'bitcoin_donation_dont_show' => 'boolean',
-            'bitcoin_donation_hide' => 'boolean',
             'bitcoin_donation_email' => 'text',
             'bitcoin_donation_address' => 'text',
             'bitcoin_donation_payment_id' => 'text',
@@ -283,9 +246,7 @@ class Bitcoin_Donation_Public_Donors
             'address' => 'Address',
             'payment_id' => 'Payment ID',
             'form_type' => 'Form Type',
-            'custom_field' => 'Custom Field',
-            'dont_show' => 'Don\'t Show',
-            'hide' => 'Hide'
+            'custom_field' => 'Custom Field'
         ];
     }
 
@@ -303,12 +264,6 @@ class Bitcoin_Donation_Public_Donors
                 break;
             case 'form_type':
                 echo esc_html(get_post_meta($post_id, '_bitcoin_donation_form_type', true));
-                break;
-            case 'dont_show':
-                echo get_post_meta($post_id, '_bitcoin_donation_dont_show', true) ? '✓' : '✗';
-                break;
-            case 'hide':
-                echo get_post_meta($post_id, '_bitcoin_donation_hide', true) ? '✓' : '✗';
                 break;
             case 'email':
                 echo esc_html(get_post_meta($post_id, '_bitcoin_donation_email', true));

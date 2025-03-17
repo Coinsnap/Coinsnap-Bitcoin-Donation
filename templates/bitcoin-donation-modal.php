@@ -73,12 +73,6 @@
                     id="<?php echo esc_html($prefix); ?>custom<?php echo esc_html($sufix); ?>"
                     placeholder="<?php echo $custom === 'mandatory' ? 'Required' : 'Optional'; ?>">
             <?php endif; ?>
-
-            <!-- <div class="opt-out-wrapper">
-                <label for="<?php echo esc_html($prefix); ?>opt-out<?php echo esc_html($sufix); ?>">Don't display my information</label>
-                <input type="checkbox" id="<?php echo esc_html($prefix); ?>opt-out<?php echo esc_html($sufix); ?>">
-            </div> -->
-
             <button type="submit" id="<?php echo esc_html($prefix); ?>public-donors-pay<?php echo esc_html($sufix); ?>">Pay</button>
         </form>
     </div>

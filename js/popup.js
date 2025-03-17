@@ -93,7 +93,7 @@ const addPopupListener = (prefix, sufix, type, exchangeRates, redirect) => {
             donorAddress: address,
             donorMessage: message,
             // donorOptOut: optOutField.checked,
-            donorCustom: `${customNameField?.textContent}: ${customField?.value}`,
+            donorCustom: `${customNameField?.textContent ?? ''}: ${customField?.value ?? ''}`,
             formType: type,
             amount: `${amount} ${currency}`,
             publicDonor: publicDonor || 0,

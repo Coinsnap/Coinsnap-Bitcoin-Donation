@@ -23,7 +23,6 @@ require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shortc
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shortcode-multi-amount-wide.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shoutouts-list.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shoutouts-form.php';
-require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-public-donors-wall.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-webhooks.php';
 
 register_activation_hook(__FILE__, 'bitcoin_donation_create_voting_payments_table');
