@@ -58,13 +58,20 @@ class Bitcoin_Donation_Settings
             'bitcoin-donation-donation-list',
             [$this->donation_list, 'render_donation_page']
         );
-        add_submenu_page(
-            'bitcoin_donation',
-            'Shoutouts',
-            'Shoutouts',
-            'manage_options',
-            'edit.php?post_type=bitcoin-shoutouts'
-        );
+
+        $options = get_option('bitcoin_donation_forms_options', []);
+        $shoutout_active = isset($options['shoutout_donation_active']) ? $options['shoutout_donation_active'] : false;
+
+        if ($shoutout_active) {
+            add_submenu_page(
+                'bitcoin_donation',
+                'Shoutouts',
+                'Shoutouts',
+                'manage_options',
+                'edit.php?post_type=bitcoin-shoutouts'
+            );
+        }
+
         add_submenu_page(
             'bitcoin_donation',
             'Polls',

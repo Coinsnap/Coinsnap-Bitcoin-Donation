@@ -159,4 +159,57 @@
         : checkConnection.css({ color: 'red' }).text('Connection failed');
     }
   });
+
+  function togglePublicDonorFields(section, force) {
+    var isChecked = $('#' + section + '_public_donors').is(':checked');
+    if (force !== undefined) {
+      isChecked = force;
+    }
+    $('.public-donor-field.' + section.replace(/_/g, '-')).closest('tr').toggle(isChecked);
+  }
+
+  function toggleShoutoutFields(section) {
+    var isChecked = $('#' + section + '_donation_active').is(':checked');
+    section = section.replace(/_/g, '-')
+    if (section == 'shoutout') {
+      $('#' + section + '-donation table tr')
+        .not(':first')
+        .toggle(isChecked);
+    } else {
+      $('#' + section + '-donation table tbody tr')
+        .not(':first')
+        .toggle(isChecked);
+    }
+    if (!isChecked) {
+      togglePublicDonorFields(section, false);
+    } else {
+      togglePublicDonorFields(section);
+    }
+  }
+
+  // Initial state
+  togglePublicDonorFields('simple_donation');
+  togglePublicDonorFields('shoutout');
+  togglePublicDonorFields('multi_amount');
+  toggleShoutoutFields('shoutout');
+  toggleShoutoutFields('multi_amount');
+
+  // Change handlers
+  $('#simple_donation_public_donors').change(function () {
+    togglePublicDonorFields('simple_donation');
+  });
+  $('#shoutout_public_donors').change(function () {
+    togglePublicDonorFields('shoutout');
+  });
+  $('#multi_amount_public_donors').change(function () {
+    togglePublicDonorFields('multi_amount');
+  });
+  $('#shoutout_donation_active').change(function () {
+    toggleShoutoutFields('shoutout');
+  });
+
+  $('#multi_amount_donation_active').change(function () {
+    toggleShoutoutFields('multi_amount');
+  });
+
 })(jQuery);

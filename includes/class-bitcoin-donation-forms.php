@@ -242,7 +242,7 @@ class Bitcoin_Donation_Forms
 
 		add_settings_field(
 			'shoutout_donation_active',
-			'Active',
+			'Enable Shoutouts',
 			[$this, 'render_field'],
 			'bitcoin_donation',
 			'bitcoin_donation_shoutout_donation_section',
@@ -486,7 +486,7 @@ class Bitcoin_Donation_Forms
 
 		add_settings_field(
 			'multi_amount_donation_active',
-			'Active',
+			'Enable Multi Amount Form',
 			[$this, 'render_field'],
 			'bitcoin_donation',
 			'bitcoin_donation_multi_amount_section',
@@ -893,8 +893,8 @@ class Bitcoin_Donation_Forms
 			'multi_amount_default_snap2'      => '5000',
 			'multi_amount_default_snap3'      => '10000',
 			'simple_donation_active' => true,
-			'shoutout_donation_active' => true,
-			'multi_amount_donation_active' => true,
+			'shoutout_donation_active' => false,
+			'multi_amount_donation_active' => false,
 			'simple_donation_public_donors' => false,
 			'shoutout_public_donors' => false,
 			'multi_amount_public_donors' => false,
@@ -979,8 +979,8 @@ class Bitcoin_Donation_Forms
 			<!-- Tab Navigation -->
 			<h2 class="nav-tab-wrapper">
 				<a href="#coinsnap" class="nav-tab" data-tab="simple-donation">Donation Button</a>
-				<a href="#btcpay" class="nav-tab" data-tab="shoutout-donation">Shoutout Donation</a>
 				<a href="#multi" class="nav-tab" data-tab="multi-amount-donation">Multi Amount Donation</a>
+				<a href="#btcpay" class="nav-tab" data-tab="shoutout-donation">Shoutout Donation</a>
 			</h2>
 
 			<form method="post" action="options.php">
@@ -1005,30 +1005,6 @@ class Bitcoin_Donation_Forms
 				?>
 			</form>
 		</div>
-		<script type="text/javascript">
-			jQuery(document).ready(function($) {
-				function togglePublicDonorFields(section) {
-					var isChecked = $('#' + section + '_public_donors').is(':checked');
-					$('.public-donor-field.' + section.replace(/_/g, '-')).closest('tr').toggle(isChecked);
-				}
-
-				// Initial state
-				togglePublicDonorFields('simple_donation');
-				togglePublicDonorFields('shoutout');
-				togglePublicDonorFields('multi_amount');
-
-				// Change handlers
-				$('#simple_donation_public_donors').change(function() {
-					togglePublicDonorFields('simple_donation');
-				});
-				$('#shoutout_public_donors').change(function() {
-					togglePublicDonorFields('shoutout');
-				});
-				$('#multi_amount_public_donors').change(function() {
-					togglePublicDonorFields('multi_amount');
-				});
-			});
-		</script>
 <?php
 	}
 }
