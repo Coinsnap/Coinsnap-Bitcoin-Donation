@@ -180,20 +180,8 @@ class Bitcoin_Donation_Webhooks
         $payload_data = $request->get_json_params();
 
         if (isset($payload_data['type']) && ($payload_data['type'] === 'Settled' || $payload_data['type'] === 'InvoiceSettled')) {
-            // Get the invoiceId from the payload
-            $invoiceId = $payload_data['invoiceId'];
-            $args = array(
-                'post_type'      => 'bitcoin-shoutouts',
-                'post_status'    => 'pending',
-                'meta_query'     => array(
-                    array(
-                        'key'   => '_bitcoin_donation_shoutouts_invoice_id',
-                        'value' => $invoiceId,
-                    ),
-                ),
-                'posts_per_page' => 1,
-            );
 
+            // Voting
             if (isset($payload_data['metadata']['type']) && $payload_data['metadata']['type'] == "Bitcoin Voting") {
                 global $wpdb;
                 $invoiceId = $payload_data['invoiceId'];
@@ -218,6 +206,7 @@ class Bitcoin_Donation_Webhooks
                         '%s'
                     ]
                 );
+                // In page QR
             } else if (isset($payload_data['metadata']['modal'])) {
                 global $wpdb;
                 $invoiceId = $payload_data['invoiceId'];
@@ -229,6 +218,7 @@ class Bitcoin_Donation_Webhooks
                     ],
                     ['%s', '%s']
                 );
+                // Public donor
                 if (isset($payload_data['metadata']['publicDonor']) && $payload_data['metadata']['publicDonor'] == '1') {
 
                     $name = $payload_data['metadata']['donorName'];
@@ -261,32 +251,28 @@ class Bitcoin_Donation_Webhooks
                         update_post_meta($post_id, '_bitcoin_donation_custom_field', sanitize_text_field($custom));
                     }
                 }
-            } if(isset($payload_data['metadata']['type']) && $payload_data['metadata']['type'] == "Bitcoin Shoutout") {
+                // Shoutouts
+            }
+            if (isset($payload_data['metadata']['type']) && $payload_data['metadata']['type'] == "Bitcoin Shoutout") {
+                $invoiceId = $payload_data['invoiceId'];
+                error_log(print_r($payload_data, true));
+                $name = $payload_data['metadata']['name'];
+                $message = $payload_data['metadata']['orderNumber'];
+                $amount = $payload_data['metadata']['amount'];
+                $provider = $payload_data['metadata']['provider'];
+                $post_data = array(
+                    'post_title'    => 'Shoutout from ' . $name,
+                    'post_status'   => 'publish',
+                    'post_type'     => 'bitcoin-shoutouts',
+                );
+                $post_id = wp_insert_post($post_data);
 
-                $query = new WP_Query($args);
-
-                if ($query->have_posts()) {
-                    while ($query->have_posts()) {
-                        $query->the_post();
-                        $post_id = get_the_ID();
-
-                        // Update the post status to 'publish'
-                        $updated_post = array(
-                            'ID'          => $post_id,
-                            'post_status' => 'publish'
-                        );
-
-                        $result = wp_update_post($updated_post, true);
-
-                        if (is_wp_error($result)) {
-                            return new WP_REST_Response('Error updating post.', 500);
-                        }
-                    }
-                    wp_reset_postdata();
-
-                    return new WP_REST_Response('Post updated successfully.', 200);
-                } else {
-                    return new WP_REST_Response('No matching post found.', 404);
+                if ($post_id) {
+                    update_post_meta($post_id, '_bitcoin_donation_shoutouts_name', sanitize_text_field($name));
+                    update_post_meta($post_id, '_bitcoin_donation_shoutouts_amount', sanitize_text_field($amount));
+                    update_post_meta($post_id, '_bitcoin_donation_shoutouts_invoice_id', sanitize_text_field($invoiceId));
+                    update_post_meta($post_id, '_bitcoin_donation_shoutouts_message', sanitize_text_field($message));
+                    update_post_meta($post_id, '_bitcoin_donation_shoutouts_provider', sanitize_text_field($provider));
                 }
             }
         }

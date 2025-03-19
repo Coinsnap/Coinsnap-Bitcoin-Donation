@@ -16,41 +16,6 @@ function setCookie(name, value, minutes) {
     document.cookie = name + "=" + value + ";" + expires + ";path=/";
 }
 
-async function createCPT(amount, message, name, invoiceId, provider) {
-    const nonce = sharedData.nonce;
-    const data = {
-        title: `Shoutout from ${name}`,
-        status: "pending",
-        name: name,
-        _bitcoin_donation_shoutouts_name: name,
-        meta: {
-            _bitcoin_donation_shoutouts_name: name,
-            _bitcoin_donation_shoutouts_amount: amount,
-            _bitcoin_donation_shoutouts_invoice_id: invoiceId,
-            _bitcoin_donation_shoutouts_message: message,
-            _bitcoin_donation_shoutouts_provider: provider,
-        }
-    };
-
-    try {
-        const response = await fetch('/wp-json/wp/v2/bitcoin-shoutouts', {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-WP-Nonce": nonce,
-            },
-            body: JSON.stringify(data),
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        await response.json();
-    } catch (error) {
-        console.error("Error creating shoutout:", error);
-    }
-}
-
 const addErrorField = (field) => {
     field.css('border', '1px solid red');
     removeBorderOnFocus(field, field)
@@ -230,6 +195,7 @@ const createActualInvoice = async (amount, message, lastInputCurrency, name, coi
         requestData.redirectUrl = sharedData?.redirectUrl || window.location.href
     } else if (type == 'Bitcoin Shoutout') {
         requestData.redirectUrl = sharedData?.shoutoutRedirectUrl || window.location.href
+        requestData.provider = coinsnap ? 'coinsnap' : 'btcpay'
     } else if (type == 'Multi Amount Donation') {
         requestData.redirectUrl = sharedData?.multiRedirectUrl || window.location.href
     } else if (type == 'Bitcoin Voting') {
@@ -283,10 +249,6 @@ const createActualInvoice = async (amount, message, lastInputCurrency, name, coi
             message: message,
             name: name
         };
-
-        if (name) {
-            createCPT(`${amount} ${lastInputCurrency}`, message, name, responseData.id, coinsnap ? 'coinsnap' : 'btcpay');
-        }
 
         setCookie('coinsnap_invoice_', JSON.stringify(invoiceCookieData), 15);
 
