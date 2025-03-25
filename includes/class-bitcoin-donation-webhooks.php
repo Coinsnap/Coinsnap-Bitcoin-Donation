@@ -5,49 +5,7 @@ class Bitcoin_Donation_Webhooks
     public function __construct()
     {
         add_action('rest_api_init', [$this, 'register_webhook_endpoint']);
-        add_action('rest_api_init', [$this, 'register_poll_check_endpoint']);
-        add_action('rest_api_init', [$this, 'register_poll_results_endpoint']);
         add_action('rest_api_init', [$this, 'register_check_payment_endpoint']);
-    }
-
-    public function register_poll_results_endpoint()
-    {
-        register_rest_route('my-plugin/v1', '/voting_results/(?P<poll_id>\d+)', [
-            'methods' => 'GET',
-            'callback' => [$this, 'get_results'],
-            'permission_callback' => '__return_true', // TODO: Add proper permissions later
-            'args' => [
-                'poll_id' => [
-                    'required' => true,
-                    'validate_callback' => function ($param) {
-                        return is_numeric($param) && $param > 0;
-                    }
-                ]
-            ]
-        ]);
-    }
-
-    public function register_poll_check_endpoint()
-    {
-        register_rest_route('my-plugin/v1', '/payment-status-long-poll/(?P<payment_id>[a-zA-Z0-9]+)/(?P<poll_id>\d+)', [
-            'methods' => 'GET',
-            'callback' => [$this, 'get_payment_status_long_poll'],
-            'permission_callback' => '__return_true', // TODO: Add proper permissions later
-            'args' => [
-                'payment_id' => [
-                    'required' => true,
-                    'validate_callback' => function ($param) {
-                        return !empty($param);
-                    }
-                ],
-                'poll_id' => [
-                    'required' => true,
-                    'validate_callback' => function ($param) {
-                        return is_numeric($param) && $param > 0;
-                    }
-                ]
-            ]
-        ]);
     }
 
     public function register_check_payment_endpoint()
@@ -66,50 +24,6 @@ class Bitcoin_Donation_Webhooks
             ]
         ]);
     }
-
-    function get_results($request)
-    {
-        $poll_id = $request['poll_id'];
-
-        global $wpdb;
-
-        $query = $wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}voting_payments WHERE status = 'completed' AND poll_id = %d",
-            $poll_id
-        );
-        $results = $wpdb->get_results($query);
-
-        return ['results' => $results];
-    }
-
-    function get_payment_status_long_poll($request)
-    {
-        $payment_id = $request['payment_id'];
-        $poll_id = $request['poll_id'];
-        $start_time = time();
-        $timeout = 5;
-
-        while (time() - $start_time < $timeout) {
-            global $wpdb;
-            $status = $wpdb->get_var($wpdb->prepare(
-                "SELECT status FROM {$wpdb->prefix}voting_payments WHERE payment_id = %s",
-                $payment_id
-            ));
-            if ($status === 'completed') {
-                $query = $wpdb->prepare(
-                    "SELECT * FROM {$wpdb->prefix}voting_payments WHERE status = 'completed' AND poll_id = %d",
-                    $poll_id
-                );
-                $results = $wpdb->get_results($query);
-
-                return ['status' => 'completed', 'results' => $results];
-            }
-            sleep(1);
-        }
-        // Timeout
-        return ['status' => 'pending'];
-    }
-
     function get_check_payment_status($request)
     {
         $payment_id = $request['payment_id'];
@@ -181,33 +95,7 @@ class Bitcoin_Donation_Webhooks
 
         if (isset($payload_data['type']) && ($payload_data['type'] === 'Settled' || $payload_data['type'] === 'InvoiceSettled')) {
 
-            // Voting
-            if (isset($payload_data['metadata']['type']) && $payload_data['metadata']['type'] == "Bitcoin Voting") {
-                global $wpdb;
-                $invoiceId = $payload_data['invoiceId'];
-                $optionId = $payload_data['metadata']['optionId'];
-                $optionTitle = $payload_data['metadata']['option'];
-                $pollId = $payload_data['metadata']['pollId'];
-
-                $wpdb->insert(
-                    "{$wpdb->prefix}voting_payments",
-                    [
-                        'payment_id' => $invoiceId,
-                        'option_id' => $optionId,
-                        'option_title' => $optionTitle,
-                        'poll_id' => $pollId,
-                        'status'     => 'completed'
-                    ],
-                    [
-                        '%s',
-                        '%d',
-                        '%s',
-                        '%s',
-                        '%s'
-                    ]
-                );
-                // In page QR
-            } else if (isset($payload_data['metadata']['modal'])) {
+            if (isset($payload_data['metadata']['modal'])) {
                 global $wpdb;
                 $invoiceId = $payload_data['invoiceId'];
                 $wpdb->insert(

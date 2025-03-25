@@ -634,7 +634,6 @@ class Bitcoin_Donation_Forms
 			]
 		);
 
-		// Add Collect donor information checkbox for multi amount
 		add_settings_field(
 			'multi_amount_public_donors',
 			'Collect donor information',

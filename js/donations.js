@@ -8,9 +8,8 @@ jQuery(document).ready(function ($) {
 
     const simpleDonation = document.getElementById('bitcoin-donation-amount')
     const wideDonation = document.getElementById('bitcoin-donation-amount-wide')
-    const bitcoinVoting = document.getElementById('bitcoin-voting-form') // TODO check
 
-    if (simpleDonation || wideDonation || bitcoinVoting) {
+    if (simpleDonation || wideDonation) {
 
         const setDefaults = (wide) => {
             const widePart = wide ? '-wide' : ''

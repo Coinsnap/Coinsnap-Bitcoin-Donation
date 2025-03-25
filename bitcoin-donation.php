@@ -12,46 +12,22 @@ if (!defined('ABSPATH')) {
 
 // Plugin settings
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shoutout-posts.php';
-require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-voting-polls.php';
-require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-crowdfundings.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-public-donors.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-settings.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shortcode.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shortcode-wide.php';
-require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shortcode-voting.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shortcode-multi-amount.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shortcode-multi-amount-wide.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shoutouts-list.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-shoutouts-form.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-bitcoin-donation-webhooks.php';
 
-register_activation_hook(__FILE__, 'bitcoin_donation_create_voting_payments_table');
 register_activation_hook(__FILE__, 'bitcoin_donation_create_donation_payments_table');
 register_deactivation_hook(__FILE__, 'bitcoin_donation_deactivate');
 
 function bitcoin_donation_deactivate()
 {
     flush_rewrite_rules();
-}
-
-function bitcoin_donation_create_voting_payments_table()
-{
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'voting_payments';
-    $charset_collate = $wpdb->get_charset_collate();
-
-    $sql = "CREATE TABLE IF NOT EXISTS $table_name (
-        id BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        payment_id VARCHAR(255) NOT NULL,
-        poll_id VARCHAR(255) NOT NULL,
-        option_id INT(4) NOT NULL,
-        option_title VARCHAR(255) NOT NULL,
-        status VARCHAR(50) NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    ) $charset_collate;";
-
-    require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-    dbDelta($sql);
 }
 
 function bitcoin_donation_create_donation_payments_table()
@@ -85,9 +61,6 @@ class Bitcoin_Donation
         wp_enqueue_style('bitcoin-donation-style', plugin_dir_url(__FILE__) . 'styles/style.css', [], '1.0.0');
         wp_enqueue_style('bitcoin-donation-style-wide', plugin_dir_url(__FILE__) . 'styles/style-wide.css', [], '1.0.0');
         wp_enqueue_style('bitcoin-donation-shoutouts', plugin_dir_url(__FILE__) . 'styles/shoutouts.css', [], '1.0.0');
-
-        wp_enqueue_script('bitcoin-donation-voting-script', plugin_dir_url(__FILE__) . 'js/voting.js', ['jquery'], '1.0.0', true);
-
         wp_enqueue_script('bitcoin-donation-multi-script', plugin_dir_url(__FILE__) . 'js/multi.js', ['jquery'], '1.0.0', true);
         $provider_defaults = [
             'provider' => 'coinsnap',

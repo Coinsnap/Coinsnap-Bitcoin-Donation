@@ -161,7 +161,9 @@
   });
 
   function togglePublicDonorFields(section, force) {
-    var isChecked = $('#' + section + '_public_donors').is(':checked');
+    section = section.replace(/-/g, '_')
+    const element = document.getElementById(section + '_public_donors');
+    var isChecked = element.checked;
     if (force !== undefined) {
       isChecked = force;
     }

@@ -187,7 +187,7 @@ const createActualInvoice = async (amount, message, lastInputCurrency, name, coi
             referralCode: 'D19833',
             type: type,
             name: name,
-            ...metadata //TEST with voting
+            ...metadata 
         }
     };
 
@@ -198,12 +198,6 @@ const createActualInvoice = async (amount, message, lastInputCurrency, name, coi
         requestData.provider = coinsnap ? 'coinsnap' : 'btcpay'
     } else if (type == 'Multi Amount Donation') {
         requestData.redirectUrl = sharedData?.multiRedirectUrl || window.location.href
-    } else if (type == 'Bitcoin Voting') {
-        // requestData.metadata.optionId = metadata.optionId
-        // requestData.metadata.option = metadata.option
-        // requestData.metadata.pollId = metadata.pollId
-        requestData.metadata.orderNumber = `Voted for ${metadata.option}`
-        redirectAutomatically = false //TODO test
     }
 
     if (window.location.href.includes("localhost")) {

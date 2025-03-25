@@ -1,5 +1,4 @@
 <?php if (!defined('ABSPATH')) exit ?>
-<!--ADD THEMES -->
 
 <div id="<?php echo esc_html($prefix); ?>qr-container<?php echo esc_html($sufix); ?>" class="qr-container" data-public-donors="<?php echo esc_attr($public_donors); ?>">
     <div class="close-popup">×</div>
