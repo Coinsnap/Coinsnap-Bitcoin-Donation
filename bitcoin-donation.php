@@ -2,7 +2,7 @@
 /*
 Plugin Name: Bitcoin Donation
 Description: Easy Bitcoin donations on a WordPress website
-Version: 0.1
+Version: 1.0
 Author: Coinsnap Dev
 */
 

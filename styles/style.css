@@ -200,7 +200,7 @@
   padding: 4px 8px !important;
   border: 1px solid #e2e8f0 !important;
   border-radius: 6px !important;
-  background-color: #f3f3f3 !important;
+  background-color: #f7f7f7 !important;
   font-size: 12px !important;
   font-weight: 500;
   appearance: none;
@@ -241,86 +241,6 @@
   background-color: #4a4a4a !important;
   border: 1px solid #555 !important;
   color: #f1f1f1 !important;
-}
-
-/* Voting */
-
-.poll-options {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.poll-option {
-  padding: 10px;
-  cursor: pointer;
-  background: #f2f2f2;
-  color: #3d3d3d;
-  font-weight: bold;
-  outline: 1px solid rgba(61, 61, 61, 0.5);
-  border: none !important;
-  text-align: left;
-  border-radius: 5px;
-  transition: background 0.3s;
-}
-
-.poll-option:hover {
-  background: #d7d7d7;
-}
-
-.poll-results {
-  width: 100%;
-}
-
-.poll-result {
-  margin-bottom: 10px;
-}
-
-.voting-progress {
-  position: relative;
-  width: 100%;
-  height: 20px;
-  background: #ddd;
-  border-radius: 5px;
-  overflow: hidden;
-}
-
-.voting-progress-bar {
-  height: 100%;
-  background: #9d9d9d;
-  width: 0;
-  transition: width 0.5s ease-in-out;
-  position: relative;
-}
-
-.voting-progress-percentage {
-  font-size: 14px;
-}
-
-.poll-result-title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.bitcoin-voting-form-container {
-  max-width: 645px;
-  width: 100%;
-  padding: 32px;
-  border-radius: 20px;
-  box-sizing: border-box;
-  background-color: #fafafa;
-  box-shadow: 1px 2px 12px -4px rgba(0, 0, 0, 0.75);
-  padding-bottom: 20px;
-
-}
-
-.bitcoin-voting-form {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-
 }
 
 .qr-container h4 {
@@ -375,19 +295,6 @@
   100% {
     transform: rotate(360deg);
   }
-}
-
-.poll-total-votes {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 4px;
-  margin-top: 16px;
-}
-
-.poll-total-wrapper {
-  display: flex;
-  gap: 6px;
-  color: #585858
 }
 
 .qr-amount {
@@ -570,32 +477,27 @@
   color: #f2f2f2;
 }
 
-.dark-theme .bitcoin-voting-form-container,
 .dark-theme .qr-container {
   background-color: #2c2c2c;
   color: white;
 }
 
-.dark-theme .bitcoin-voting-form-container h3,
 .dark-theme .check-results,
 .dark-theme .end-text,
 .dark-theme .qr-amount,
 .dark-theme .qr-fiat,
 .dark-theme h3,
 .dark-theme h4,
-.dark-theme .poll-total-wrapper,
 .dark-theme .close-popup {
   color: white;
 }
 
-.dark-theme .poll-option,
 .dark-theme .check-results,
 .dark-theme .return-button {
   background: #3a3a3a;
   color: white;
 }
 
-.dark-theme .poll-option:hover,
 .dark-theme .check-results:hover,
 .dark-theme .return-button:hover {
   background: #4a4a4a;

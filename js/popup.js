@@ -90,7 +90,7 @@ const addPopupListener = (prefix, sufix, type, exchangeRates, redirect) => {
         const metadata = {
             donorName: `${firstNameField.value} ${lastNameField?.value ?? ''}`,
             donorEmail: emailField?.value,
-            donorAddress: address,
+            donorAddress: address != ' ,  , ' ? address : '',
             donorMessage: message,
             donorCustom: customContent,
             formType: type,

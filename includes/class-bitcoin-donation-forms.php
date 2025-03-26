@@ -118,6 +118,22 @@ class Bitcoin_Donation_Forms
 		);
 
 		add_settings_field(
+			'form_type',
+			'Form Type',
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_simple_donation_section',
+			[
+				'label_for' => 'form_type',
+				'type'      => 'select',
+				'options'   => [
+					"NARROW" => "Narrow",
+					"WIDE" => "Wide"
+				]
+			]
+		);
+
+		add_settings_field(
 			'simple_donation_public_donors',
 			'Collect donor information',
 			[$this, 'render_field'],
@@ -635,6 +651,22 @@ class Bitcoin_Donation_Forms
 		);
 
 		add_settings_field(
+			'multi_amount_form_type',
+			'Form Type',
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_form_type',
+				'type'      => 'select',
+				'options'   => [
+					"NARROW" => "Narrow",
+					"WIDE" => "Wide"
+				]
+			]
+		);
+
+		add_settings_field(
 			'multi_amount_public_donors',
 			'Collect donor information',
 			[$this, 'render_field'],
@@ -804,7 +836,7 @@ class Bitcoin_Donation_Forms
 		echo $name;
 		echo '</th>';
 		echo "<td>";
-		echo "<input type='text' id='shortcode' name='shortcode' class='regular-text' readonly value='[$shortcode]'>";
+		echo "<input type='text' id='shortcode_$shortcode' name='shortcode' class='regular-text' readonly value='[$shortcode]'>";
 		echo '</td>';
 		echo '</tr>';
 	}
@@ -915,6 +947,8 @@ class Bitcoin_Donation_Forms
 			'multi_amount_address' => 'optional',
 			'multi_amount_custom_field_name' => 'Custom Field',
 			'multi_amount_custom_field_visibility' => 'hidden',
+			'form_type' => 'NARROW',
+			'multi_amount_form_type' => 'NARROW'
 		];
 		if ($field_type == 'text') {
 			$field_value = isset($options[$field_id]) ? $options[$field_id] : ($defaults[$field_id] ?? '');
