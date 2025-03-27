@@ -3,11 +3,11 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-class Bitcoin_Donation_Shortcode_Wide
+class coinsnap_bitcoin_donation_Shortcode_Wide
 {
     public function __construct()
     {
-        add_shortcode('bitcoin_donation_wide', [$this, 'bitcoin_donation_render_shortcode_wide']);
+        add_shortcode('coinsnap_bitcoin_donation_wide', [$this, 'coinsnap_bitcoin_donation_render_shortcode_wide']);
     }
 
     private function get_template($template_name, $args = [])
@@ -23,12 +23,12 @@ class Bitcoin_Donation_Shortcode_Wide
         }
     }
 
-    function bitcoin_donation_render_shortcode_wide()
+    function coinsnap_bitcoin_donation_render_shortcode_wide()
     {
-        $options = get_option('bitcoin_donation_forms_options');
+        $options = get_option('coinsnap_bitcoin_donation_forms_options');
         $options = is_array($options) ? $options : [];
-        $options_general = get_option('bitcoin_donation_options');
-        $theme_class = $options_general['theme'] === 'dark' ? 'bitcoin-donation-dark-theme' : 'bitcoin-donation-light-theme';
+        $options_general = get_option('coinsnap_bitcoin_donation_options');
+        $theme_class = $options_general['theme'] === 'dark' ? 'coinsnap-bitcoin-donation-dark-theme' : 'coinsnap-bitcoin-donation-light-theme';
         $modal_theme = $options_general['theme'] === 'dark' ? 'dark-theme' : 'light-theme';
         $button_text = $options['button_text'] ?? 'Donate';
         $title_text = $options['title_text'] ?? 'Donate with Bitcoin';
@@ -37,15 +37,14 @@ class Bitcoin_Donation_Shortcode_Wide
         $last_name = $options['simple_donation_last_name'];
         $email = $options['simple_donation_email'];
         $address = $options['simple_donation_address'];
-        $message = $options['simple_donation_message'];
         $custom = $options['simple_donation_custom_field_visibility'];
         $custom_name = $options['simple_donation_custom_field_name'];
         $public_donors = $options['simple_donation_public_donors'];
         if (!$active) {
             ob_start();
 ?>
-            <div style="padding: 30px;" class="bitcoin-donation-donation-form <?php echo esc_attr($theme_class); ?> wide-form">
-                <div class="bitcoin-donation-title-wrapper"
+            <div style="padding: 30px;" class="coinsnap-bitcoin-donation-form <?php echo esc_attr($theme_class); ?> wide-form">
+                <div class="coinsnap-bitcoin-donation-title-wrapper"
                     style="display: flex;justify-content: center; flex-direction: column; align-items: center; margin: 0">
                     <h3><?php echo esc_html($title_text); ?></h3>
                 </div>
@@ -58,11 +57,11 @@ class Bitcoin_Donation_Shortcode_Wide
 
         ob_start();
         ?>
-        <div id="bitcoin-donation-form-wide" class="bitcoin-donation-donation-form <?php echo esc_attr($theme_class);
-                                                                                    echo " " . esc_attr($modal_theme) ?> wide-form">
-            <div class="bitcoin-donation-title-wrapper">
+        <div id="coinsnap-bitcoin-donation-form-wide" class="coinsnap-bitcoin-donation-form <?php echo esc_attr($theme_class);
+                                                                                            echo " " . esc_attr($modal_theme) ?> wide-form">
+            <div class="coinsnap-bitcoin-donation-title-wrapper">
                 <h3><?php echo esc_html($title_text); ?></h3>
-                <select style="max-width: 172px;" id="bitcoin-donation-swap-wide" class="currency-swapper">
+                <select style="max-width: 172px;" id="coinsnap-bitcoin-donation-swap-wide" class="currency-swapper">
                     <option value="EUR">EUR</option>
                     <option value="USD">USD</option>
                     <option value="CAD">CAD</option>
@@ -72,38 +71,37 @@ class Bitcoin_Donation_Shortcode_Wide
                     <option value="CHF">CHF</option>
                 </select>
             </div>
-            <input type="text" id="bitcoin-donation-email-wide" name="bitcoin-email" style="display: none;" aria-hidden="true">
-            <div class="bitcoin-donation-wide-field-wrapper">
-                <div class="bitcoin-donation-wide-up">
+            <input type="text" id="coinsnap-bitcoin-donation-email-wide" name="bitcoin-email" style="display: none;" aria-hidden="true">
+            <div class="coinsnap-bitcoin-donation-wide-field-wrapper">
+                <div class="coinsnap-bitcoin-donation-wide-up">
 
                     <div class="shoutout-input-label">
-                        <label for="bitcoin-donation-amount-wide">Amount</label>
+                        <label for="coinsnap-bitcoin-donation-amount-wide">Amount</label>
                         <div class="amount-wrapper">
-                            <input type="text" id="bitcoin-donation-amount-wide">
+                            <input type="text" id="coinsnap-bitcoin-donation-amount-wide">
                             <div class="secondary-amount">
-                                <span id="bitcoin-donation-satoshi-wide"></span>
+                                <span id="coinsnap-bitcoin-donation-satoshi-wide"></span>
                             </div>
                         </div>
                     </div>
 
-                    <button class="wide-form-button" id="bitcoin-donation-pay-wide"><?php echo esc_html($button_text); ?></button>
+                    <button class="wide-form-button" id="coinsnap-bitcoin-donation-pay-wide"><?php echo esc_html($button_text); ?></button>
                 </div>
-                <div class="bitcoin-donation-wide-down">
-                    <label for="bitcoin-donation-message-wide">Message</label>
-                    <textarea id="bitcoin-donation-message-wide" class="bitcoin-donation-message wide-message-text-area" required name="message" rows="2"></textarea>
+                <div class="coinsnap-bitcoin-donation-wide-down">
+                    <label for="coinsnap-bitcoin-donation-message-wide">Message</label>
+                    <textarea id="coinsnap-bitcoin-donation-message-wide" class="coinsnap-bitcoin-donation-message wide-message-text-area" required name="message" rows="2"></textarea>
                 </div>
             </div>
-            <div id="bitcoin-donation-blur-overlay-wide" class="blur-overlay"></div>
+            <div id="coinsnap-bitcoin-donation-blur-overlay-wide" class="blur-overlay"></div>
 
             <?php
-            $this->get_template('bitcoin-donation-modal', [
-                'prefix' => 'bitcoin-donation-',
+            $this->get_template('coinsnap-bitcoin-donation-modal', [
+                'prefix' => 'coinsnap-bitcoin-donation-',
                 'sufix' => '-wide',
                 'first_name' => $first_name,
                 'last_name' => $last_name,
                 'email' => $email,
                 'address' => $address,
-                'message' => $message,
                 'public_donors' => $public_donors,
                 'custom' => $custom,
                 'custom_name' => $custom_name,
@@ -118,4 +116,4 @@ class Bitcoin_Donation_Shortcode_Wide
     }
 }
 
-new Bitcoin_Donation_Shortcode_Wide();
+new coinsnap_bitcoin_donation_Shortcode_Wide();

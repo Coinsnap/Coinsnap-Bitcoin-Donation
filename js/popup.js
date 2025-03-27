@@ -138,7 +138,7 @@ const addPopupListener = (prefix, sufix, type, exchangeRates, redirect) => {
             copyBtc.addEventListener('click', () => { navigator.clipboard.writeText(qrBitcoin); });
 
             // Add fiat amount
-            if (exchangeRates['EUR']) { // TODO check why is this fixed to EUR
+            if (exchangeRates['EUR']) {
                 document.getElementById(`${prefix}qr-fiat${sufix}`).textContent = `≈ ${res.amount * exchangeRates['EUR']} EUR`;
                 // Store the handler function when adding the listener
                 walletHandler = function () {

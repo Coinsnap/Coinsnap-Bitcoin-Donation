@@ -3,7 +3,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class Bitcoin_Donation_Public_Donors
+class coinsnap_bitcoin_donation_Public_Donors
 {
     public function __construct()
     {
@@ -47,56 +47,56 @@ class Bitcoin_Donation_Public_Donors
 
     public function register_custom_meta_fields()
     {
-        register_meta('post', '_bitcoin_donation_donor_name', [
+        register_meta('post', '_coinsnap_bitcoin_donation_donor_name', [
             'object_subtype' => 'bitcoin-pds',
             'type' => 'string',
             'single' => true,
             'show_in_rest' => true,
         ]);
 
-        register_meta('post', '_bitcoin_donation_amount', [
+        register_meta('post', '_coinsnap_bitcoin_donation_amount', [
             'object_subtype' => 'bitcoin-pds',
             'type' => 'string',
             'single' => true,
             'show_in_rest' => true,
         ]);
 
-        register_meta('post', '_bitcoin_donation_message', [
+        register_meta('post', '_coinsnap_bitcoin_donation_message', [
             'object_subtype' => 'bitcoin-pds',
             'type' => 'string',
             'single' => true,
             'show_in_rest' => true,
         ]);
 
-        register_meta('post', '_bitcoin_donation_form_type', [
+        register_meta('post', '_coinsnap_bitcoin_donation_form_type', [
             'object_subtype' => 'bitcoin-pds',
             'type' => 'string',
             'single' => true,
             'show_in_rest' => true,
         ]);
 
-        register_meta('post', '_bitcoin_donation_email', [
+        register_meta('post', '_coinsnap_bitcoin_donation_email', [
             'object_subtype' => 'bitcoin-pds',
             'type' => 'string',
             'single' => true,
             'show_in_rest' => true,
         ]);
 
-        register_meta('post', '_bitcoin_donation_address', [
+        register_meta('post', '_coinsnap_bitcoin_donation_address', [
             'object_subtype' => 'bitcoin-pds',
             'type' => 'string',
             'single' => true,
             'show_in_rest' => true,
         ]);
 
-        register_meta('post', '_bitcoin_donation_payment_id', [
+        register_meta('post', '_coinsnap_bitcoin_donation_payment_id', [
             'object_subtype' => 'bitcoin-pds',
             'type' => 'string',
             'single' => true,
             'show_in_rest' => true,
         ]);
 
-        register_meta('post', '_bitcoin_donation_custom_field', [
+        register_meta('post', '_coinsnap_bitcoin_donation_custom_field', [
             'object_subtype' => 'bitcoin-pds',
             'type' => 'string',
             'single' => true,
@@ -107,7 +107,7 @@ class Bitcoin_Donation_Public_Donors
     public function add_public_donors_metaboxes()
     {
         add_meta_box(
-            'bitcoin_donation_public_donors_details',
+            'coinsnap_bitcoin_donation_public_donors_details',
             'Donor Details',
             [$this, 'render_public_donors_metabox'],
             'bitcoin-pds',
@@ -118,80 +118,80 @@ class Bitcoin_Donation_Public_Donors
 
     public function render_public_donors_metabox($post)
     {
-        wp_nonce_field('bitcoin_donation_public_donors_nonce', 'bitcoin_donation_public_donors_nonce');
+        wp_nonce_field('coinsnap_bitcoin_donation_public_donors_nonce', 'coinsnap_bitcoin_donation_public_donors_nonce');
 
-        $name = get_post_meta($post->ID, '_bitcoin_donation_donor_name', true);
-        $amount = get_post_meta($post->ID, '_bitcoin_donation_amount', true);
-        $message = get_post_meta($post->ID, '_bitcoin_donation_message', true);
-        $form_type = get_post_meta($post->ID, '_bitcoin_donation_form_type', true);
-        $email = get_post_meta($post->ID, '_bitcoin_donation_email', true);
-        $address = get_post_meta($post->ID, '_bitcoin_donation_address', true);
-        $payment_id = get_post_meta($post->ID, '_bitcoin_donation_payment_id', true);
-        $custom_field = get_post_meta($post->ID, '_bitcoin_donation_custom_field', true);
+        $name = get_post_meta($post->ID, '_coinsnap_bitcoin_donation_donor_name', true);
+        $amount = get_post_meta($post->ID, '_coinsnap_bitcoin_donation_amount', true);
+        $message = get_post_meta($post->ID, '_coinsnap_bitcoin_donation_message', true);
+        $form_type = get_post_meta($post->ID, '_coinsnap_bitcoin_donation_form_type', true);
+        $email = get_post_meta($post->ID, '_coinsnap_bitcoin_donation_email', true);
+        $address = get_post_meta($post->ID, '_coinsnap_bitcoin_donation_address', true);
+        $payment_id = get_post_meta($post->ID, '_coinsnap_bitcoin_donation_payment_id', true);
+        $custom_field = get_post_meta($post->ID, '_coinsnap_bitcoin_donation_custom_field', true);
 ?>
         <table class="form-table">
             <tr>
                 <th scope="row">
-                    <label for="bitcoin_donation_donor_name"><?php echo esc_html_e('Name', 'bitcoin-donation') ?></label>
+                    <label for="coinsnap_bitcoin_donation_donor_name"><?php echo esc_html_e('Name', 'coinsnap-bitcoin-donation') ?></label>
                 </th>
                 <td>
-                    <input type="text" id="bitcoin_donation_donor_name" name="bitcoin_donation_donor_name" class="regular-text" value="<?php echo esc_attr($name); ?>" readonly>
+                    <input type="text" id="coinsnap_bitcoin_donation_donor_name" name="coinsnap_bitcoin_donation_donor_name" class="regular-text" value="<?php echo esc_attr($name); ?>" readonly>
                 </td>
             </tr>
             <tr>
                 <th scope="row">
-                    <label for="bitcoin_donation_amount"><?php echo esc_html_e('Amount', 'bitcoin-donation') ?></label>
+                    <label for="coinsnap_bitcoin_donation_amount"><?php echo esc_html_e('Amount', 'coinsnap-bitcoin-donation') ?></label>
                 </th>
                 <td>
-                    <input type="text" id="bitcoin_donation_amount" name="bitcoin_donation_amount" class="regular-text" value="<?php echo esc_attr($amount); ?>" readonly>
+                    <input type="text" id="coinsnap_bitcoin_donation_amount" name="coinsnap_bitcoin_donation_amount" class="regular-text" value="<?php echo esc_attr($amount); ?>" readonly>
                 </td>
             </tr>
             <tr>
                 <th scope="row">
-                    <label for="bitcoin_donation_message"><?php echo esc_html_e('Message', 'bitcoin-donation') ?></label>
+                    <label for="coinsnap_bitcoin_donation_message"><?php echo esc_html_e('Message', 'coinsnap-bitcoin-donation') ?></label>
                 </th>
                 <td>
-                    <textarea id="bitcoin_donation_message" name="bitcoin_donation_message" class="regular-text" rows="3" readonly><?php echo esc_textarea($message); ?></textarea>
+                    <textarea id="coinsnap_bitcoin_donation_message" name="coinsnap_bitcoin_donation_message" class="regular-text" rows="3" readonly><?php echo esc_textarea($message); ?></textarea>
                 </td>
             </tr>
             <tr>
                 <th scope="row">
-                    <label for="bitcoin_donation_form_type"><?php echo esc_html_e('Form Type', 'bitcoin-donation') ?></label>
+                    <label for="coinsnap_bitcoin_donation_form_type"><?php echo esc_html_e('Form Type', 'coinsnap-bitcoin-donation') ?></label>
                 </th>
                 <td>
-                    <input type="text" id="bitcoin_donation_form_type" name="bitcoin_donation_form_type" class="regular-text" value="<?php echo esc_attr($form_type); ?>" readonly>
+                    <input type="text" id="coinsnap_bitcoin_donation_form_type" name="coinsnap_bitcoin_donation_form_type" class="regular-text" value="<?php echo esc_attr($form_type); ?>" readonly>
                 </td>
             </tr>
             <tr>
                 <th scope="row">
-                    <label for="bitcoin_donation_email"><?php echo esc_html_e('Email', 'bitcoin-donation') ?></label>
+                    <label for="coinsnap_bitcoin_donation_email"><?php echo esc_html_e('Email', 'coinsnap-bitcoin-donation') ?></label>
                 </th>
                 <td>
-                    <input type="email" id="bitcoin_donation_email" name="bitcoin_donation_email" class="regular-text" value="<?php echo esc_attr($email); ?>" readonly>
+                    <input type="email" id="coinsnap_bitcoin_donation_email" name="coinsnap_bitcoin_donation_email" class="regular-text" value="<?php echo esc_attr($email); ?>" readonly>
                 </td>
             </tr>
             <tr>
                 <th scope="row">
-                    <label for="bitcoin_donation_address"><?php echo esc_html_e('Address', 'bitcoin-donation') ?></label>
+                    <label for="coinsnap_bitcoin_donation_address"><?php echo esc_html_e('Address', 'coinsnap-bitcoin-donation') ?></label>
                 </th>
                 <td>
-                    <input type="text" id="bitcoin_donation_address" name="bitcoin_donation_address" class="regular-text" value="<?php echo esc_attr($address); ?>" readonly>
+                    <input type="text" id="coinsnap_bitcoin_donation_address" name="coinsnap_bitcoin_donation_address" class="regular-text" value="<?php echo esc_attr($address); ?>" readonly>
                 </td>
             </tr>
             <tr>
                 <th scope="row">
-                    <label for="bitcoin_donation_payment_id"><?php echo esc_html_e('Payment ID', 'bitcoin-donation') ?></label>
+                    <label for="coinsnap_bitcoin_donation_payment_id"><?php echo esc_html_e('Payment ID', 'coinsnap-bitcoin-donation') ?></label>
                 </th>
                 <td>
-                    <input type="text" id="bitcoin_donation_payment_id" name="bitcoin_donation_payment_id" class="regular-text" value="<?php echo esc_attr($payment_id); ?>" readonly>
+                    <input type="text" id="coinsnap_bitcoin_donation_payment_id" name="coinsnap_bitcoin_donation_payment_id" class="regular-text" value="<?php echo esc_attr($payment_id); ?>" readonly>
                 </td>
             </tr>
             <tr>
                 <th scope="row">
-                    <label for="bitcoin_donation_custom_field"><?php echo esc_html_e('Custom Field', 'bitcoin-donation') ?></label>
+                    <label for="coinsnap_bitcoin_donation_custom_field"><?php echo esc_html_e('Custom Field', 'coinsnap-bitcoin-donation') ?></label>
                 </th>
                 <td>
-                    <input type="text" id="bitcoin_donation_custom_field" name="bitcoin_donation_custom_field" class="regular-text" value="<?php echo esc_attr($custom_field); ?>" readonly>
+                    <input type="text" id="coinsnap_bitcoin_donation_custom_field" name="coinsnap_bitcoin_donation_custom_field" class="regular-text" value="<?php echo esc_attr($custom_field); ?>" readonly>
                 </td>
             </tr>
         </table>
@@ -207,21 +207,21 @@ class Bitcoin_Donation_Public_Donors
         if ($post->post_type !== 'bitcoin-pds') return;
 
         if (
-            !isset($_POST['bitcoin_donation_public_donors_nonce']) ||
-            !wp_verify_nonce($_POST['bitcoin_donation_public_donors_nonce'], 'bitcoin_donation_public_donors_nonce')
+            !isset($_POST['coinsnap_bitcoin_donation_public_donors_nonce']) ||
+            !wp_verify_nonce($_POST['coinsnap_bitcoin_donation_public_donors_nonce'], 'coinsnap_bitcoin_donation_public_donors_nonce')
         ) {
             return;
         }
 
         $fields = [
-            'bitcoin_donation_donor_name' => 'text',
-            'bitcoin_donation_amount' => 'text',
-            'bitcoin_donation_message' => 'text',
-            'bitcoin_donation_form_type' => 'text',
-            'bitcoin_donation_email' => 'text',
-            'bitcoin_donation_address' => 'text',
-            'bitcoin_donation_payment_id' => 'text',
-            'bitcoin_donation_custom_field' => 'text',
+            'coinsnap_bitcoin_donation_donor_name' => 'text',
+            'coinsnap_bitcoin_donation_amount' => 'text',
+            'coinsnap_bitcoin_donation_message' => 'text',
+            'coinsnap_bitcoin_donation_form_type' => 'text',
+            'coinsnap_bitcoin_donation_email' => 'text',
+            'coinsnap_bitcoin_donation_address' => 'text',
+            'coinsnap_bitcoin_donation_payment_id' => 'text',
+            'coinsnap_bitcoin_donation_custom_field' => 'text',
         ];
 
         foreach ($fields as $field => $type) {
@@ -254,31 +254,31 @@ class Bitcoin_Donation_Public_Donors
     {
         switch ($column) {
             case 'name':
-                echo esc_html(get_post_meta($post_id, '_bitcoin_donation_donor_name', true));
+                echo esc_html(get_post_meta($post_id, '_coinsnap_bitcoin_donation_donor_name', true));
                 break;
             case 'amount':
-                echo esc_html(get_post_meta($post_id, '_bitcoin_donation_amount', true));
+                echo esc_html(get_post_meta($post_id, '_coinsnap_bitcoin_donation_amount', true));
                 break;
             case 'message':
-                echo esc_html(get_post_meta($post_id, '_bitcoin_donation_message', true));
+                echo esc_html(get_post_meta($post_id, '_coinsnap_bitcoin_donation_message', true));
                 break;
             case 'form_type':
-                echo esc_html(get_post_meta($post_id, '_bitcoin_donation_form_type', true));
+                echo esc_html(get_post_meta($post_id, '_coinsnap_bitcoin_donation_form_type', true));
                 break;
             case 'email':
-                echo esc_html(get_post_meta($post_id, '_bitcoin_donation_email', true));
+                echo esc_html(get_post_meta($post_id, '_coinsnap_bitcoin_donation_email', true));
                 break;
             case 'address':
-                echo esc_html(get_post_meta($post_id, '_bitcoin_donation_address', true));
+                echo esc_html(get_post_meta($post_id, '_coinsnap_bitcoin_donation_address', true));
                 break;
             case 'payment_id':
-                echo esc_html(get_post_meta($post_id, '_bitcoin_donation_payment_id', true));
+                echo esc_html(get_post_meta($post_id, '_coinsnap_bitcoin_donation_payment_id', true));
                 break;
             case 'custom_field':
-                echo esc_html(get_post_meta($post_id, '_bitcoin_donation_custom_field', true));
+                echo esc_html(get_post_meta($post_id, '_coinsnap_bitcoin_donation_custom_field', true));
                 break;
         }
     }
 }
 
-new Bitcoin_Donation_Public_Donors();
+new coinsnap_bitcoin_donation_Public_Donors();

@@ -14,8 +14,8 @@ foreach ($tables as $table) {
 }
 
 $options = array(
-    'bitcoin_donation_options',
-    'bitcoin_donation_forms_options',
+    'coinsnap_bitcoin_donation_options',
+    'coinsnap_bitcoin_donation_forms_options',
     'coinsnap_webhook_secret'
 );
 

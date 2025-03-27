@@ -3,7 +3,7 @@ if (!defined('ABSPATH')) {
 	exit;
 }
 
-class Bitcoin_Donation_Shoutout_Metabox
+class coinsnap_bitcoin_donation_Shoutout_Metabox
 {
 	public function __construct()
 	{
@@ -49,35 +49,35 @@ class Bitcoin_Donation_Shoutout_Metabox
 	}
 	public function register_custom_meta_fields()
 	{
-		register_meta('post', '_bitcoin_donation_shoutouts_name', [
+		register_meta('post', '_coinsnap_bitcoin_donation_shoutouts_name', [
 			'object_subtype' => 'bitcoin-shoutouts',
 			'type' => 'string',
 			'single' => true,
 			'show_in_rest' => true,
 		]);
 
-		register_meta('post', '_bitcoin_donation_shoutouts_amount', [
+		register_meta('post', '_coinsnap_bitcoin_donation_shoutouts_amount', [
 			'object_subtype' => 'bitcoin-shoutouts',
 			'type' => 'string',
 			'single' => true,
 			'show_in_rest' => true,
 		]);
 
-		register_meta('post', '_bitcoin_donation_shoutouts_invoice_id', [
+		register_meta('post', '_coinsnap_bitcoin_donation_shoutouts_invoice_id', [
 			'object_subtype' => 'bitcoin-shoutouts',
 			'type' => 'string',
 			'single' => true,
 			'show_in_rest' => true,
 		]);
 
-		register_meta('post', '_bitcoin_donation_shoutouts_message', [
+		register_meta('post', '_coinsnap_bitcoin_donation_shoutouts_message', [
 			'object_subtype' => 'bitcoin-shoutouts',
 			'type' => 'string',
 			'single' => true,
 			'show_in_rest' => true,
 		]);
 
-		register_meta('post', '_bitcoin_donation_shoutouts_provider', [
+		register_meta('post', '_coinsnap_bitcoin_donation_shoutouts_provider', [
 			'object_subtype' => 'bitcoin-shoutouts',
 			'type' => 'string',
 			'single' => true,
@@ -88,7 +88,7 @@ class Bitcoin_Donation_Shoutout_Metabox
 	public function add_shoutouts_metaboxes()
 	{
 		add_meta_box(
-			'bitcoin_donation_shoutouts_details',
+			'coinsnap_bitcoin_donation_shoutouts_details',
 			'Shoutouts Details',
 			[$this, 'render_shoutouts_metabox'],
 			'bitcoin-shoutouts',
@@ -100,64 +100,64 @@ class Bitcoin_Donation_Shoutout_Metabox
 	public function render_shoutouts_metabox($post)
 	{
 		// Add nonce for security
-		wp_nonce_field('bitcoin_donation_shoutouts_nonce', 'bitcoin_donation_shoutouts_nonce');
+		wp_nonce_field('coinsnap_bitcoin_donation_shoutouts_nonce', 'coinsnap_bitcoin_donation_shoutouts_nonce');
 
 		// Retrieve existing meta values
-		$name = get_post_meta($post->ID, '_bitcoin_donation_shoutouts_name', true);
-		$message = get_post_meta($post->ID, '_bitcoin_donation_shoutouts_message', true);
-		$amount = get_post_meta($post->ID, '_bitcoin_donation_shoutouts_amount', true);
-		$invoice_id = get_post_meta($post->ID, '_bitcoin_donation_shoutouts_invoice_id', true);
-		$provider = get_post_meta($post->ID, '_bitcoin_donation_shoutouts_provider', true);
+		$name = get_post_meta($post->ID, '_coinsnap_bitcoin_donation_shoutouts_name', true);
+		$message = get_post_meta($post->ID, '_coinsnap_bitcoin_donation_shoutouts_message', true);
+		$amount = get_post_meta($post->ID, '_coinsnap_bitcoin_donation_shoutouts_amount', true);
+		$invoice_id = get_post_meta($post->ID, '_coinsnap_bitcoin_donation_shoutouts_invoice_id', true);
+		$provider = get_post_meta($post->ID, '_coinsnap_bitcoin_donation_shoutouts_provider', true);
 
 ?>
 		<table class="form-table">
 			<tr>
 				<th scope="row">
-					<label for="bitcoin_donation_shoutouts_name"><?php echo esc_html_e('Name', 'bitcoin-donation-shoutouts') ?></label>
+					<label for="coinsnap_bitcoin_donation_shoutouts_name"><?php echo esc_html_e('Name', 'coinsnap-bitcoin-donation-shoutouts') ?></label>
 				</th>
 				<td>
 					<input
 						type="text"
-						id="bitcoin_donation_shoutouts_name"
-						name="bitcoin_donation_shoutouts_name"
+						id="coinsnap_bitcoin_donation_shoutouts_name"
+						name="coinsnap_bitcoin_donation_shoutouts_name"
 						class="regular-text"
 						value="<?php echo esc_attr($name); ?>">
 				</td>
 			</tr>
 			<tr>
 				<th scope="row">
-					<label for="bitcoin_donation_shoutouts_amount"><?php echo esc_html_e('Amount', 'bitcoin-donation-shoutouts') ?></label>
+					<label for="coinsnap_bitcoin_donation_shoutouts_amount"><?php echo esc_html_e('Amount', 'coinsnap-bitcoin-donation-shoutouts') ?></label>
 				</th>
 				<td>
 					<input
 						type="text"
-						id="bitcoin_donation_shoutouts_amount"
-						name="bitcoin_donation_shoutouts_amount"
+						id="coinsnap_bitcoin_donation_shoutouts_amount"
+						name="coinsnap_bitcoin_donation_shoutouts_amount"
 						class="regular-text"
 						value="<?php echo esc_attr($amount); ?>">
 				</td>
 			</tr>
 			<tr>
 				<th scope="row">
-					<label for="bitcoin_donation_shoutouts_invoice_id"><?php echo esc_html_e('Invoice Id', 'bitcoin-donation-shoutouts') ?></label>
+					<label for="coinsnap_bitcoin_donation_shoutouts_invoice_id"><?php echo esc_html_e('Invoice Id', 'coinsnap-bitcoin-donation-shoutouts') ?></label>
 				</th>
 				<td>
 					<input
 						type="text"
-						id="bitcoin_donation_shoutouts_invoice_id"
-						name="bitcoin_donation_shoutouts_invoice_id"
+						id="coinsnap_bitcoin_donation_shoutouts_invoice_id"
+						name="coinsnap_bitcoin_donation_shoutouts_invoice_id"
 						class="regular-text"
 						value="<?php echo esc_attr($invoice_id); ?>">
 				</td>
 			</tr>
 			<tr>
 				<th scope="row">
-					<label for="bitcoin_donation_shoutouts_message"><?php echo esc_html_e('Message', 'bitcoin-donation-shoutouts') ?></label>
+					<label for="coinsnap_bitcoin_donation_shoutouts_message"><?php echo esc_html_e('Message', 'coinsnap-bitcoin-donation-shoutouts') ?></label>
 				</th>
 				<td>
 					<textarea
-						id="bitcoin_donation_shoutouts_message"
-						name="bitcoin_donation_shoutouts_message"
+						id="coinsnap_bitcoin_donation_shoutouts_message"
+						name="coinsnap_bitcoin_donation_shoutouts_message"
 						class="regular-text"
 						rows="5"
 						cols="50"><?php echo esc_textarea($message); ?></textarea>
@@ -166,13 +166,13 @@ class Bitcoin_Donation_Shoutout_Metabox
 			</tr>
 			<tr>
 				<th scope="row">
-					<label for="bitcoin_donation_shoutouts_provider"><?php echo esc_html_e('Provider', 'bitcoin-donation-shoutouts') ?></label>
+					<label for="coinsnap_bitcoin_donation_shoutouts_provider"><?php echo esc_html_e('Provider', 'coinsnap-bitcoin-donation-shoutouts') ?></label>
 				</th>
 				<td>
 					<input
 						type="text"
-						id="bitcoin_donation_shoutouts_provider"
-						name="bitcoin_donation_shoutouts_provider"
+						id="coinsnap_bitcoin_donation_shoutouts_provider"
+						name="coinsnap_bitcoin_donation_shoutouts_provider"
 						class="regular-text"
 						readonly
 						value="<?php echo esc_attr($provider); ?>">
@@ -194,7 +194,7 @@ class Bitcoin_Donation_Shoutout_Metabox
 			$expected_nonce = 'wp_rest';
 			$nonce = isset($_SERVER['HTTP_X_WP_NONCE']) ? sanitize_text_field($_SERVER['HTTP_X_WP_NONCE']) : '';
 		} else {
-			$expected_nonce = 'bitcoin_donation_shoutouts_nonce';
+			$expected_nonce = 'coinsnap_bitcoin_donation_shoutouts_nonce';
 			$nonce = filter_input(INPUT_POST, $expected_nonce, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 		}
 		if (empty($nonce) || !wp_verify_nonce($nonce, $expected_nonce)) {
@@ -212,11 +212,11 @@ class Bitcoin_Donation_Shoutout_Metabox
 		}
 
 		$fields = [
-			'bitcoin_donation_shoutouts_name'     => 'text',
-			'bitcoin_donation_shoutouts_amount'   => 'text',
-			'bitcoin_donation_shoutouts_provider' => 'text',
-			'bitcoin_donation_shoutouts_invoice_id' => 'text',
-			'bitcoin_donation_shoutouts_message'    => 'text',
+			'coinsnap_bitcoin_donation_shoutouts_name'     => 'text',
+			'coinsnap_bitcoin_donation_shoutouts_amount'   => 'text',
+			'coinsnap_bitcoin_donation_shoutouts_provider' => 'text',
+			'coinsnap_bitcoin_donation_shoutouts_invoice_id' => 'text',
+			'coinsnap_bitcoin_donation_shoutouts_message'    => 'text',
 		];
 
 		// If this is a REST request, get the JSON payload.
@@ -274,15 +274,15 @@ class Bitcoin_Donation_Shoutout_Metabox
 	{
 		switch ($column) {
 			case 'name':
-				echo esc_html(get_post_meta($post_id, '_bitcoin_donation_shoutouts_name', true) ?: 'Anonymous');
+				echo esc_html(get_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_name', true) ?: 'Anonymous');
 				break;
 			case 'amount':
-				echo esc_html(get_post_meta($post_id, '_bitcoin_donation_shoutouts_amount', true) ?: '');
+				echo esc_html(get_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_amount', true) ?: '');
 				break;
 			case 'invoice_id':
-				$invoice_id = get_post_meta($post_id, '_bitcoin_donation_shoutouts_invoice_id', true) ?: '';
+				$invoice_id = get_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_invoice_id', true) ?: '';
 				if (!empty($invoice_id)) {
-					$provider = get_post_meta($post_id, '_bitcoin_donation_shoutouts_provider', true) ?: '';
+					$provider = get_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_provider', true) ?: '';
 					$url = $provider === 'btcpay' ? 'https://btcpay.coincharge.io/invoices/' : 'https://app.coinsnap.io/td/';
 					$href = $url . esc_attr($invoice_id);
 					echo '<a href="' . esc_url($href) . '" class="button button-small" target="_blank" rel="noopener noreferrer">' .
@@ -290,7 +290,7 @@ class Bitcoin_Donation_Shoutout_Metabox
 				}
 				break;
 			case 'message':
-				$message = get_post_meta($post_id, '_bitcoin_donation_shoutouts_message', true) ?: '';
+				$message = get_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_message', true) ?: '';
 				$message = strlen($message) > 150 ? substr($message, 0, 150) . ' ...' : $message;
 				echo esc_html($message);
 				break;
@@ -298,4 +298,4 @@ class Bitcoin_Donation_Shoutout_Metabox
 	}
 }
 
-new Bitcoin_Donation_Shoutout_Metabox();
+new coinsnap_bitcoin_donation_Shoutout_Metabox();

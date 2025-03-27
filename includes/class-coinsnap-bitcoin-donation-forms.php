@@ -1,15 +1,15 @@
 <?php
-class Bitcoin_Donation_Forms
+class Coinsnap_Bitcoin_Donation_Forms
 {
 
 	public function __construct()
 	{
-		add_action('admin_init', [$this, 'bitcoin_donation_forms_settings_init']);
+		add_action('admin_init', [$this, 'coinsnap_bitcoin_donation_forms_settings_init']);
 	}
 
-	function bitcoin_donation_forms_settings_init()
+	function coinsnap_bitcoin_donation_forms_settings_init()
 	{
-		register_setting('bitcoin_donation_forms_settings', 'bitcoin_donation_forms_options', [
+		register_setting('coinsnap_bitcoin_donation_forms_settings', 'coinsnap_bitcoin_donation_forms_options', [
 			'type'              => 'array',
 			'sanitize_callback' => [$this, 'sanitize_forms_options']
 		]);
@@ -831,12 +831,12 @@ class Bitcoin_Donation_Forms
 
 	private function render_shortcode_row($name, $shortcode)
 	{
-		echo "<tr>";
+		echo "<tr id='shortcode_$shortcode'>";
 		echo "<th>";
 		echo $name;
 		echo '</th>';
 		echo "<td>";
-		echo "<input type='text' id='shortcode_$shortcode' name='shortcode' class='regular-text' readonly value='[$shortcode]'>";
+		echo "<input type='text' name='shortcode' class='regular-text' readonly value='[$shortcode]'>";
 		echo '</td>';
 		echo '</tr>';
 	}
@@ -844,8 +844,8 @@ class Bitcoin_Donation_Forms
 	private function render_shortcode_section($section_id)
 	{
 		if ($section_id == 'bitcoin_donation_simple_donation_section') {
-			$this->render_shortcode_row('Shortcode narrow form', 'bitcoin_donation');
-			$this->render_shortcode_row('Shortcode wide form', 'bitcoin_donation_wide');
+			$this->render_shortcode_row('Shortcode narrow form', 'coinsnap_bitcoin_donation');
+			$this->render_shortcode_row('Shortcode wide form', 'coinsnap_bitcoin_donation_wide');
 		} elseif ($section_id == 'bitcoin_donation_shoutout_donation_section') {
 			$this->render_shortcode_row('Shortcode form', 'shoutout_form');
 			$this->render_shortcode_row('Shortcode list', 'shoutout_list');
@@ -901,7 +901,7 @@ class Bitcoin_Donation_Forms
 
 	public function render_field($args)
 	{
-		$options     = get_option('bitcoin_donation_forms_options', []);
+		$options     = get_option('coinsnap_bitcoin_donation_forms_options', []);
 		$field_id    = $args['label_for'];
 		$field_type  = $args['type'];
 		$field_value = isset($options[$field_id]) ? $options[$field_id] : '';
@@ -957,7 +957,7 @@ class Bitcoin_Donation_Forms
 			case 'select':
 				echo '<select 
                 id="' . esc_attr($field_id) . '" 
-                name="bitcoin_donation_forms_options[' . esc_attr($field_id) . ']"
+                name="coinsnap_bitcoin_donation_forms_options[' . esc_attr($field_id) . ']"
                 class="regular-text">';
 				foreach ($args['options'] as $value => $label) {
 					echo '<option value="' . esc_attr($value) . '"' .
@@ -976,7 +976,7 @@ class Bitcoin_Donation_Forms
 			case 'text':
 				echo '<input type="text" 
                 id="' . esc_attr($field_id) . '" 
-                name="bitcoin_donation_forms_options[' . esc_attr($field_id) . ']" 
+                name="coinsnap_bitcoin_donation_forms_options[' . esc_attr($field_id) . ']" 
                 value="' . esc_attr($field_value) . '" 
                 class="regular-text"' .
 					(isset($args['readonly']) && $args['readonly'] ? ' readonly' : '') .
@@ -989,7 +989,7 @@ class Bitcoin_Donation_Forms
 				$checked = isset($options[$field_id]) ? $options[$field_id] : ($defaults[$field_id] ?? false);
 				echo '<input type="checkbox" 
                     id="' . esc_attr($field_id) . '" 
-                    name="bitcoin_donation_forms_options[' . esc_attr($field_id) . ']" 
+                    name="coinsnap_bitcoin_donation_forms_options[' . esc_attr($field_id) . ']" 
                     value="1"' .
 					checked($checked, true, false) . '>';
 				break;
@@ -1013,14 +1013,14 @@ class Bitcoin_Donation_Forms
 			<h2 class="nav-tab-wrapper">
 				<a href="#coinsnap" class="nav-tab" data-tab="simple-donation">Donation Button</a>
 				<a href="#multi" class="nav-tab" data-tab="multi-amount-donation">Multi Amount Donation</a>
-				<a href="#btcpay" class="nav-tab" data-tab="shoutout-donation">Shoutout Donation</a>
+				<a href="#shoutouts" class="nav-tab" data-tab="shoutout-donation">Shoutout Donation</a>
 			</h2>
 
 			<form method="post" action="options.php">
 				<?php
 
 				// Render the settings fields for the Bitcoin Donation
-				settings_fields('bitcoin_donation_forms_settings');
+				settings_fields('coinsnap_bitcoin_donation_forms_settings');
 
 				echo '<div id="simple-donation" class="tab-content">';
 				$this->render_section('bitcoin_donation_simple_donation_section');

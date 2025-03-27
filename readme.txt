@@ -1,4 +1,4 @@
-=== Bitcoin Donation ===
+=== Coinsnap Bitcoin Donation ===
 
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, donation, BTCPay
@@ -7,7 +7,7 @@ Stable tag: 1.0.0
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Instant Bitcoin/Sats donations on Wordpress website directly to your wallet
+Accept Bitcoin donations and shoutouts in WordPress. Offer freely adjustable or pre-set donation amounts.
 
 == Description ==
 
@@ -16,8 +16,8 @@ With the Coinsnap Bitcoin-Lightning payment plugin you only need a Lightning wal
 
 * Coinsnap Bitcoin Donation Demo Site: https://donation.coinsnap.org/
 * Blog Article: https://coinsnap.io/en/
-* WordPress: https://wordpress.org/plugins/bitcoin-donation/
-* GitHub: https://github.com/Coinsnap/Bitcoin-Donation
+* WordPress: https://wordpress.org/plugins/coinsnap-bitcoin-donation/
+* GitHub: https://github.com/Coinsnap/coinsnap-bitcoin-donation
 
 
 == Bitcoin and Lightning payments in Donation Plugin ==
@@ -136,7 +136,7 @@ After saving settings you can use Store ID and Api Key on the step 2.
 
 ### 4.1. Donation shortcode ###
 
-Go to "Bitcoin Donations" in the sideboard on the left in your WordPress and click on "Bitcoin Donations". At the top of the page you will find shortcode [bitcoin_donation] that you can use it in your content.
+Go to "Bitcoin Donations" in the sideboard on the left in your WordPress and click on "Bitcoin Donations". At the top of the page you will find shortcode [coinsnap_bitcoin_donation] that you can use it in your content.
 
 ### 4.2. Configure your settings ####
 
@@ -159,7 +159,7 @@ After you will fill all the necessary data you can use shortcode in your content
 
 Follow updates on plugin's GitHub page:
 
-https://github.com/Coinsnap/Bitcoin-Donation
+https://github.com/Coinsnap/coinsnap-bitcoin-donation
 
 === Frequently Asked Questions ===
 

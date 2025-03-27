@@ -1,6 +1,6 @@
 <?php
 
-class Bitcoin_Donation_List
+class Coinsnap_Bitcoin_Donation_List
 {
 
 	public function __construct()
@@ -9,7 +9,7 @@ class Bitcoin_Donation_List
 	}
 	private function fetch_donations()
 	{
-		$options = get_option('bitcoin_donation_options');
+		$options = get_option('coinsnap_bitcoin_donation_options');
 		$provider = $options['provider'];
 
 		if ($provider == 'coinsnap') {
@@ -58,7 +58,7 @@ class Bitcoin_Donation_List
 			return;
 		}
 
-		$options          = get_option('bitcoin_donation_options');
+		$options          = get_option('coinsnap_bitcoin_donation_options');
 		$provider         = $options['provider'];
 		$btcpay_store_id  = $options['btcpay_store_id'];
 		$btcpay_url       = $options['btcpay_url'];
@@ -130,7 +130,7 @@ class Bitcoin_Donation_List
 	private function render_donation_row($donation)
 	{
 		$invoice_id = $donation['id'];
-		$options = get_option('bitcoin_donation_options');
+		$options = get_option('coinsnap_bitcoin_donation_options');
 		$provider = $options['provider'];
 		$isBtcpay = $provider === 'btcpay';
 		$href = ($isBtcpay)

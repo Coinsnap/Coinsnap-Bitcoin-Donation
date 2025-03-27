@@ -3,8 +3,8 @@
   margin-bottom: 20px;
 }
 
-.bitcoin-donation-settings-form input[type="text"],
-.bitcoin-donation-settings-form select {
+.coinsnap-bitcoin-donation-settings-form input[type="text"],
+.coinsnap-bitcoin-donation-settings-form select {
   width: 100%;
   max-width: 500px;
   padding: 8px;
@@ -14,7 +14,7 @@
   margin-bottom: 15px;
 }
 
-.bitcoin-donation-settings-form label {
+.coinsnap-bitcoin-donation-settings-form label {
   font-weight: bold;
   margin-bottom: 5px;
   display: block;
@@ -114,4 +114,8 @@
 
 .form-table th {
   width: 240px
+}
+
+.hiddenRow {
+  display: none !important;
 }

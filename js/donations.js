@@ -6,21 +6,21 @@ jQuery(document).ready(function ($) {
     var selectedCurrencyWide = formData.currency
     var secondaryCurrencyWide = 'sats'
 
-    const simpleDonation = document.getElementById('bitcoin-donation-amount')
-    const wideDonation = document.getElementById('bitcoin-donation-amount-wide')
+    const simpleDonation = document.getElementById('coinsnap-bitcoin-donation-amount')
+    const wideDonation = document.getElementById('coinsnap-bitcoin-donation-amount-wide')
 
     if (simpleDonation || wideDonation) {
 
         const setDefaults = (wide) => {
             const widePart = wide ? '-wide' : ''
-            const satoshiFieldName = `bitcoin-donation-satoshi${widePart}`
+            const satoshiFieldName = `coinsnap-bitcoin-donation-satoshi${widePart}`
             const selCurrency = wide ? selectedCurrencyWide : selectedCurrency
             const secCurrency = wide ? secondaryCurrencyWide : secondaryCurrency
 
-            document.getElementById(`bitcoin-donation-swap${widePart}`).value = selCurrency
+            document.getElementById(`coinsnap-bitcoin-donation-swap${widePart}`).value = selCurrency
             const operation = selCurrency == 'sats' ? '*' : '/';
             const fiatCurrency = formData.currency
-            const amountField = document.getElementById(`bitcoin-donation-amount${widePart}`);
+            const amountField = document.getElementById(`coinsnap-bitcoin-donation-amount${widePart}`);
 
             amountField.value = formData.defaultAmount
             updateValueField(
@@ -29,9 +29,9 @@ jQuery(document).ready(function ($) {
                 operation,
                 exchangeRates,
                 fiatCurrency,
-                true // TODO check
+                true
             )
-            const messageField = document.getElementById(`bitcoin-donation-message${widePart}`);
+            const messageField = document.getElementById(`coinsnap-bitcoin-donation-message${widePart}`);
             messageField.value = formData.defaultMessage;
 
             const secondaryField = document.getElementById(satoshiFieldName)
@@ -44,11 +44,11 @@ jQuery(document).ready(function ($) {
             exchangeRates = rates
             if (simpleDonation) {
                 setDefaults(false)
-                addPopupListener('bitcoin-donation-', '', 'Bitcoin Donation', exchangeRates, formData.redirectUrl)
+                addPopupListener('coinsnap-bitcoin-donation-', '', 'Bitcoin Donation', exchangeRates, formData.redirectUrl)
             }
             if (wideDonation) {
                 setDefaults(true)
-                addPopupListener('bitcoin-donation-', '-wide', 'Bitcoin Donation', exchangeRates, formData.redirectUrl)
+                addPopupListener('coinsnap-bitcoin-donation-', '-wide', 'Bitcoin Donation', exchangeRates, formData.redirectUrl)
             }
         });
 
@@ -69,12 +69,12 @@ jQuery(document).ready(function ($) {
             const widePart = wide ? '-wide' : ''
             const selCurrency = wide ? selectedCurrencyWide : selectedCurrency
             const secCurrency = wide ? secondaryCurrencyWide : secondaryCurrency
-            const field = document.getElementById(`bitcoin-donation-amount${widePart}`)
-            const field2 = document.getElementById(`bitcoin-donation-satoshi${widePart}`)
+            const field = document.getElementById(`coinsnap-bitcoin-donation-amount${widePart}`)
+            const field2 = document.getElementById(`coinsnap-bitcoin-donation-satoshi${widePart}`)
             let value = field.value.replace(` ${selCurrency}`, '');
             if (value.trim() !== '') {
                 field.value = value + ` ${selCurrency}`;
-                updateSecondaryCurrency(wide, `bitcoin-donation-amount${widePart}`, `bitcoin-donation-satoshi${widePart}`)
+                updateSecondaryCurrency(wide, `coinsnap-bitcoin-donation-amount${widePart}`, `coinsnap-bitcoin-donation-satoshi${widePart}`)
             } else {
                 field.value = '' + ` ${selCurrency}`;
                 field2.textContent = 0 + " " + secCurrency
@@ -83,7 +83,7 @@ jQuery(document).ready(function ($) {
 
         const handleChangeCurrency = (wide) => {
             const widePart = wide ? '-wide' : ''
-            const newCurrency = $(`#bitcoin-donation-swap${widePart}`).val();
+            const newCurrency = $(`#coinsnap-bitcoin-donation-swap${widePart}`).val();
             if (wide) {
                 selectedCurrencyWide = newCurrency;
                 secondaryCurrencyWide = (newCurrency === 'sats') ? formData.currency : 'sats';
@@ -91,26 +91,26 @@ jQuery(document).ready(function ($) {
                 selectedCurrency = newCurrency;
                 secondaryCurrency = (newCurrency === 'sats') ? formData.currency : 'sats';
             }
-            const amountField = $(`#bitcoin-donation-amount${widePart}`);
+            const amountField = $(`#coinsnap-bitcoin-donation-amount${widePart}`);
             const amountValue = cleanAmount(amountField.val()) || 0;
             amountField.val(`${amountValue} ${wide ? selectedCurrencyWide : selectedCurrency}`);
-            updateSecondaryCurrency(wide, `bitcoin-donation-amount${widePart}`, `bitcoin-donation-satoshi${widePart}`);
+            updateSecondaryCurrency(wide, `coinsnap-bitcoin-donation-amount${widePart}`, `coinsnap-bitcoin-donation-satoshi${widePart}`);
         }
         // Update secondary values
-        $('#bitcoin-donation-amount').on('input', () => handleAmountInput(false));
-        $('#bitcoin-donation-amount-wide').on('input', () => handleAmountInput(true));
+        $('#coinsnap-bitcoin-donation-amount').on('input', () => handleAmountInput(false));
+        $('#coinsnap-bitcoin-donation-amount-wide').on('input', () => handleAmountInput(true));
 
         // Handle thousands separators
-        NumericInput('bitcoin-donation-amount')
-        NumericInput('bitcoin-donation-amount-wide')
+        NumericInput('coinsnap-bitcoin-donation-amount')
+        NumericInput('coinsnap-bitcoin-donation-amount-wide')
 
         // Limit cursor movement
-        $('#bitcoin-donation-amount').on('click keydown', (e) => { limitCursorMovement(e, selectedCurrency); });
-        $('#bitcoin-donation-amount-wide').on('click keydown', (e) => { limitCursorMovement(e, selectedCurrencyWide); });
+        $('#coinsnap-bitcoin-donation-amount').on('click keydown', (e) => { limitCursorMovement(e, selectedCurrency); });
+        $('#coinsnap-bitcoin-donation-amount-wide').on('click keydown', (e) => { limitCursorMovement(e, selectedCurrencyWide); });
 
         // Handle currency change
-        $('#bitcoin-donation-swap').on('change', () => { handleChangeCurrency(false); });
-        $('#bitcoin-donation-swap-wide').on('change', () => { handleChangeCurrency(true); });
+        $('#coinsnap-bitcoin-donation-swap').on('change', () => { handleChangeCurrency(false); });
+        $('#coinsnap-bitcoin-donation-swap-wide').on('change', () => { handleChangeCurrency(true); });
 
     }
 

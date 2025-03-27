@@ -1,5 +1,5 @@
 <?php
-class Bitcoin_Donation_Webhooks
+class coinsnap_bitcoin_donation_Webhooks
 {
 
     public function __construct()
@@ -61,7 +61,7 @@ class Bitcoin_Donation_Webhooks
 
     public function register_webhook_endpoint()
     {
-        register_rest_route('bitcoin-donation/v1', 'webhook', [
+        register_rest_route('coinsnap-bitcoin-donation/v1', 'webhook', [
             'methods'  => ['POST'],
             'callback' => [$this, 'handle_webhook'],
             'permission_callback' => [$this, 'verify_webhook_request']
@@ -128,15 +128,15 @@ class Bitcoin_Donation_Webhooks
                     $post_id = wp_insert_post($post_data);
 
                     if ($post_id) {
-                        update_post_meta($post_id, '_bitcoin_donation_donor_name', sanitize_text_field($name));
-                        update_post_meta($post_id, '_bitcoin_donation_amount', sanitize_text_field($amount));
-                        update_post_meta($post_id, '_bitcoin_donation_message', sanitize_text_field($message));
-                        update_post_meta($post_id, '_bitcoin_donation_form_type', sanitize_text_field($type));
-                        update_post_meta($post_id, '_bitcoin_donation_dont_show', $opt_out_value);
-                        update_post_meta($post_id, '_bitcoin_donation_email', sanitize_email($email));
-                        update_post_meta($post_id, '_bitcoin_donation_address', sanitize_text_field($address));
-                        update_post_meta($post_id, '_bitcoin_donation_payment_id', sanitize_text_field($invoiceId));
-                        update_post_meta($post_id, '_bitcoin_donation_custom_field', sanitize_text_field($custom));
+                        update_post_meta($post_id, '_coinsnap_bitcoin_donation_donor_name', sanitize_text_field($name));
+                        update_post_meta($post_id, '_coinsnap_bitcoin_donation_amount', sanitize_text_field($amount));
+                        update_post_meta($post_id, '_coinsnap_bitcoin_donation_message', sanitize_text_field($message));
+                        update_post_meta($post_id, '_coinsnap_bitcoin_donation_form_type', sanitize_text_field($type));
+                        update_post_meta($post_id, '_coinsnap_bitcoin_donation_dont_show', $opt_out_value);
+                        update_post_meta($post_id, '_coinsnap_bitcoin_donation_email', sanitize_email($email));
+                        update_post_meta($post_id, '_coinsnap_bitcoin_donation_address', sanitize_text_field($address));
+                        update_post_meta($post_id, '_coinsnap_bitcoin_donation_payment_id', sanitize_text_field($invoiceId));
+                        update_post_meta($post_id, '_coinsnap_bitcoin_donation_custom_field', sanitize_text_field($custom));
                     }
                 }
                 // Shoutouts
@@ -156,11 +156,11 @@ class Bitcoin_Donation_Webhooks
                 $post_id = wp_insert_post($post_data);
 
                 if ($post_id) {
-                    update_post_meta($post_id, '_bitcoin_donation_shoutouts_name', sanitize_text_field($name));
-                    update_post_meta($post_id, '_bitcoin_donation_shoutouts_amount', sanitize_text_field($amount));
-                    update_post_meta($post_id, '_bitcoin_donation_shoutouts_invoice_id', sanitize_text_field($invoiceId));
-                    update_post_meta($post_id, '_bitcoin_donation_shoutouts_message', sanitize_text_field($message));
-                    update_post_meta($post_id, '_bitcoin_donation_shoutouts_provider', sanitize_text_field($provider));
+                    update_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_name', sanitize_text_field($name));
+                    update_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_amount', sanitize_text_field($amount));
+                    update_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_invoice_id', sanitize_text_field($invoiceId));
+                    update_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_message', sanitize_text_field($message));
+                    update_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_provider', sanitize_text_field($provider));
                 }
             }
         }
@@ -168,4 +168,4 @@ class Bitcoin_Donation_Webhooks
         return new WP_REST_Response('Webhook type not handled.', 200);
     }
 }
-new Bitcoin_Donation_Webhooks();
+new coinsnap_bitcoin_donation_Webhooks();

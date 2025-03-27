@@ -146,7 +146,7 @@
       event.preventDefault();
       var connection = false
       const origin = adminData.ngrokUrl ? adminData.ngrokUrl : new URL(window.location.href).origin;
-      const webhookUrl = `${origin}/wp-json/bitcoin-donation/v1/webhook`
+      const webhookUrl = `${origin}/wp-json/coinsnap-bitcoin-donation/v1/webhook`
       if ($providerSelector?.val() == 'coinsnap') {
         const coinsnapStoreId = $('#coinsnap_store_id').val();
         const coinsnapApiKey = $('#coinsnap_api_key').val();
@@ -220,23 +220,28 @@
   function toggleShortcode(value, section) {
     const regular = document.getElementById(`shortcode_${section}`);
     const wide = document.getElementById(`shortcode_${section}_wide`);
-    const regulularRow = regular.parentNode.parentNode;
-    const wideRow = wide.parentNode.parentNode;
+    if (!regular || !wide) {
+      return;
+    }
     if (value == 'WIDE') {
-      regulularRow.style.display = 'none';
-      wideRow.style.display = 'table-row';
+      regular.style.display = 'none';
+      wide.classList.remove('hiddenRow');
+      wide.style.display = 'table-row!important';
     } else {
-      regulularRow.style.display = 'table-row';
-      wideRow.style.display = 'none';
+      console.log(regular, wide)
+      regular.style.display = 'table-row';
+      wide.classList.add('hiddenRow');
     }
   }
 
-  if ($('#form_type').val) {
+  if ($('#form_type')?.val) {
     const value = $('#form_type').val();
-    toggleShortcode(value, 'bitcoin_donation');
-  } else if ($('#multi_amount_form_type')) {
+    toggleShortcode(value, 'coinsnap_bitcoin_donation');
+  }
+  if ($('#multi_amount_form_type')?.val) {
     const value = $('#multi_amount_form_type').val();
     toggleShortcode(value, 'multi_amount_donation');
+
   }
 
   // Initial state
@@ -266,7 +271,7 @@
 
   $('#form_type').change(function () {
     const value = $(this).val();
-    toggleShortcode(value, 'bitcoin_donation');
+    toggleShortcode(value, 'coinsnap_bitcoin_donation');
   });
 
   $('#multi_amount_form_type').change(function () {

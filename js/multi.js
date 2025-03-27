@@ -4,18 +4,18 @@ jQuery(document).ready(function ($) {
     var multiPrimaryCurrency = multiData.multiPrimary == 'SATS' ? 'sats' : multiData.multiFiat
     var multiSecondaryCurrency = multiData.multiPrimary == 'SATS' ? multiData.multiFiat : 'sats'
 
-    const multiDonation = document.getElementById('bitcoin-donation-amount-multi')
-    const wideMultiDonation = document.getElementById('bitcoin-donation-amount-multi-wide')
+    const multiDonation = document.getElementById('coinsnap-bitcoin-donation-amount-multi')
+    const wideMultiDonation = document.getElementById('coinsnap-bitcoin-donation-amount-multi-wide')
 
     if (multiDonation || wideMultiDonation) {
 
         const multiDefaults = (wide) => {
             const widePart = wide ? '-wide' : ''
-            const satoshiFieldName = `bitcoin-donation-satoshi-multi${widePart}`
-            document.getElementById(`bitcoin-donation-swap-multi${widePart}`).value = multiPrimaryCurrency
+            const satoshiFieldName = `coinsnap-bitcoin-donation-satoshi-multi${widePart}`
+            document.getElementById(`coinsnap-bitcoin-donation-swap-multi${widePart}`).value = multiPrimaryCurrency
             const operation = multiPrimaryCurrency == 'sats' ? '*' : '/';
             const currency = multiPrimaryCurrency == 'sats' ? multiSecondaryCurrency : multiPrimaryCurrency
-            const amountField = document.getElementById(`bitcoin-donation-amount-multi${widePart}`);
+            const amountField = document.getElementById(`coinsnap-bitcoin-donation-amount-multi${widePart}`);
             amountField.value = multiData.defaultMultiAmount
             updateValueField(
                 multiData.defaultMultiAmount,
@@ -25,15 +25,15 @@ jQuery(document).ready(function ($) {
                 currency,
                 true, // mutli needed?
             )
-            const messageField = document.getElementById(`bitcoin-donation-message-multi${widePart}`);
+            const messageField = document.getElementById(`coinsnap-bitcoin-donation-message-multi${widePart}`);
             messageField.value = multiData.defaultMultiMessage;
             const secondaryField = document.getElementById(satoshiFieldName)
             secondaryField.textContent = "≈ " + secondaryField.textContent + " " + multiSecondaryCurrency
             amountField.value += " " + multiPrimaryCurrency
             for (let i = 1; i <= 3; i++) {
                 updateSecondaryCurrency(
-                    `bitcoin-donation-pay-multi-snap${i}-primary${widePart}`,
-                    `bitcoin-donation-pay-multi-snap${i}-secondary${widePart}`,
+                    `coinsnap-bitcoin-donation-pay-multi-snap${i}-primary${widePart}`,
+                    `coinsnap-bitcoin-donation-pay-multi-snap${i}-secondary${widePart}`,
                     multiData[`snap${i}Amount`]
                 )
             }
@@ -43,11 +43,11 @@ jQuery(document).ready(function ($) {
             exchangeRates = rates
             if (multiDonation) {
                 multiDefaults(false)
-                addPopupListener('bitcoin-donation-', '-multi', 'Multi Amount Donation', exchangeRates, multiData.redirectUrl)
+                addPopupListener('coinsnap-bitcoin-donation-', '-multi', 'Multi Amount Donation', exchangeRates, multiData.redirectUrl)
             }
             if (wideMultiDonation) {
                 multiDefaults(true)
-                addPopupListener('bitcoin-donation-', '-multi-wide', 'Multi Amount Donation', exchangeRates, multiData.redirectUrl)
+                addPopupListener('coinsnap-bitcoin-donation-', '-multi-wide', 'Multi Amount Donation', exchangeRates, multiData.redirectUrl)
             }
         });
 
@@ -68,12 +68,12 @@ jQuery(document).ready(function ($) {
 
         const handleAmountInput = (wide) => {
             const widePart = wide ? '-wide' : ''
-            const field = document.getElementById(`bitcoin-donation-amount-multi${widePart}`)
-            const field2 = document.getElementById(`bitcoin-donation-satoshi-multi${widePart}`)
+            const field = document.getElementById(`coinsnap-bitcoin-donation-amount-multi${widePart}`)
+            const field2 = document.getElementById(`coinsnap-bitcoin-donation-satoshi-multi${widePart}`)
             let value = field.value.replace(` ${multiPrimaryCurrency}`, '');
             if (value.trim() !== '') {
                 field.value = value + ` ${multiPrimaryCurrency}`;
-                updateSecondaryCurrency(`bitcoin-donation-amount-multi${widePart}`, `bitcoin-donation-satoshi-multi${widePart}`, value)
+                updateSecondaryCurrency(`coinsnap-bitcoin-donation-amount-multi${widePart}`, `coinsnap-bitcoin-donation-satoshi-multi${widePart}`, value)
             } else {
                 field.value = 0;
                 field2.textContent = 0 + " " + multiSecondaryCurrency
@@ -93,16 +93,16 @@ jQuery(document).ready(function ($) {
         }
 
         // Update secondary values
-        $('#bitcoin-donation-amount-multi').on('input', () => { handleAmountInput(false) });
-        $('#bitcoin-donation-amount-multi-wide').on('input', () => { handleAmountInput(true) });
+        $('#coinsnap-bitcoin-donation-amount-multi').on('input', () => { handleAmountInput(false) });
+        $('#coinsnap-bitcoin-donation-amount-multi-wide').on('input', () => { handleAmountInput(true) });
 
         // Handle thousands separators
-        NumericInput('bitcoin-donation-amount-multi')
-        NumericInput('bitcoin-donation-amount-multi-wide')
+        NumericInput('coinsnap-bitcoin-donation-amount-multi')
+        NumericInput('coinsnap-bitcoin-donation-amount-multi-wide')
 
         // Limit cursor movement
-        $('#bitcoin-donation-amount-multi').on('click keydown', (e) => { limitCursorMovement(e, multiPrimaryCurrency); });
-        $('#bitcoin-donation-amount-multi-wide').on('click keydown', (e) => { limitCursorMovement(e, multiPrimaryCurrency); });
+        $('#coinsnap-bitcoin-donation-amount-multi').on('click keydown', (e) => { limitCursorMovement(e, multiPrimaryCurrency); });
+        $('#coinsnap-bitcoin-donation-amount-multi-wide').on('click keydown', (e) => { limitCursorMovement(e, multiPrimaryCurrency); });
 
         // Update snap buttons
         const snapIds = ['snap1', 'snap2', 'snap3'];
@@ -110,11 +110,11 @@ jQuery(document).ready(function ($) {
         snapIds.forEach(snapId => {
             variants.forEach(variant => {
                 const suffix = variant ? `${snapId}${variant}` : snapId;
-                const payButtonId = `bitcoin-donation-pay-multi-${suffix}`;
-                const primaryId = `bitcoin-donation-pay-multi-${snapId}-primary${variant}`;
+                const payButtonId = `coinsnap-bitcoin-donation-pay-multi-${suffix}`;
+                const primaryId = `coinsnap-bitcoin-donation-pay-multi-${snapId}-primary${variant}`;
 
                 $(`#${payButtonId}`).on('click', () => {
-                    const amountField = $(`#bitcoin-donation-amount-multi${variant}`);
+                    const amountField = $(`#coinsnap-bitcoin-donation-amount-multi${variant}`);
                     const amount = cleanAmount(document.getElementById(primaryId).textContent)
                     amountField.val(`${amount} ${multiPrimaryCurrency}`);
                     amountField.trigger('input');
@@ -124,20 +124,20 @@ jQuery(document).ready(function ($) {
 
         const handleMultiChangeCurrency = (wide) => {
             const widePart = wide ? '-wide' : ''
-            const newCurrency = $(`#bitcoin-donation-swap-multi${widePart}`).val();
+            const newCurrency = $(`#coinsnap-bitcoin-donation-swap-multi${widePart}`).val();
             multiPrimaryCurrency = newCurrency;
             multiSecondaryCurrency = (newCurrency === 'sats') ? multiData.multiFiat : 'sats';
 
-            const amountField = $(`#bitcoin-donation-amount-multi${widePart}`);
+            const amountField = $(`#coinsnap-bitcoin-donation-amount-multi${widePart}`);
             const amountValue = cleanAmount(amountField.val()) || 0;
             amountField.val(`${amountValue} ${multiPrimaryCurrency}`);
 
-            updateSecondaryCurrency(`bitcoin-donation-amount-multi${widePart}`, `bitcoin-donation-satoshi-multi${widePart}`);
+            updateSecondaryCurrency(`coinsnap-bitcoin-donation-amount-multi${widePart}`, `coinsnap-bitcoin-donation-satoshi-multi${widePart}`);
             const snaps = ['snap1', 'snap2', 'snap3'];
 
             snaps.forEach(snap => {
-                const primaryId = `bitcoin-donation-pay-multi-${snap}-primary${widePart}`;
-                const secondaryId = `bitcoin-donation-pay-multi-${snap}-secondary${widePart}`;
+                const primaryId = `coinsnap-bitcoin-donation-pay-multi-${snap}-primary${widePart}`;
+                const secondaryId = `coinsnap-bitcoin-donation-pay-multi-${snap}-secondary${widePart}`;
                 if (newCurrency !== 'sats') {
                     updateSecondaryCurrency(primaryId, secondaryId, multiData[`${snap}Amount`]);
                 } else {
@@ -148,8 +148,8 @@ jQuery(document).ready(function ($) {
         }
 
         // Handle currency change
-        $('#bitcoin-donation-swap-multi').on('change', () => { handleMultiChangeCurrency(false); });
-        $('#bitcoin-donation-swap-multi-wide').on('change', () => { handleMultiChangeCurrency(true); });
+        $('#coinsnap-bitcoin-donation-swap-multi').on('change', () => { handleMultiChangeCurrency(false); });
+        $('#coinsnap-bitcoin-donation-swap-multi-wide').on('change', () => { handleMultiChangeCurrency(true); });
 
     }
 
