@@ -228,7 +228,6 @@
       wide.classList.remove('hiddenRow');
       wide.style.display = 'table-row!important';
     } else {
-      console.log(regular, wide)
       regular.style.display = 'table-row';
       wide.classList.add('hiddenRow');
     }

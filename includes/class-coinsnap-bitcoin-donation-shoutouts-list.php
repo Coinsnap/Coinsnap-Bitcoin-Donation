@@ -3,7 +3,7 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-class coinsnap_bitcoin_donation_Shoutouts_List
+class Coinsnap_Bitcoin_Donation_Shoutouts_List
 {
     public function __construct()
     {
@@ -144,4 +144,4 @@ class coinsnap_bitcoin_donation_Shoutouts_List
     }
 }
 
-new coinsnap_bitcoin_donation_Shoutouts_List();
+new Coinsnap_Bitcoin_Donation_Shoutouts_List();

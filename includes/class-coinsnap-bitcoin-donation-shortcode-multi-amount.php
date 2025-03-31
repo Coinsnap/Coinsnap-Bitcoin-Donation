@@ -3,7 +3,7 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-class coinsnap_bitcoin_donation_Shortcode_Multi_Amount
+class Coinsnap_Bitcoin_Donation_Shortcode_Multi_Amount
 {
     public function __construct()
     {
@@ -138,4 +138,4 @@ class coinsnap_bitcoin_donation_Shortcode_Multi_Amount
     }
 }
 
-new coinsnap_bitcoin_donation_Shortcode_Multi_Amount();
+new Coinsnap_Bitcoin_Donation_Shortcode_Multi_Amount();

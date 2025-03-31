@@ -3,7 +3,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class coinsnap_bitcoin_donation_Public_Donors
+class Coinsnap_Bitcoin_Donation_Public_Donors
 {
     public function __construct()
     {
@@ -281,4 +281,4 @@ class coinsnap_bitcoin_donation_Public_Donors
     }
 }
 
-new coinsnap_bitcoin_donation_Public_Donors();
+new Coinsnap_Bitcoin_Donation_Public_Donors();

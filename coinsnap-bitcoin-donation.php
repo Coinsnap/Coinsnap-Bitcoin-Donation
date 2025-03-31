@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Bitcoin Donation
-Description: Accept Bitcoin Donations on any WordPress website.
+Description: Accept Bitcoin Donations in WordPress websites.
 Version: 1.0
 Author: Coinsnap Dev
 */

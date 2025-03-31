@@ -3,7 +3,7 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-class coinsnap_bitcoin_donation_Shoutouts_Form
+class Coinsnap_Bitcoin_Donation_Shoutouts_Form
 {
     public function __construct()
     {
@@ -135,4 +135,4 @@ class coinsnap_bitcoin_donation_Shoutouts_Form
     }
 }
 
-new coinsnap_bitcoin_donation_Shoutouts_Form();
+new Coinsnap_Bitcoin_Donation_Shoutouts_Form();

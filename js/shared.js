@@ -81,8 +81,6 @@ const handleButtonClick = (buttonId, honeypotId, amountId, satoshiId, messageId,
 
     const currency = lastInputCurrency.toUpperCase();
     const amount = currency === 'SATS' ? satsAmount : fiatAmount;
-    console.log(satsAmount, fiatAmount)
-
     if (!isNaN(amount) && amount > 0) {
         const type = name ? 'Shoutout Donation' : 'Donation Button';
         createInvoice(amount, message, lastInputCurrency, name, type);
