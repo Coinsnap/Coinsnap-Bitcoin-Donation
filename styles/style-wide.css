@@ -21,13 +21,13 @@
   flex-grow: 1;
 }
 
-.bitcoin-donation-wide-down {
+.coinsnap-bitcoin-donation-wide-down {
   height: 80px;
   display: flex;
   flex-direction: column;
 }
 
-.bitcoin-donation-wide-field-wrapper {
+.coinsnap-bitcoin-donation-wide-field-wrapper {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -35,14 +35,14 @@
 
 }
 
-.bitcoin-donation-multi-wide-wrapper {
+.coinsnap-bitcoin-donation-multi-wide-wrapper {
   display: flex;
   flex-direction: column;
   gap: 10px;
   padding: 30px;
 }
 
-.bitcoin-donation-wide-up {
+.coinsnap-bitcoin-donation-wide-up {
   display: flex;
   gap: 8px;
 }
@@ -61,7 +61,7 @@
   /* Nice */
 }
 
-#bitcoin-donation-form-wide {
+#coinsnap-bitcoin-donation-form-wide {
   padding: 38px 8px 8px 8px;
 }
 

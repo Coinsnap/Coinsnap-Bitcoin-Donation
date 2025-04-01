@@ -6,7 +6,7 @@ if (!defined('WP_UNINSTALL_PLUGIN')) {
 
 global $wpdb;
 $tables = array(
-    $wpdb->prefix . 'voting_payments'
+    $wpdb->prefix . 'donation_payments'
 );
 
 foreach ($tables as $table) {
@@ -14,8 +14,8 @@ foreach ($tables as $table) {
 }
 
 $options = array(
-    'bitcoin_donation_options',
-    'bitcoin_donation_forms_options',
+    'coinsnap_bitcoin_donation_options',
+    'coinsnap_bitcoin_donation_forms_options',
     'coinsnap_webhook_secret'
 );
 

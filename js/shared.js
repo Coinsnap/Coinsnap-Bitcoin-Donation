@@ -16,41 +16,6 @@ function setCookie(name, value, minutes) {
     document.cookie = name + "=" + value + ";" + expires + ";path=/";
 }
 
-async function createCPT(amount, message, name, invoiceId, provider) {
-    const nonce = sharedData.nonce;
-    const data = {
-        title: `Shoutout from ${name}`,
-        status: "pending",
-        name: name,
-        _bitcoin_donation_shoutouts_name: name,
-        meta: {
-            _bitcoin_donation_shoutouts_name: name,
-            _bitcoin_donation_shoutouts_amount: amount,
-            _bitcoin_donation_shoutouts_invoice_id: invoiceId,
-            _bitcoin_donation_shoutouts_message: message,
-            _bitcoin_donation_shoutouts_provider: provider,
-        }
-    };
-
-    try {
-        const response = await fetch('/wp-json/wp/v2/bitcoin-shoutouts', {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-WP-Nonce": nonce,
-            },
-            body: JSON.stringify(data),
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        await response.json();
-    } catch (error) {
-        console.error("Error creating shoutout:", error);
-    }
-}
-
 const addErrorField = (field) => {
     field.css('border', '1px solid red');
     removeBorderOnFocus(field, field)
@@ -116,8 +81,6 @@ const handleButtonClick = (buttonId, honeypotId, amountId, satoshiId, messageId,
 
     const currency = lastInputCurrency.toUpperCase();
     const amount = currency === 'SATS' ? satsAmount : fiatAmount;
-    console.log(satsAmount, fiatAmount)
-
     if (!isNaN(amount) && amount > 0) {
         const type = name ? 'Shoutout Donation' : 'Donation Button';
         createInvoice(amount, message, lastInputCurrency, name, type);
@@ -162,21 +125,7 @@ const updateValueField = (amount, fieldName, operation, exchangeRates, currency,
         console.error(`Field with ID "${fieldName}" not found.`);
         return;
     }
-    if (fieldName == 'bitcoin-donation-shoutout-satoshi') { // Min and Premium shoutout amoutns
-        const minAmount = sharedData.minimumShoutoutAmount
-        const premiumAmount = sharedData.premiumShoutoutAmount
-        const satoshi = amount / currencyRate
-        if (satoshi < minAmount) {
-            field.style.color = '#e55e65';
-            premiumAmount.disabled = true
-        } else if (satoshi >= premiumAmount) {
-            field.style.color = '#f7931a';
-            premiumAmount.disabled = false
-        } else {
-            field.style.color = '';
-            premiumAmount.disabled = false
-        }
-    } else if (multi && !isNaN(amount) && currencyRate) {
+    if (multi && !isNaN(amount) && currencyRate) {
         const value = operation == '*' ? amount * currencyRate : amount / currencyRate;
         const decimals = value > 1000 ? 4 : 8;
         const valueDecimal = value.toFixed(operation == '*' ? decimals : 0);
@@ -235,7 +184,8 @@ const createActualInvoice = async (amount, message, lastInputCurrency, name, coi
             orderNumber: message,
             referralCode: 'D19833',
             type: type,
-            name: name
+            name: name,
+            ...metadata 
         }
     };
 
@@ -243,14 +193,9 @@ const createActualInvoice = async (amount, message, lastInputCurrency, name, coi
         requestData.redirectUrl = sharedData?.redirectUrl || window.location.href
     } else if (type == 'Bitcoin Shoutout') {
         requestData.redirectUrl = sharedData?.shoutoutRedirectUrl || window.location.href
+        requestData.provider = coinsnap ? 'coinsnap' : 'btcpay'
     } else if (type == 'Multi Amount Donation') {
         requestData.redirectUrl = sharedData?.multiRedirectUrl || window.location.href
-    } else if (type == 'Bitcoin Voting') {
-        requestData.metadata.optionId = metadata.optionId
-        requestData.metadata.option = metadata.option
-        requestData.metadata.pollId = metadata.pollId
-        requestData.metadata.orderNumber = `Voted for ${metadata.option}`
-        redirectAutomatically = false //TODO test
     }
 
     if (window.location.href.includes("localhost")) {
@@ -296,10 +241,6 @@ const createActualInvoice = async (amount, message, lastInputCurrency, name, coi
             message: message,
             name: name
         };
-
-        if (name) {
-            createCPT(`${amount} ${lastInputCurrency}`, message, name, responseData.id, coinsnap ? 'coinsnap' : 'btcpay');
-        }
 
         setCookie('coinsnap_invoice_', JSON.stringify(invoiceCookieData), 15);
 
@@ -499,4 +440,21 @@ const limitCursorMovement = (e, primaryCurrency) => {
             field.setSelectionRange(satsStart, satsStart);
         }
     }
+}
+
+const hideElementById = (id, prefix = '', sufix = '') => {
+    document.getElementById(`${prefix}${id}${sufix}`).style.display = 'none'
+}
+const hideElementsById = (ids, prefix = '', sufix = '') => {
+    ids.forEach(id => {
+        hideElementById(id, prefix, sufix)
+    })
+}
+const showElementById = (id, display, prefix = '', sufix = '') => {
+    document.getElementById(`${prefix}${id}${sufix}`).style.display = display
+}
+const showElementsById = (ids, display, prefix = '', sufix = '') => {
+    ids.forEach(id => {
+        showElementById(id, display, prefix, sufix)
+    })
 }

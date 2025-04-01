@@ -1,1 +1,1 @@
-# Bitcoin-Donation
+# coinsnap-bitcoin-donation
