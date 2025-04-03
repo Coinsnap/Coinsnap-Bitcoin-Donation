@@ -90,7 +90,10 @@ jQuery(document).ready(function ($) {
             const secCurrency = secondaryCurrency
             const field = document.getElementById(`coinsnap-bitcoin-donation-shoutout-amount`)
             const field2 = document.getElementById(`coinsnap-bitcoin-donation-shoutout-satoshi`)
-            let value = field.value.replace(` ${selCurrency}`, '');
+            let value = field.value.replace(/[^\d.,]/g, '');
+            if (value[0] == '0') {
+                value = value.substring(1);
+            }
             if (value.trim() !== '') {
                 field.value = value + ` ${selCurrency}`;
                 updateSecondaryCurrency(`coinsnap-bitcoin-donation-shoutout-amount`, `coinsnap-bitcoin-donation-shoutout-satoshi`)

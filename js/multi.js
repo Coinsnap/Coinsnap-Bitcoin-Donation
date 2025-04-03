@@ -56,7 +56,7 @@ jQuery(document).ready(function ($) {
             const currencyRate = exchangeRates[currency];
             const primaryField = document.getElementById(primaryId)
             var amount = cleanAmount(originalAmount)
-            if (primaryId.includes("snap")) {
+            if (primaryId.includes("-snap")) {
                 primaryField.textContent = `${amount} ${multiPrimaryCurrency}`
             } else {
                 amount = cleanAmount(primaryField.value)
@@ -70,7 +70,10 @@ jQuery(document).ready(function ($) {
             const widePart = wide ? '-wide' : ''
             const field = document.getElementById(`coinsnap-bitcoin-donation-amount-multi${widePart}`)
             const field2 = document.getElementById(`coinsnap-bitcoin-donation-satoshi-multi${widePart}`)
-            let value = field.value.replace(` ${multiPrimaryCurrency}`, '');
+            let value = field.value.replace(/[^\d.,]/g, '');
+            if(value[0] == '0') {
+                value = value.substring(1);
+            }
             if (value.trim() !== '') {
                 field.value = value + ` ${multiPrimaryCurrency}`;
                 updateSecondaryCurrency(`coinsnap-bitcoin-donation-amount-multi${widePart}`, `coinsnap-bitcoin-donation-satoshi-multi${widePart}`, value)
@@ -131,7 +134,6 @@ jQuery(document).ready(function ($) {
             const amountField = $(`#coinsnap-bitcoin-donation-amount-multi${widePart}`);
             const amountValue = cleanAmount(amountField.val()) || 0;
             amountField.val(`${amountValue} ${multiPrimaryCurrency}`);
-
             updateSecondaryCurrency(`coinsnap-bitcoin-donation-amount-multi${widePart}`, `coinsnap-bitcoin-donation-satoshi-multi${widePart}`);
             const snaps = ['snap1', 'snap2', 'snap3'];
 

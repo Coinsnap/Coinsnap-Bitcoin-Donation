@@ -71,7 +71,10 @@ jQuery(document).ready(function ($) {
             const secCurrency = wide ? secondaryCurrencyWide : secondaryCurrency
             const field = document.getElementById(`coinsnap-bitcoin-donation-amount${widePart}`)
             const field2 = document.getElementById(`coinsnap-bitcoin-donation-satoshi${widePart}`)
-            let value = field.value.replace(` ${selCurrency}`, '');
+            let value = field.value.replace(/[^\d.,]/g, '');
+            if (value[0] == '0') {
+                value = value.substring(1);
+            }
             if (value.trim() !== '') {
                 field.value = value + ` ${selCurrency}`;
                 updateSecondaryCurrency(wide, `coinsnap-bitcoin-donation-amount${widePart}`, `coinsnap-bitcoin-donation-satoshi${widePart}`)
