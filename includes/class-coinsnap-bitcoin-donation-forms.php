@@ -1034,7 +1034,15 @@ class Coinsnap_Bitcoin_Donation_Forms
 				?>
 				<?php
 				// Render submit button
-				submit_button();
+				submit_button(
+					__('Save Settings', 'bitcoin_donation'),
+					'primary',
+					'coinsnap_bitcoin_donation_forms_options[submit]',
+					false,
+					[
+						'id' => 'submit-button'
+					]
+				);
 				?>
 			</form>
 		</div>

@@ -164,7 +164,9 @@ async function fetchCoinsnapExchangeRates() {
             .forEach(item => {
                 const currency = item.currencyPair.replace("SATS_", ""); // Remove "SATS_" prefix
                 exchangeRates[currency] = parseFloat(item.rate); // Update exchangeRates
+                console.log("Exchange rate for " + currency + ": " + item.rate , "parsed: " + parseFloat(item.rate));
             });
+            console.log(exchangeRates)
 
         return exchangeRates;
     } catch (error) {
@@ -420,6 +422,7 @@ const NumericInput = (inputFieldName) => {
 
             target.value = val;
         });
+        inp.blur();
     }
 }
 

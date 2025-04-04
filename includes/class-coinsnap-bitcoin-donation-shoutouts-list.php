@@ -84,7 +84,7 @@ class Coinsnap_Bitcoin_Donation_Shoutouts_List
 
         $highlight = false;
         $name = "No Shoutouts Available";
-        $message = "There are no soutouts yet. This is just an example of how they will be displayed once there are some available.";
+        $message = "There are no shoutouts yet. This is just an example of how they will be displayed once there are some available.";
         $amount = "0 sats";
         $daysAgo = "Today";
     ?>
