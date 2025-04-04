@@ -142,7 +142,7 @@
       document.cookie = name + "=" + value + ";" + expires + ";path=/";
     }
 
-    async function handleCheckConnection() {
+    async function handleCheckConnection(isSubmit = false) {
       event.preventDefault();
       var connection = false
       const origin = adminData.ngrokUrl ? adminData.ngrokUrl : new URL(window.location.href).origin;
@@ -172,8 +172,17 @@
         }
       }
       setCookie('coinsnap_connection_', JSON.stringify({ 'connection': connection }), 20)
-      $('#submit').click();
+      if (!isSubmit) {
+        $('#submit').click();
+
+      }
     }
+
+    $('#submit').click(async function (event) {
+      await handleCheckConnection(true);
+      $('#submit').click();
+    });
+
 
     $checkConnectionCoisnanpButton.on('click', async (event) => { await handleCheckConnection(); })
     $checkConnectionBtcPayButton.on('click', async (event) => { await handleCheckConnection(); });
