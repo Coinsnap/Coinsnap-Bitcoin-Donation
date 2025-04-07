@@ -139,7 +139,7 @@ const addPopupListener = (prefix, sufix, type, exchangeRates, redirect) => {
 
             // Add fiat amount
             if (exchangeRates['EUR']) {
-                document.getElementById(`${prefix}qr-fiat${sufix}`).textContent = `≈ ${res.amount * exchangeRates['EUR']} EUR`;
+                document.getElementById(`${prefix}qr-fiat${sufix}`).textContent = `≈ ${(res.amount * exchangeRates['EUR']).toFixed(2)} EUR`;
                 // Store the handler function when adding the listener
                 walletHandler = function () {
                     window.location.href = `lightning:${qrLightning}`;

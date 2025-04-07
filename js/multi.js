@@ -73,7 +73,7 @@ jQuery(document).ready(function ($) {
             const field = document.getElementById(`coinsnap-bitcoin-donation-amount-multi${widePart}`)
             const field2 = document.getElementById(`coinsnap-bitcoin-donation-satoshi-multi${widePart}`)
             let value = field.value.replace(/[^\d.,]/g, '');
-            if(value[0] == '0') {
+            if(value[0] == '0' && value[1] != '.') {
                 value = value.substring(1);
             }
             if (value.trim() !== '') {
