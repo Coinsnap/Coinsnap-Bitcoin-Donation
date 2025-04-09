@@ -164,9 +164,7 @@ async function fetchCoinsnapExchangeRates() {
             .forEach(item => {
                 const currency = item.currencyPair.replace("SATS_", ""); // Remove "SATS_" prefix
                 exchangeRates[currency] = parseFloat(item.rate); // Update exchangeRates
-                console.log("Exchange rate for " + currency + ": " + item.rate , "parsed: " + parseFloat(item.rate));
             });
-            console.log(exchangeRates)
 
         return exchangeRates;
     } catch (error) {
@@ -365,7 +363,8 @@ const addNumSeparators = (amount) => {
 }
 
 const getThousandSeparator = () => {
-    return (1000).toLocaleString().replace(/\d/g, '')[0];
+    return ","
+    // return (1000).toLocaleString().replace(/\d/g, '')[0];
 }
 
 const removeThousandSeparator = (amount) => {
@@ -407,7 +406,6 @@ const NumericInput = (inputFieldName) => {
             tmp = parseFloat(tmp)
             original = original.replace(tmp, "")
             var val = Number(tmp).toLocaleString();
-
             if (tmp == '') {
                 target.value = '';
             } else {
@@ -419,7 +417,6 @@ const NumericInput = (inputFieldName) => {
             var event = e || window.event;
             var target = event.target;
             var val = removeThousandSeparator(target.value)
-
             target.value = val;
         });
         inp.blur();
