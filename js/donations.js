@@ -72,7 +72,8 @@ jQuery(document).ready(function ($) {
             const field = document.getElementById(`coinsnap-bitcoin-donation-amount${widePart}`)
             const field2 = document.getElementById(`coinsnap-bitcoin-donation-satoshi${widePart}`)
             let value = field.value.replace(/[^\d.,]/g, '');
-            if (value[0] == '0') {
+            const decimalSeparator = getThousandSeparator() == "." ? "," : ".";
+            if (value[0] == '0' && value[1] != decimalSeparator) {
                 value = value.substring(1);
             }
             if (value.trim() !== '') {
