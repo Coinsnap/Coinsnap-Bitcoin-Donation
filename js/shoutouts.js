@@ -92,7 +92,7 @@ jQuery(document).ready(function ($) {
             const field2 = document.getElementById(`coinsnap-bitcoin-donation-shoutout-satoshi`)
             let value = field.value.replace(/[^\d.,]/g, '');
             const decimalSeparator = getThousandSeparator() == "." ? "," : ".";
-            if (value[0] == '0' && value[1] != decimalSeparator) {
+            if (value[0] == '0' && value[1] != decimalSeparator && value.length > 1) {
                 value = value.substring(1);
             }
             if (value.trim() !== '') {
