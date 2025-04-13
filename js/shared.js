@@ -352,7 +352,7 @@ const createInvoice = async (amount, message, lastInputCurrency, name, type, red
 
 const addNumSeparators = (amount) => {
     var tmp = removeThousandSeparator(amount)
-    var val = Number(tmp).toLocaleString();
+    var val = Number(tmp).toLocaleString("en-GB");
 
     if (tmp == '') {
         return '';
@@ -363,8 +363,7 @@ const addNumSeparators = (amount) => {
 }
 
 const getThousandSeparator = () => {
-    return ","
-    // return (1000).toLocaleString().replace(/\d/g, '')[0];
+    return (1000).toLocaleString("en-GB").replace(/\d/g, '')[0];
 }
 
 const removeThousandSeparator = (amount) => {
@@ -405,7 +404,7 @@ const NumericInput = (inputFieldName) => {
             var original = tmp
             tmp = parseFloat(tmp)
             original = original.replace(tmp, "")
-            var val = Number(tmp).toLocaleString();
+            var val = Number(tmp).toLocaleString("en-GB");
             if (tmp == '') {
                 target.value = '';
             } else {
