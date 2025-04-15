@@ -133,7 +133,7 @@ From here on you can follow 1.1 to 1.3 and you will be set to sell for Bitcoin i
 
 Follow updates on plugin's GitHub page:
 
-[https://github.com/Coinsnap/Bitcoin-Donation](https://github.com/Coinsnap/Bitcoin-Donation)
+[https://github.com/Coinsnap/Coinsnap-Bitcoin-Donation](https://github.com/Coinsnap/Coinsnap-Bitcoin-Donation)
 
 === Frequently Asked Questions ===
 
