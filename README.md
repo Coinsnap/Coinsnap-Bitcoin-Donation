@@ -6,7 +6,7 @@
 * Tags: Lightning, Lightning Payment, SATS, Satoshi sats, bitcoin, Wordpress, bitcoin, donation, BTCPay, payment gateway, accept bitcoin, bitcoin plugin, bitcoin payment processor, bitcoin e-commerce, Lightning Network, cryptocurrency, lightning payment processor
 * Requires at least: 5.2
 * Tested up to: 6.7
-* Requires PHP: 7.4
+* Requires PHP: 8.0
 * Stable tag: 1.0.0
 * License: GPL2
 * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -65,7 +65,7 @@ Coinsnap’s Bitcoin Donation plugin for WordPress makes it amazingly simple for
 * Coinsnap Bitcoin Donation Demo Site: [https://donation.coinsnap.org/](https://donation.coinsnap.org/)
 * Product page: [https://coinsnap.io/coinsnap-bitcoin-donation-plugin/](https://coinsnap.io/coinsnap-bitcoin-donation-plugin/) 
 * Installation Guide: [https://coinsnap.io/coinsnap-bitcoin-donation-installation-guide/](https://coinsnap.io/coinsnap-bitcoin-donation-installation-guide/)
-* Github plugin page: [https://github.com/Coinsnap/Coinsnap-bitcoin-donation/](https://github.com/Coinsnap/Coinsnap-bitcoin-donation/)
+* Github plugin page: [https://github.com/Coinsnap/Coinsnap-Bitcoin-Donation/](https://github.com/Coinsnap/Coinsnap-Bitcoin-Donation/)
 
 ## Documentation: ##
 
@@ -129,21 +129,16 @@ Now WordPress will offer you to **Activate** the plugin – click the button and
 
 From here on you can follow 1.1 to 1.3 and you will be set to sell for Bitcoin in no time at all!
 
-
 # Upgrade Notice #
 
 Follow updates on plugin's GitHub page:
 
-https://github.com/Coinsnap/Bitcoin-Donation
+[https://github.com/Coinsnap/Coinsnap-Bitcoin-Donation](https://github.com/Coinsnap/Coinsnap-Bitcoin-Donation)
 
 # Frequently Asked Questions #
 
 Plugin's page on Coinsnap website: [https://coinsnap.io/coinsnap-bitcoin-donation-plugin/](https://coinsnap.io/coinsnap-bitcoin-donation-plugin/)
 
-# Screenshot #
-  
 # Changelog #
 = 1.0.0 :: 2024-07-08 =
 * Initial release. 
-
-
