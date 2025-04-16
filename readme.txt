@@ -84,7 +84,7 @@ Now WordPress will offer you to **Activate** the plugin – click the button and
 Next, you will connect the plugin with your Coinsnap account.
 
 
-== 1.1. Coinsnap Bitcoin Donation Settings ==
+= 1.1. Coinsnap Bitcoin Donation Settings =
 
 After you have installed and activated the Coinsnap Bitcoin Donation plugin, you need to configure the Coinsnap settings. Go to **Bitcoin Donations -> Settings** [1] in the black sidebar on the left.
 
@@ -96,7 +96,7 @@ As soon as you’ve pasted the Store ID and the API Key into their fields, click
 Don’t forget to klick on **Save changes** before you start configuring your donation form(s)!
 
 
-== 1.2. Enter Store ID and API Key in your Coinsnap Bitcoin Donation Settings ==
+= 1.2. Enter Store ID and API Key in your Coinsnap Bitcoin Donation Settings =
 
 Go to the **Settings** menu item in your Coinsnap merchant admin backend [https://app.coinsnap.io/login](https://app.coinsnap.io/login). Then click on **Store** and you will see your Coinsnap **Store ID** and the Coinsnap **API Key** in the **Store** section.
 
@@ -104,10 +104,10 @@ Go to the **Settings** menu item in your Coinsnap merchant admin backend [https:
 
 Click on the “**Save changes**” button at the bottom of the page to apply and save the settings. You are ready to start selling for Bitcoin now: Just create a donation form and place it via the shortcode on your website.
 
-== YOU ARE SET TO SELL FOR BITCOIN NOW! To be sure all works fine, you should now... ==
+= YOU ARE SET TO SELL FOR BITCOIN NOW! To be sure all works fine, you should now... =
 
 
-== 1.3. Test the payment method in a Coinsnap Bitcoin Donation form on your website ==
+= 1.3. Test the payment method in a Coinsnap Bitcoin Donation form on your website =
 
 After all settings have been made, a test transaction should be carried out.
 
@@ -147,7 +147,7 @@ Plugin's page on Coinsnap website: [https://coinsnap.io/coinsnap-bitcoin-donatio
 4. Donation form
 5. Donations list
 6. QR code
-7. Registration in Cooinsnap*
+7. Registration in Cooinsnap
 8. Email address confirmation
 9. Setting up website at Coinsnap
 
