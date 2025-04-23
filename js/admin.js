@@ -97,8 +97,6 @@
 
     async function updateWebhook(storeId, apiKey, webhookUrl, webhookId, btcpayUrl) {
       const webhookSecret = await getWebhookSecret();
-      console.log(webhookSecret)
-      console.log(webhookUrl)
       const data = {
         url: webhookUrl,
         events: ['Settled'],

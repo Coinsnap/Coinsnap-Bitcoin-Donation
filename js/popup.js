@@ -85,7 +85,7 @@ const addPopupListener = (prefix, sufix, type, exchangeRates, redirect) => {
         // const optOutField = document.getElementById(`${prefix}opt-out${sufix}`);
         const customField = document.getElementById(`${prefix}custom${sufix}`);
         const customNameField = document.getElementById(`${prefix}custom-name${sufix}`);
-        const customContent =  customNameField?.textContent && customField?.value ? `${customNameField.textContent}: ${customField.value}`: ''
+        const customContent = customNameField?.textContent && customField?.value ? `${customNameField.textContent}: ${customField.value}` : ''
         const validForm = !publicDonor || checkRequiredFieds([firstNameField, lastNameField, emailField, streetField, houseNumberField, postalCodeField, cityField, countryField, customField]);
         const metadata = {
             donorName: `${firstNameField.value} ${lastNameField?.value ?? ''}`,
@@ -164,6 +164,8 @@ const addPopupListener = (prefix, sufix, type, exchangeRates, redirect) => {
                                 resetPopup(prefix, sufix);
                                 if (redirect) {
                                     window.location.href = redirect;
+                                } else {
+                                    window.location.reload();
                                 }
                             }, 2000);
 
