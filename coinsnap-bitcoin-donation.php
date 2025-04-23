@@ -153,19 +153,6 @@ class coinsnap_bitcoin_donation
         wp_enqueue_script('coinsnap-bitcoin-donation-popup-script', plugin_dir_url(__FILE__) . 'js/popup.js', ['jquery'], '1.0.0', true);
     }
 
-    private function get_webhook_secret()
-    {
-        $option_name = 'coinsnap_webhook_secret';
-        $secret = get_option($option_name);
-
-        if (!$secret) {
-            $secret = bin2hex(random_bytes(16));
-            add_option($option_name, $secret, '', false);
-        }
-
-        return $secret;
-    }
-
     function coinsnap_bitcoin_donation_enqueue_admin_styles($hook)
     {
         error_log($hook);
@@ -176,11 +163,10 @@ class coinsnap_bitcoin_donation
             wp_enqueue_script('coinsnap-bitcoin-donation-admin-script', plugin_dir_url(__FILE__) . 'js/admin.js', ['jquery'], '1.0.0', true);
         } else if ($hook === 'toplevel_page_coinsnap_bitcoin_donation') {
             wp_enqueue_style('coinsnap-bitcoin-donation-admin-style', plugin_dir_url(__FILE__) . 'styles/admin-style.css', [], '1.0.0');
-            $secret = $this->get_webhook_secret();
             $options = get_option('coinsnap_bitcoin_donation_options', []);
             $ngrok_url = isset($options['ngrok_url']) ? $options['ngrok_url'] : '';
             wp_enqueue_script('coinsnap-bitcoin-donation-admin-script', plugin_dir_url(__FILE__) . 'js/admin.js', ['jquery'], '1.0.0', true);
-            wp_localize_script('coinsnap-bitcoin-donation-admin-script', 'adminData', ['webhookSecret' => $secret, 'ngrokUrl' => $ngrok_url]);
+            wp_localize_script('coinsnap-bitcoin-donation-admin-script', 'adminData', [ 'ngrokUrl' => $ngrok_url]);
         }
     }
 

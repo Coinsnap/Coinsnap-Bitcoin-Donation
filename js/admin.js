@@ -57,7 +57,6 @@
       });
     }
 
-
     function checkConnection(storeId, apiKey, btcpayUrl) {
       const headers = btcpayUrl ? { 'Authorization': `token ${apiKey}` } : { 'x-api-key': apiKey, };
       const url = btcpayUrl
@@ -72,9 +71,16 @@
       })
         .then(() => true)
         .catch(() => false);
-
     }
 
+    const getWebhookSecret = async () => {
+      fetch(`/wp-json/my-plugin/v1/get-wh-secret`)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+        });
+    }
+    
     function checkWebhooks(storeId, apiKey, btcpayUrl) {
       const headers = btcpayUrl ? { 'Authorization': `token ${apiKey}` } : { 'x-api-key': apiKey, };
       const url = btcpayUrl
@@ -91,11 +97,13 @@
         .catch(() => []);
     }
 
-    function updateWebhook(storeId, apiKey, webhookUrl, webhookId, btcpayUrl) {
+    async function updateWebhook(storeId, apiKey, webhookUrl, webhookId, btcpayUrl) {
+      const webhookSecret = await getWebhookSecret();
+
       const data = {
         url: webhookUrl,
         events: ['Settled'],
-        secret: adminData.webhookSecret
+        secret: webhookSecret
       }
       const headers = btcpayUrl ? { 'Authorization': `token ${apiKey}` } : { 'x-api-key': apiKey, };
       const url = btcpayUrl
@@ -113,11 +121,13 @@
         .catch(() => []);
     }
 
-    function createWebhook(storeId, apiKey, webhookUrl, btcpayUrl) {
+    async function createWebhook(storeId, apiKey, webhookUrl, btcpayUrl) {
+      const webhookSecret = await getWebhookSecret();
+
       const data = {
         url: webhookUrl,
         events: ['Settled'],
-        secret: adminData.webhookSecret
+        secret: webhookSecret
       }
 
       const headers = btcpayUrl
@@ -134,7 +144,6 @@
         contentType: 'application/json',
         headers: headers,
         data: JSON.stringify(data)
-
       })
     }
 
@@ -167,7 +176,8 @@
     async function handleCheckConnection(isSubmit = false) {
       event.preventDefault();
       var connection = false
-      const origin = adminData.ngrokUrl ? adminData.ngrokUrl : new URL(window.location.href).origin;
+      const ngrokLiveUrl = document.getElementById('ngrok_url')?.value;
+      const origin = ngrokLiveUrl ? ngrokLiveUrl : new URL(window.location.href).origin;
       const webhookUrl = `${origin}/wp-json/coinsnap-bitcoin-donation/v1/webhook`
       if ($providerSelector?.val() == 'coinsnap') {
         const coinsnapStoreId = $('#coinsnap_store_id').val();
@@ -208,7 +218,6 @@
       await handleCheckConnection(true);
       $('#submit').click();
     });
-
 
     $checkConnectionCoisnanpButton.on('click', async (event) => { await handleCheckConnection(); })
     $checkConnectionBtcPayButton.on('click', async (event) => { await handleCheckConnection(); });
