@@ -91,6 +91,28 @@
         .catch(() => []);
     }
 
+    function updateWebhook(storeId, apiKey, webhookUrl, webhookId, btcpayUrl) {
+      const data = {
+        url: webhookUrl,
+        events: ['Settled'],
+        secret: adminData.webhookSecret
+      }
+      const headers = btcpayUrl ? { 'Authorization': `token ${apiKey}` } : { 'x-api-key': apiKey, };
+      const url = btcpayUrl
+        ? `${btcpayUrl}/api/v1/stores/${storeId}/webhooks/${webhookId}`
+        : `https://app.coinsnap.io/api/v1/stores/${storeId}/webhooks/${webhookId}`
+
+      return $.ajax({
+        url: url,
+        method: 'PUT',
+        contentType: 'application/json',
+        headers: headers,
+        data: JSON.stringify(data)
+      })
+        .then((response) => response)
+        .catch(() => []);
+    }
+
     function createWebhook(storeId, apiKey, webhookUrl, btcpayUrl) {
       const data = {
         url: webhookUrl,
@@ -153,9 +175,11 @@
         connection = await checkConnection(coinsnapStoreId, coinsnapApiKey)
         if (connection) {
           const webhooks = await checkWebhooks(coinsnapStoreId, coinsnapApiKey)
-          const webhookFound = webhooks.some(webhook => webhook.url === webhookUrl);
+          const webhookFound = webhooks?.find(webhook => webhook.url === webhookUrl);
           if (!webhookFound) {
             await createWebhook(coinsnapStoreId, coinsnapApiKey, webhookUrl)
+          } else {
+            await updateWebhook(coinsnapStoreId, coinsnapApiKey, webhookUrl, webhookFound.id)
           }
         }
       } else {
@@ -165,9 +189,11 @@
         connection = await checkConnection(btcpayStoreId, btcpayApiKey, btcpayUrl)
         if (connection) {
           const webhooks = await checkWebhooks(btcpayStoreId, btcpayApiKey, btcpayUrl)
-          const webhookFound = webhooks.some(webhook => webhook.url === webhookUrl);
+          const webhookFound = webhooks?.find(webhook => webhook.url === webhookUrl);
           if (!webhookFound) {
             await createWebhook(btcpayStoreId, btcpayApiKey, webhookUrl, btcpayUrl)
+          } else {
+            await updateWebhook(btcpayStoreId, btcpayApiKey, webhookUrl, webhookFound.id, btcpayUrl)
           }
         }
       }
