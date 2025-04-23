@@ -74,11 +74,9 @@
     }
 
     const getWebhookSecret = async () => {
-      fetch(`/wp-json/my-plugin/v1/get-wh-secret`)
-        .then(response => response.json())
-        .then(data => {
-          return data;
-        });
+      const response = await fetch('/wp-json/my-plugin/v1/get-wh-secret');
+      const data = await response.json();
+      return data;
     }
     
     function checkWebhooks(storeId, apiKey, btcpayUrl) {
@@ -99,7 +97,6 @@
 
     async function updateWebhook(storeId, apiKey, webhookUrl, webhookId, btcpayUrl) {
       const webhookSecret = await getWebhookSecret();
-
       const data = {
         url: webhookUrl,
         events: ['Settled'],
