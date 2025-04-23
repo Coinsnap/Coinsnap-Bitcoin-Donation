@@ -77,7 +77,7 @@
       fetch(`/wp-json/my-plugin/v1/get-wh-secret`)
         .then(response => response.json())
         .then(data => {
-          console.log(data)
+          return data;
         });
     }
     
