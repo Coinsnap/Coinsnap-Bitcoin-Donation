@@ -152,7 +152,7 @@ const addPopupListener = (prefix, sufix, type, exchangeRates, redirect) => {
             retryId = res.id
 
             const checkPaymentStatus = () => {
-                fetch(`/wp-json/my-plugin/v1/check-payment-status/${res.id}`)
+                fetch(`/wp-json/coinsnap-bitcoin-donation/v1/check-payment-status/${res.id}`)
                     .then(response => response.json())
                     .then(data => {
                         const qrContainer = document.getElementById(`${prefix}qr-container${sufix}`);

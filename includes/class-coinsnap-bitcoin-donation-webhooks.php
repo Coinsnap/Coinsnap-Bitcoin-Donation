@@ -11,7 +11,7 @@ class coinsnap_bitcoin_donation_Webhooks
 
     public function register_check_payment_endpoint()
     {
-        register_rest_route('my-plugin/v1', '/check-payment-status/(?P<payment_id>[a-zA-Z0-9]+)', [
+        register_rest_route('coinsnap-bitcoin-donation/v1', '/check-payment-status/(?P<payment_id>[a-zA-Z0-9]+)', [
             'methods' => 'GET',
             'callback' => [$this, 'get_check_payment_status'],
             'permission_callback' => '__return_true', // TODO: Add proper permissions later
@@ -27,7 +27,7 @@ class coinsnap_bitcoin_donation_Webhooks
     }
     public function register_get_wh_secret_endpoint()
     {
-        register_rest_route('my-plugin/v1', '/get-wh-secret', [
+        register_rest_route('coinsnap-bitcoin-donation/v1', '/get-wh-secret', [
             'methods' => 'GET',
             'callback' => [$this, 'get_wh_secret'],
             'permission_callback' => '__return_true', // TODO: Add proper permissions later

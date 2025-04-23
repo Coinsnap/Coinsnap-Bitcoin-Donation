@@ -74,11 +74,11 @@
     }
 
     const getWebhookSecret = async () => {
-      const response = await fetch('/wp-json/my-plugin/v1/get-wh-secret');
+      const response = await fetch('/wp-json/coinsnap-bitcoin-donation/v1/get-wh-secret');
       const data = await response.json();
       return data;
     }
-    
+
     function checkWebhooks(storeId, apiKey, btcpayUrl) {
       const headers = btcpayUrl ? { 'Authorization': `token ${apiKey}` } : { 'x-api-key': apiKey, };
       const url = btcpayUrl
