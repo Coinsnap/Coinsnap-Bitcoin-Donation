@@ -1,110 +1,74 @@
-/* Common Styles */
-#coinsnap-bitcoin-donation-form-wide {
-  max-width: 800px;
-  margin: 20px auto;
-  padding: 30px;
-  border-radius: 8px;
-  font-family: Arial, sans-serif;
-  font-size: 14px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.wide-form input {
+  margin-bottom: 0px !important;
 }
 
-#coinsnap-bitcoin-donation-form-wide label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
+.wide-form {
+  max-width: 645px;
 }
 
-#coinsnap-bitcoin-donation-form-wide input {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-
-#coinsnap-bitcoin-donation-form-wide button {
-  width: 70%;
-  padding: 10px;
-  background-color: #6393c7;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
+.wide-form-button {
+  width: 80% !important;
+  height: 40px !important;
+  align-self: flex-end !important;
+  margin-top: 0px !important;
 }
 
 .amount-field {
   width: 140px;
 }
 
-#coinsnap-bitcoin-donation-form-wide button:hover {
-  transition: 250ms;
-  background-color: #f7a70a;
+.wide-message-text-area {
+  flex-grow: 1;
 }
 
-/* Light Theme */
-.bitcoin-donation-light-theme-wide {
-  background-color: #f2f2f2;
-  color: #333333;
-}
-
-.bitcoin-donation-light-theme-wide input {
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  color: #333;
-}
-
-.bitcoin-donation-light-theme-wide textarea {
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  color: #333;
-}
-
-/* Dark Theme */
-.bitcoin-donation-dark-theme-wide {
-  background-color: #2c2c2cf7;
-  color: #f1f1f1;
-}
-
-.bitcoin-donation-dark-theme-wide input {
-  background-color: #3a3a3a;
-  border: 1px solid #555;
-  color: #f1f1f1;
-}
-
-.bitcoin-donation-dark-theme-wide textarea {
-  background-color: #3a3a3a;
-  border: 1px solid #555;
-  color: #f1f1f1;
-}
-
-
-.bitcoin-donation-message-wide {
-  width: 100%;
-  resize: none;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 8px;
-  box-sizing: border-box;
-}
-
-.bitcoin-donation-title-wrapper-wide {
+.coinsnap-bitcoin-donation-wide-down {
+  height: 80px;
   display: flex;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
 }
 
-.bitcoin-donation-title-wrapper-wide h3 {
-  font-weight: bold;
-  color: #f7a70a;
-  stroke: #6393c7;
-
-}
-
-.bitcoin-donation-wide-field-wrapper {
+.coinsnap-bitcoin-donation-wide-field-wrapper {
   display: flex;
+  flex-direction: column;
   gap: 10px;
-  align-items: center;
+  padding: 0px 30px 30px 30px;
+
+}
+
+.coinsnap-bitcoin-donation-multi-wide-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 30px;
+}
+
+.coinsnap-bitcoin-donation-wide-up {
+  display: flex;
+  gap: 8px;
+}
+
+.multi-wide-button {
+  width: 31% !important;
+  align-self: center;
+}
+
+.mulit-wide-label-left {
+  width: 31%;
+}
+
+.mulit-wide-label-right {
+  width: 69%;
+  /* Nice */
+}
+
+#coinsnap-bitcoin-donation-form-wide {
+  padding: 38px 8px 8px 8px;
+}
+
+.wide-form .snap-primary-amount {
+  font-size: 14px;
+}
+
+.wide-form .snap-secondary-amount {
+  font-size: 12px;
 }
