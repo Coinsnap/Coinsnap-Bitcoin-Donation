@@ -5,9 +5,9 @@
 * Contributors: coinsnap
 * Tags: Lightning, Lightning Payment, SATS, Satoshi sats, bitcoin, Wordpress, bitcoin, donation, BTCPay, payment gateway, accept bitcoin, bitcoin plugin, bitcoin payment processor, bitcoin e-commerce, Lightning Network, cryptocurrency, lightning payment processor
 * Requires at least: 5.2
-* Tested up to: 6.7
+* Tested up to: 6.8
 * Requires PHP: 8.0
-* Stable tag: 1.0.0
+* Stable tag: 1.1.0
 * License: GPL2
 * License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -140,5 +140,20 @@ Follow updates on plugin's GitHub page:
 Plugin's page on Coinsnap website: [https://coinsnap.io/coinsnap-bitcoin-donation-plugin/](https://coinsnap.io/coinsnap-bitcoin-donation-plugin/)
 
 # Changelog #
-= 1.0.0 :: 2024-07-08 =
+
+#### 1.0.0 :: 2024-07-08 ####
 * Initial release. 
+
+#### 1.1.0 :: 2025-04-30 ####
+* Updated Wordpress backend interface
+* Updated plugin menu pages
+* Added 2 more forms (Shoutout and Multi Amount)
+* Added Donor Information collection option
+* Added settings tabs for new forms and Donor Information
+* Updated frontend interface
+* Added QR popup payment
+* Added currency selector
+* Updated input fields with separators and currency
+* Added conversion rate fetching from coinsnap
+* Added cleanup on plugin uninstall
+* Compatibility with Wordpress 6.8.1 is tested.
