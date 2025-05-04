@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name:        Coinsnap Bitcoin Donation
- * Plugin URI:         https://coinsnap.io
+ * Plugin URI:         https://coinsnap.io/coinsnap-bitcoin-donation-plugin/
  * Description:        Easy Bitcoin donations on a WordPress website
  * Version:            1.1.0
  * Author:             Coinsnap
