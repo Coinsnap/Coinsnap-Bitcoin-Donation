@@ -1,4 +1,3 @@
-
 function deleteCookie(name) {
     document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/;';
 }
@@ -185,7 +184,7 @@ const createActualInvoice = async (amount, message, lastInputCurrency, name, coi
             referralCode: 'D19833',
             type: type,
             name: name,
-            ...metadata 
+            ...metadata
         }
     };
 
@@ -377,6 +376,24 @@ const cleanAmount = (amount) => {
 
 }
 
+const formatNumericInput = (target) => {
+    var tmp = removeThousandSeparator(target.value);
+    var original = tmp;
+    tmp = parseFloat(tmp);
+    original = original.replace(tmp, "");
+    var val = Number(tmp).toLocaleString("en-GB");
+    if (isNaN(tmp) || tmp === '') {
+        target.value = '';
+    } else {
+        target.value = `${val}${original}`;
+    }
+}
+
+const unformatNumericInput = (target) => {
+    var val = removeThousandSeparator(target.value);
+    target.value = val;
+}
+
 const NumericInput = (inputFieldName) => {
     const inp = document.getElementById(inputFieldName)
     if (inp) {
@@ -399,26 +416,15 @@ const NumericInput = (inputFieldName) => {
 
         inp.addEventListener('blur', function (e) {
             var event = e || window.event;
-            var target = event.target;
-            var tmp = removeThousandSeparator(target.value)
-            var original = tmp
-            tmp = parseFloat(tmp)
-            original = original.replace(tmp, "")
-            var val = Number(tmp).toLocaleString("en-GB");
-            if (tmp == '') {
-                target.value = '';
-            } else {
-                target.value = `${val}${original}`
-            }
+            formatNumericInput(event.target);
         });
 
         inp.addEventListener('focus', function (e) {
             var event = e || window.event;
-            var target = event.target;
-            var val = removeThousandSeparator(target.value)
-            target.value = val;
+            unformatNumericInput(event.target);
         });
-        inp.blur();
+        unformatNumericInput(inp);
+        formatNumericInput(inp);
     }
 }
 

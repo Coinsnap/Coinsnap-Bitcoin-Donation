@@ -37,8 +37,11 @@ jQuery(document).ready(function ($) {
                     multiData[`snap${i}Amount`]
                 )
             }
-            amountField.focus();
-            amountField.blur();
+            unformatNumericInput(amountField)
+            formatNumericInput(amountField)
+
+            // amountField.focus();
+            // amountField.blur();
         }
 
         fetchCoinsnapExchangeRates().then(rates => {
