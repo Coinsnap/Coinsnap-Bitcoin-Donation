@@ -23,7 +23,7 @@ jQuery(document).ready(function ($) {
                 operation,
                 exchangeRates,
                 currency,
-                true, // mutli needed?
+                true,
             )
             const messageField = document.getElementById(`coinsnap-bitcoin-donation-message-multi${widePart}`);
             messageField.value = multiData.defaultMultiMessage;
