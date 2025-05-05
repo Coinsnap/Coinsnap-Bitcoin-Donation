@@ -189,7 +189,7 @@ const createActualInvoice = async (amount, message, lastInputCurrency, name, coi
         }
     };
 
-    if (type == 'Donation Button') {
+    if (type == 'Bitcoin Donation') {
         requestData.redirectUrl = sharedData?.redirectUrl || window.location.href
     } else if (type == 'Bitcoin Shoutout') {
         requestData.redirectUrl = sharedData?.shoutoutRedirectUrl || window.location.href

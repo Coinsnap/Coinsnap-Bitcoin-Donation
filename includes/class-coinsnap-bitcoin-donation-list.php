@@ -38,7 +38,12 @@ class Coinsnap_Bitcoin_Donation_List
 		$filtered_invoices = array_filter($invoices, function ($invoice) {
 			return isset($invoice['metadata']['referralCode'])
 				&& $invoice['metadata']['referralCode'] === "D19833"
-				&& $invoice['status'] === 'Settled';
+				&& $invoice['status'] === 'Settled'
+				&& (
+					$invoice['metadata']['type'] == 'Bitcoin Donation' ||
+					$invoice['metadata']['type'] == 'Bitcoin Shoutout' ||
+					$invoice['metadata']['type'] == 'Multi Amount Donation'
+				);
 		});
 		if ($provider == 'coinsnap') {
 			usort($filtered_invoices, function ($a, $b) {
