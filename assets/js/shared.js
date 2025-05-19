@@ -438,14 +438,26 @@ const limitCursorMovement = (e, primaryCurrency) => {
     const satsStart = field.value.length - satsOffset;
 
     if (field.value.includes(primaryCurrency)) {
+        // Handle click events
         if (e.type === 'click' && position >= satsStart) {
             let value = field.value.replace(` ${primaryCurrency}`, '');
             field.setSelectionRange(value.length, value.length);
         }
 
-        if (e.type === 'keydown' && (e.key === 'ArrowRight' || e.key === 'End') && position >= satsStart) {
-            e.preventDefault();
-            field.setSelectionRange(satsStart, satsStart);
+        // Handle keydown events
+        if (e.type === 'keydown') {
+            // For regular or Command/Ctrl + right arrow
+            if ((e.key === 'ArrowRight' || e.key === 'End') &&
+                (position >= satsStart || (field.selectionEnd > field.selectionStart))) {
+                e.preventDefault();
+                field.setSelectionRange(satsStart, satsStart);
+            }
+
+            // Specifically for Command/Ctrl + right arrow
+            if ((e.metaKey || e.ctrlKey) && e.key === 'ArrowRight') {
+                e.preventDefault();
+                field.setSelectionRange(satsStart, satsStart);
+            }
         }
     }
 }
