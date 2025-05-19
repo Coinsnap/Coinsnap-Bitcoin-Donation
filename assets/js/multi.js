@@ -48,11 +48,11 @@ jQuery(document).ready(function ($) {
             exchangeRates = rates
             if (multiDonation) {
                 multiDefaults(false)
-                addPopupListener('coinsnap-bitcoin-donation-', '-multi', 'Multi Amount Donation', exchangeRates, multiData.redirectUrl)
+                addDonationPopupListener('coinsnap-bitcoin-donation-', '-multi', 'Multi Amount Donation', exchangeRates, multiData.redirectUrl)
             }
             if (wideMultiDonation) {
                 multiDefaults(true)
-                addPopupListener('coinsnap-bitcoin-donation-', '-multi-wide', 'Multi Amount Donation', exchangeRates, multiData.redirectUrl)
+                addDonationPopupListener('coinsnap-bitcoin-donation-', '-multi-wide', 'Multi Amount Donation', exchangeRates, multiData.redirectUrl)
             }
         });
 
