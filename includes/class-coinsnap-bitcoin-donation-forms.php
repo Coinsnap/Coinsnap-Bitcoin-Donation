@@ -831,12 +831,12 @@ class Coinsnap_Bitcoin_Donation_Forms
 
 	private function render_shortcode_row($name, $shortcode)
 	{
-		echo "<tr id='shortcode_".esc_html($shortcode)."'>";
+		echo "<tr id='shortcode_" . esc_html($shortcode) . "'>";
 		echo "<th>";
 		echo esc_html($name);
 		echo '</th>';
 		echo "<td>";
-		echo "<input type='text' name='shortcode' class='regular-text' readonly value='[".esc_html($shortcode)."]'>";
+		echo "<input type='text' name='shortcode' class='regular-text' readonly value='[" . esc_html($shortcode) . "]'>";
 		echo '</td>';
 		echo '</tr>';
 	}
@@ -906,7 +906,7 @@ class Coinsnap_Bitcoin_Donation_Forms
 		$field_type  = $args['type'];
 		$field_value = isset($options[$field_id]) ? $options[$field_id] : '';
 		$defaults = [
-			'default_message' => 'Thank you for your work',
+			'default_message' => 'Thank you for your support',
 			'default_amount'  => '5',
 			'button_text'     => 'Donate',
 			'title_text'      => 'Donate with Bitcoin',
@@ -916,7 +916,7 @@ class Coinsnap_Bitcoin_Donation_Forms
 			'shoutout_title_text'      => 'Bitcoin Shoutouts',
 			'shoutout_minimum_amount'  => '21',
 			'shoutout_premium_amount'  => '21000',
-			'multi_amount_default_message' => 'Thank you for your work',
+			'multi_amount_default_message' => 'Thank you for your support',
 			'multi_amount_default_amount'  => '5',
 			'multi_amount_button_text'     => 'Donate',
 			'multi_amount_title_text'      => 'Donate with Bitcoin',
