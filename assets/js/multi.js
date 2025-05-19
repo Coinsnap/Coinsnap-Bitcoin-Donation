@@ -62,7 +62,8 @@ jQuery(document).ready(function ($) {
             const primaryField = document.getElementById(primaryId)
             var amount = cleanAmount(originalAmount)
             if (primaryId.includes("-snap")) {
-                primaryField.textContent = `${amount} ${multiPrimaryCurrency}`
+                const amountWithSep = addNumSeparators(`${amount}`)
+                primaryField.textContent = `${amountWithSep} ${multiPrimaryCurrency}`
             } else {
                 amount = cleanAmount(primaryField.value)
             }
@@ -96,8 +97,10 @@ jQuery(document).ready(function ($) {
             const primaryAmount = cleanAmount(primaryField.textContent)
             const secondaryField = document.getElementById(secondaryId)
             const convertedPrimary = (primaryAmount / currencyRate).toFixed(0)
-            primaryField.textContent = `${convertedPrimary} ${multiPrimaryCurrency}`
-            secondaryField.textContent = `≈ ${primaryAmount} ${multiSecondaryCurrency}`
+            const primaryWithSep = addNumSeparators(`${convertedPrimary}`)
+            const secondaryWithSep = addNumSeparators(`${primaryAmount}`)
+            primaryField.textContent = `${primaryWithSep} ${multiPrimaryCurrency}`
+            secondaryField.textContent = `≈ ${secondaryWithSep} ${multiSecondaryCurrency}`
 
         }
 
