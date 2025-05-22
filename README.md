@@ -13,9 +13,9 @@
 
 Let visitors donate Bitcoin anywhere on your WordPress site. Simple setup, optional shoutouts, and display messages beside or below the donation form
 
-== Description ==
+## Description
 
-= Accept Bitcoin Donations with Coinsnap Bitcoin Donation! =
+### Accept Bitcoin Donations with Coinsnap Bitcoin Donation!
 
 Enable the visitors on your WordPress website to make donations with Bitcoin wherever you want. Make it extremely simple to donate, or even let them make a shoutout and display all shoutouts next to the donation form or on a dedicated website. If you wish, you can also gather your donors’ contact data for later interactions.
 
@@ -27,13 +27,13 @@ With Coinsnap Bitcoin Donation for WordPress you can accept Bitcoin donations on
 
 Coinsnap Bitcoin Donation works with Coinsnap or your own BTCPay Server.
 
-= Requirements: =
+### Requirements:
 
 * A WordPress website
 * The Coinsnap Bitcoin Donation plugin
 * A [Coinsnap account](https://app.coinsnap.io/register) or your own BTCPay Server
 
-= Features & functions: =
+### Features & functions:
 
 * **Customisable donation buttons**:
 	* Freely selectable or preset donation amount
@@ -42,18 +42,18 @@ Coinsnap Bitcoin Donation works with Coinsnap or your own BTCPay Server.
 * **Easy integration via shortcodes** - donation buttons can be placed anywhere on your website: in the content, in the sidebar or in the footer, by pasting the shortcode at the appropriate place.
 * **Receive payments directly into your Bitcoin wallet** - either via Coinsnap or your own BTCPay Server.
 
-= Quick setup: =
+### Quick setup:
 
 * Install plugin directly via the WordPress plugin directory
 * Configure with just a few clicks
 * And that's it!
 
-= Two operating modes: =
+### Two operating modes:
 
 * Use Coinsnap (no technical know-how required)
 * Or use your own BTCPay server (for advanced users)
 
-= Why Coinsnap Bitcoin Donation? =
+### Why Coinsnap Bitcoin Donation?
 
 * Open source and free in the WordPress Plugin Directory
 * No programming knowledge required
@@ -63,7 +63,7 @@ Coinsnap Bitcoin Donation works with Coinsnap or your own BTCPay Server.
 * Strong support through our support team, accessible in your Coinsnap account
 
 
-= More information =
+### More information
 
 * Live demo: [https://donation.coinsnap.org/](https://donation.coinsnap.org/)
 * Product page: [https://coinsnap.io/coinsnap-bitcoin-donation-plugin/](https://coinsnap.io/coinsnap-bitcoin-donation-plugin/) 
@@ -72,7 +72,7 @@ Coinsnap Bitcoin Donation works with Coinsnap or your own BTCPay Server.
 * Github plugin page: [https://github.com/Coinsnap/Coinsnap-bitcoin-donation/](https://github.com/Coinsnap/Coinsnap-bitcoin-donation/)
 
 
-= Documentation: =
+### Documentation:
 
 * [Coinsnap API (1.0) documentation](https://docs.coinsnap.io/)
 * [Frequently Asked Questions](https://coinsnap.io/faq/) 
