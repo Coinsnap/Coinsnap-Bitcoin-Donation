@@ -63,6 +63,13 @@ class coinsnap_bitcoin_donation_Shoutout_Metabox
 			'show_in_rest' => true,
 		]);
 
+		register_meta('post', '_coinsnap_bitcoin_donation_shoutouts_sats_amount', [
+			'object_subtype' => 'bitcoin-shoutouts',
+			'type' => 'string',
+			'single' => true,
+			'show_in_rest' => true,
+		]);
+
 		register_meta('post', '_coinsnap_bitcoin_donation_shoutouts_invoice_id', [
 			'object_subtype' => 'bitcoin-shoutouts',
 			'type' => 'string',
@@ -106,6 +113,7 @@ class coinsnap_bitcoin_donation_Shoutout_Metabox
 		$name = get_post_meta($post->ID, '_coinsnap_bitcoin_donation_shoutouts_name', true);
 		$message = get_post_meta($post->ID, '_coinsnap_bitcoin_donation_shoutouts_message', true);
 		$amount = get_post_meta($post->ID, '_coinsnap_bitcoin_donation_shoutouts_amount', true);
+		$sats_amount = get_post_meta($post->ID, '_coinsnap_bitcoin_donation_shoutouts_sats_amount', true);
 		$invoice_id = get_post_meta($post->ID, '_coinsnap_bitcoin_donation_shoutouts_invoice_id', true);
 		$provider = get_post_meta($post->ID, '_coinsnap_bitcoin_donation_shoutouts_provider', true);
 
@@ -135,6 +143,19 @@ class coinsnap_bitcoin_donation_Shoutout_Metabox
 						name="coinsnap_bitcoin_donation_shoutouts_amount"
 						class="regular-text"
 						value="<?php echo esc_attr($amount); ?>">
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">
+					<label for="coinsnap_bitcoin_donation_shoutouts_sats_amount"><?php echo esc_html_e('Sats Amount', 'coinsnap-bitcoin-donation') ?></label>
+				</th>
+				<td>
+					<input
+						type="text"
+						id="coinsnap_bitcoin_donation_shoutouts_sats_amount"
+						name="coinsnap_bitcoin_donation_shoutouts_sats_amount"
+						class="regular-text"
+						value="<?php echo esc_attr($sats_amount); ?>">
 				</td>
 			</tr>
 			<tr>
@@ -182,19 +203,21 @@ class coinsnap_bitcoin_donation_Shoutout_Metabox
 <?php
 	}
 
-	public function save_shoutouts_meta($post_id, $post){
-            // Bail out if this is an autosave.
-            if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {return;}
+	public function save_shoutouts_meta($post_id, $post)
+	{
+		// Bail out if this is an autosave.
+		if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+			return;
+		}
 
-            // Check nonce for security
-            if (defined('REST_REQUEST') && REST_REQUEST) {
-		$expected_nonce = 'wp_rest';
-		$nonce = (null !== filter_input(INPUT_SERVER,'HTTP_X_WP_NONCE',FILTER_SANITIZE_FULL_SPECIAL_CHARS))? sanitize_text_field(filter_input(INPUT_SERVER,'HTTP_X_WP_NONCE',FILTER_SANITIZE_FULL_SPECIAL_CHARS)) : '';
-            }
-            else {
-		$expected_nonce = 'coinsnap_bitcoin_donation_shoutouts_nonce';
-		$nonce = filter_input(INPUT_POST, $expected_nonce, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-            }
+		// Check nonce for security
+		if (defined('REST_REQUEST') && REST_REQUEST) {
+			$expected_nonce = 'wp_rest';
+			$nonce = (null !== filter_input(INPUT_SERVER, 'HTTP_X_WP_NONCE', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) ? sanitize_text_field(filter_input(INPUT_SERVER, 'HTTP_X_WP_NONCE', FILTER_SANITIZE_FULL_SPECIAL_CHARS)) : '';
+		} else {
+			$expected_nonce = 'coinsnap_bitcoin_donation_shoutouts_nonce';
+			$nonce = filter_input(INPUT_POST, $expected_nonce, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+		}
 		if (empty($nonce) || !wp_verify_nonce($nonce, $expected_nonce)) {
 			return;
 		}
@@ -212,6 +235,7 @@ class coinsnap_bitcoin_donation_Shoutout_Metabox
 		$fields = [
 			'coinsnap_bitcoin_donation_shoutouts_name'     => 'text',
 			'coinsnap_bitcoin_donation_shoutouts_amount'   => 'text',
+			'coinsnap_bitcoin_donation_shoutouts_sats_amount' => 'text',
 			'coinsnap_bitcoin_donation_shoutouts_provider' => 'text',
 			'coinsnap_bitcoin_donation_shoutouts_invoice_id' => 'text',
 			'coinsnap_bitcoin_donation_shoutouts_message'    => 'text',
@@ -241,18 +265,17 @@ class coinsnap_bitcoin_donation_Shoutout_Metabox
 			return;
 		}
 		foreach ($fields as $field => $type) {
-                    if (null !== filter_input(INPUT_POST,$field,FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
-                        $value = filter_input(INPUT_POST,$field,FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-			
-                        if ($type === 'number') {
-                            $value = floatval($value);
-			} 
-                        else {
-                            $value = sanitize_text_field($value);
+			if (null !== filter_input(INPUT_POST, $field, FILTER_SANITIZE_FULL_SPECIAL_CHARS)) {
+				$value = filter_input(INPUT_POST, $field, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+				if ($type === 'number') {
+					$value = floatval($value);
+				} else {
+					$value = sanitize_text_field($value);
+				}
+
+				update_post_meta($post_id, '_' . $field, $value); // The stored meta keys have a leading underscore.
 			}
-				
-			update_post_meta($post_id, '_' . $field, $value); // The stored meta keys have a leading underscore.
-                    }
 		}
 	}
 
@@ -263,6 +286,7 @@ class coinsnap_bitcoin_donation_Shoutout_Metabox
 			'title' => $columns['title'],
 			'name' => 'Name',
 			'amount' => 'Amount',
+			'sats_amount' => 'Sats Amount',
 			'invoice_id' => 'Invoice id',
 			'message' => 'Message'
 		];
@@ -278,6 +302,9 @@ class coinsnap_bitcoin_donation_Shoutout_Metabox
 				break;
 			case 'amount':
 				echo esc_html(get_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_amount', true) ?: '');
+				break;
+			case 'sats_amount':
+				echo esc_html(get_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_sats_amount', true) ?: '');
 				break;
 			case 'invoice_id':
 				$invoice_id = get_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_invoice_id', true) ?: '';

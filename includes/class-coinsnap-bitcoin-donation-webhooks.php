@@ -163,6 +163,10 @@ class coinsnap_bitcoin_donation_Webhooks
                 $message = $payload_data['metadata']['orderNumber'];
                 $amount = $payload_data['metadata']['amount'];
                 $provider = $payload_data['metadata']['provider'];
+
+                // Get sats amount from payload if available, otherwise set to empty
+                $sats_amount = isset($payload_data['metadata']['satsAmount']) ? $payload_data['metadata']['satsAmount'] : '';
+                error_log(print_r($payload_data, true));
                 $post_data = array(
                     'post_title'    => 'Shoutout from ' . $name,
                     'post_status'   => 'publish',
@@ -173,6 +177,7 @@ class coinsnap_bitcoin_donation_Webhooks
                 if ($post_id) {
                     update_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_name', sanitize_text_field($name));
                     update_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_amount', sanitize_text_field($amount));
+                    update_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_sats_amount', sanitize_text_field($sats_amount));
                     update_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_invoice_id', sanitize_text_field($invoiceId));
                     update_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_message', sanitize_text_field($message));
                     update_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_provider', sanitize_text_field($provider));

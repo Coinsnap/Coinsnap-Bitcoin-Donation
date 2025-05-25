@@ -32,14 +32,15 @@ class Coinsnap_Bitcoin_Donation_Shoutouts_List
                 // error_log(print_r(get_post_meta($post_id), true));
                 $shoutout_name = get_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_name', true);
                 $shoutout_amount = get_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_amount', true);
+                $shoutout_sats_amount = get_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_sats_amount', true);
                 $shoutout_message = get_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_message', true);
 
                 $shoutouts[] = array(
                     'date'   => $post->post_date,
                     'name'   => $shoutout_name,
                     'amount' => $shoutout_amount,
+                    'sats_amount' => $shoutout_sats_amount,
                     'message' => $shoutout_message
-
                 );
             }
         }
@@ -110,9 +111,10 @@ class Coinsnap_Bitcoin_Donation_Shoutouts_List
         $options = get_option('coinsnap_bitcoin_donation_forms_options');
         $name = $donation['name'];
         $amount = $donation['amount'];
+        $sats_amount = !empty($donation['sats_amount']) ? $donation['sats_amount'] . ' sats' : '';
         $message = $donation['message'];
         $highlightAmount = $options['shoutout_premium_amount'] ?? '21000';
-        $highlight = (int)$amount >= (int)$highlightAmount;
+        $highlight = (int)$amount >= (int)$highlightAmount || (int)$sats_amount >= (int)$highlightAmount;
         $date =  $donation['date'];
         $donationDate = new DateTime($date);
         $now = new DateTime();

@@ -87,6 +87,7 @@ const addDonationPopupListener = (prefix, sufix, type, exchangeRates, redirect) 
         const customNameField = document.getElementById(`${prefix}custom-name${sufix}`);
         const customContent = customNameField?.textContent && customField?.value ? `${customNameField.textContent}: ${customField.value}` : ''
         const validForm = !publicDonor || checkRequiredFieds([firstNameField, lastNameField, emailField, streetField, houseNumberField, postalCodeField, cityField, countryField, customField]);
+        const satsAmount = currency == 'SATS' ? amount : (amount / exchangeRates[currency]).toFixed(0);
         const metadata = {
             donorName: `${firstNameField.value} ${lastNameField?.value ?? ''}`,
             donorEmail: emailField?.value,
@@ -96,7 +97,8 @@ const addDonationPopupListener = (prefix, sufix, type, exchangeRates, redirect) 
             formType: type,
             amount: `${amount} ${currency}`,
             publicDonor: publicDonor || 0,
-            modal: true
+            modal: true,
+            satsAmount: satsAmount,
         }
         if (!validForm) return;
 
@@ -141,14 +143,14 @@ const addDonationPopupListener = (prefix, sufix, type, exchangeRates, redirect) 
             if (exchangeRates['EUR']) {
                 document.getElementById(`${prefix}qr-fiat${sufix}`).textContent = `≈ ${(res.amount * exchangeRates['EUR'])?.toFixed(3)} EUR`;
                 document.getElementById(`${prefix}pay-in-wallet${sufix}`).setAttribute('href', `lightning:${qrLightning}`);
-                
+
                 //  Browser doesn't know how to redirect to unknown protocol
                 //  Store the handler function when adding the listener
                 //  walletHandler = function () {
                 //      window.location.replace(`lightning:${qrLightning}`);
                 //  };
                 //document.getElementById(`${prefix}pay-in-wallet${sufix}`).addEventListener('click', walletHandler);
-                
+
             }
 
             // Reset retry counter
