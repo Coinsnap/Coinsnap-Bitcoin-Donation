@@ -28,7 +28,7 @@ With Coinsnap Bitcoin Donation for WordPress you can accept Bitcoin donations on
 Coinsnap Bitcoin Donation works with Coinsnap or your own BTCPay Server.
 
 ### Requirements:
-
+![Coinsnap Bitcoin Donation](https://coinsnap.io/wp-content/uploads/2025/05/Wordpress_Coinsnap_BTCPay_Server_Plugin.png) 
 * A WordPress website
 * The Coinsnap Bitcoin Donation plugin
 * A [Coinsnap account](https://app.coinsnap.io/register) or your own BTCPay Server
