@@ -112,7 +112,7 @@
                 </div>
             </div>
         </details>
-        <a id="<?php echo esc_html($prefix); ?>pay-in-wallet<?php echo esc_html($sufix); ?>" class="qr-pay-in-wallet"><?php esc_html__('Pay in wallet','coinsnap-bitcoin-donation');?></a>
+        <a id="<?php echo esc_html($prefix); ?>pay-in-wallet<?php echo esc_html($sufix); ?>" class="qr-pay-in-wallet"><?php echo esc_html__('Pay in wallet','coinsnap-bitcoin-donation');?></a>
     </div>
     <div id="<?php echo esc_html($prefix); ?>thank-you-popup<?php echo esc_html($sufix); ?>" class="thank-you-popup">
         <img class="checkmark-img" id="checkmark" alt="Checkmark" src="<?php echo esc_url(COINSNAP_BITCOIN_DONATION_PLUGIN_DIR . 'assets/images/checkmark.svg'); ?>">
