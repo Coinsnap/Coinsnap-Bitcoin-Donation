@@ -1,5 +1,5 @@
 // js/popup.js
-const checkRequiredFieds = (fields) => {
+const checkDonationRequiredFieds = (fields) => {
     let valid = true;
     fields.forEach((field) => {
         if (field && field.required && !field.value.trim()) {
@@ -86,7 +86,7 @@ const addDonationPopupListener = (prefix, sufix, type, exchangeRates, redirect) 
         const customField = document.getElementById(`${prefix}custom${sufix}`);
         const customNameField = document.getElementById(`${prefix}custom-name${sufix}`);
         const customContent = customNameField?.textContent && customField?.value ? `${customNameField.textContent}: ${customField.value}` : ''
-        const validForm = !publicDonor || checkRequiredFieds([firstNameField, lastNameField, emailField, streetField, houseNumberField, postalCodeField, cityField, countryField, customField]);
+        const validForm = !publicDonor || checkDonationRequiredFieds([firstNameField, lastNameField, emailField, streetField, houseNumberField, postalCodeField, cityField, countryField, customField]);
         const satsAmount = currency == 'SATS' ? amount : (amount / exchangeRates[currency]).toFixed(0);
         const metadata = {
             donorName: `${firstNameField.value} ${lastNameField?.value ?? ''}`,

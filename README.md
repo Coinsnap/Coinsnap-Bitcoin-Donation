@@ -7,7 +7,7 @@
 * Requires at least: 5.2
 * Tested up to: 6.8
 * Requires PHP: 8.0
-* Stable tag: 1.1.0
+* Stable tag: 1.1.2
 * License: GPL2
 * License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -145,10 +145,10 @@ Plugin's page on Coinsnap website: [https://coinsnap.io/coinsnap-bitcoin-donatio
 
 # Changelog #
 
-#### 1.0.0 :: 2024-07-08 ####
+#### 1.0.0 :: 2024-07-08
 * Initial release. 
 
-#### 1.1.0 :: 2025-04-30 ####
+#### 1.1.0 :: 2025-04-30
 * Updated Wordpress backend interface
 * Updated plugin menu pages
 * Added 2 more forms (Shoutout and Multi Amount)
@@ -161,3 +161,10 @@ Plugin's page on Coinsnap website: [https://coinsnap.io/coinsnap-bitcoin-donatio
 * Added conversion rate fetching from coinsnap
 * Added cleanup on plugin uninstall
 * Compatibility with Wordpress 6.8.1 is tested.
+
+#### 1.1.1 :: 2025-05-25
+* Fixed bug for shoutouts
+* Update: Expanded the shoutouts so that they remember sats amount too and highlight based on that
+
+#### 1.1.2 :: 2025-06-04
+* Fixed bug for checkRequiredFieds constant in popup.js file
