@@ -227,7 +227,53 @@
         ? checkConnection.css({ color: 'green' }).text('Connection successful')
         : checkConnection.css({ color: 'red' }).text('Connection failed');
     }
+    
+    
+    
+    $('#coinsnap_bitcoin_donation_btcpay_wizard_button').click(function(e) {
+        e.preventDefault();
+        const host = $('#btcpay_url').val();
+	if (isDonationValidUrl(host)) {
+            let data = {
+                'action': 'coinsnap_bitcoin_donation_btcpay_apiurl_handler',
+                'host': host,
+                'apiNonce': coinsnap_bitcoin_donation_ajax.nonce
+            };
+            
+            $.post(coinsnap_bitcoin_donation_ajax.ajax_url, data, function(response) {
+                if (response.data.url) {
+                    window.location = response.data.url;
+		}
+            }).fail( function() {
+		alert('Error processing your request. Please make sure to enter a valid BTCPay Server instance URL.')
+            });
+	}
+        else {
+            alert('Please enter a valid url including https:// in the BTCPay Server URL input field.')
+        }
+    });
+    
   });
+  
+    function isDonationValidUrl(serverUrl) {
+        if(serverUrl.indexOf('http') > -1){
+            try {
+                const url = new URL(serverUrl);
+                if (url.protocol !== 'https:' && url.protocol !== 'http:') {
+                    return false;
+                }
+            }
+            catch (e) {
+                console.error(e);
+                return false;
+            }
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
 
   function togglePublicDonorFields(section, force) {
     section = section.replace(/-/g, '_')

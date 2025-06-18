@@ -3,7 +3,7 @@
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, donation, BTCPay
 Tested up to: 6.8
-Stable tag: 1.1.2
+Stable tag: 1.2.0
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -180,3 +180,6 @@ Plugin's page on Coinsnap website: [https://coinsnap.io/coinsnap-bitcoin-donatio
 
 = 1.1.2 :: 2025-06-04 =
 * Fixed bug for checkRequiredFieds constant in popup.js file
+
+= 1.2.0 :: 2025-06-18 =
+* Update: BTCPay setup wizard is added in BTCPay server settings.
