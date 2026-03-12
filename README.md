@@ -5,9 +5,9 @@
 * Contributors: coinsnap
 * Tags: Lightning, Lightning Payment, SATS, Satoshi sats, bitcoin, Wordpress, bitcoin, donation, BTCPay, payment gateway, accept bitcoin, bitcoin plugin, bitcoin payment processor, bitcoin e-commerce, Lightning Network, cryptocurrency, lightning payment processor
 * Requires at least: 5.2
-* Tested up to: 6.8
+* Tested up to: 6.9
 * Requires PHP: 8.0
-* Stable tag: 1.2.0
+* Stable tag: 1.4.0
 * License: GPL2
 * License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -66,18 +66,17 @@ Coinsnap Bitcoin Donation works with Coinsnap or your own BTCPay Server.
 ### More information
 
 * Live demo: [https://donation.coinsnap.org/](https://donation.coinsnap.org/)
-* Product page: [https://coinsnap.io/coinsnap-bitcoin-donation-plugin/](https://coinsnap.io/coinsnap-bitcoin-donation-plugin/) 
-* Installation Guide: [https://coinsnap.io/coinsnap-bitcoin-donation-installation-guide/](https://coinsnap.io/coinsnap-bitcoin-donation-installation-guide/)
-* WordPress Plugin Directory: [https://wordpress.org/plugins/coinsnap-bitcoin-donation/](https://wordpress.org/plugins/coinsnap-bitcoin-donation/)
+* Product page: [https://coinsnap.io/modules/bitcoin-donation/](https://coinsnap.io/modules/bitcoin-donation/) 
+* Installation Guide: [https://coinsnap.io/modules/bitcoin-donation/bitcoin-donation-plugin-installation-guide/](https://coinsnap.io/modules/bitcoin-donation/bitcoin-donation-plugin-installation-guide/)
 * Github plugin page: [https://github.com/Coinsnap/Coinsnap-bitcoin-donation/](https://github.com/Coinsnap/Coinsnap-bitcoin-donation/)
 
 
 ### Documentation:
 
 * [Coinsnap API (1.0) documentation](https://docs.coinsnap.io/)
-* [Frequently Asked Questions](https://coinsnap.io/faq/) 
-* [Terms and Conditions](https://coinsnap.io/general-terms-and-conditions/)
-* [Privacy Policy](https://coinsnap.io/privacy/)
+* [Frequently Asked Questions](https://coinsnap.io/help/coinsnap-faq/) 
+* [Terms and Conditions](https://coinsnap.io/info/general-terms-and-conditions/)
+* [Privacy Policy](https://coinsnap.io/info/privacy-policy/)
 
 # Installation #
 
@@ -141,7 +140,7 @@ Follow updates on plugin's GitHub page:
 
 # Frequently Asked Questions #
 
-Plugin's page on Coinsnap website: [https://coinsnap.io/coinsnap-bitcoin-donation-plugin/](https://coinsnap.io/coinsnap-bitcoin-donation-plugin/)
+Plugin's page on Coinsnap website: [https://coinsnap.io/modules/bitcoin-donation/](https://coinsnap.io/modules/bitcoin-donation/)
 
 # Changelog #
 
@@ -171,3 +170,27 @@ Plugin's page on Coinsnap website: [https://coinsnap.io/coinsnap-bitcoin-donatio
 
 #### 1.2.0 :: 2025-06-18
 * Update: BTCPay setup wizard is added in BTCPay server settings.
+
+#### 1.3.0 :: 2025-12-09
+* Update: Added payment gateway client class. 
+* Update: Added support for all the Coinsnap currencies.
+* Update: Minimum order amount is added to connection status notice.
+* Update: Plugin name is changed in Wordpress backend.
+* Added QR-code generator for BTCPay server invoice.
+* Compatibility with Wordpress 6.9 is tested.
+
+#### 1.3.1 :: 2026-02-04
+* Updated interface of donor information form.
+* Compatibility with Wordpress 6.9.1 is tested.
+
+#### 1.3.2 :: 2026-02-15
+* Update: Added order ID and all the standard fields for invoice request.
+* Update: Added plugin isolation from other Coinsnap plugins in backend.
+* Update: Deleted currency exchange check on frontend.
+* Update: Added plugin isolation from other plugins in backend.
+
+#### 1.4.0 :: 2026-03-12
+* Update: Fiat/Crypto amount calculation in frontend.
+* Update: Minimum and premium donation amounts in Shoutout form.
+* Udpate: Name and message values in shoutout list in frontend.
+* Compatibility with Wordpress 6.9.4 is tested.

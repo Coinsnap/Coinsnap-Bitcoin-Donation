@@ -1,35 +1,30 @@
 <?php
+if (!defined('ABSPATH')){ exit; }
+class Coinsnap_Bitcoin_Donation_List {
 
-class Coinsnap_Bitcoin_Donation_List
-{
+    public function __construct(){
+	add_action('wp_ajax_refresh_donations', array($this, 'refresh_donations_ajax'));
+    }
 
-	public function __construct()
-	{
-		add_action('wp_ajax_refresh_donations', array($this, 'refresh_donations_ajax'));
-	}
-	private function fetch_donations()
-	{
-		$options = get_option('coinsnap_bitcoin_donation_options');
-		$provider = $options['provider'];
+    private function fetch_donations(){
+        $options = get_option('coinsnap_bitcoin_donation_options');
+        $provider = $options['provider'];
 
-		if ($provider == 'coinsnap') {
-			$api_key = $options['coinsnap_api_key'];
-			$store_id = $options['coinsnap_store_id'];
-			$url = 'https://app.coinsnap.io/api/v1/stores/' . $store_id . '/invoices';
-			$headers = array(
-				'headers' => array('x-api-key' => $api_key, 'Content-Type' => 'application/json')
-			);
-		} else {
-			$api_key = $options['btcpay_api_key'];
-			$store_id = $options['btcpay_store_id'];
-			$base_url = $options['btcpay_url'];
-			$url = $base_url . '/api/v1/stores/' . $store_id . '/invoices';
-			$headers = array(
-				'headers' => array('Authorization' => 'token ' . $api_key, 'Content-Type' => 'application/json')
-			);
-		}
+        if ($provider == 'coinsnap') {
+            $api_key = $options['coinsnap_api_key'];
+            $store_id = $options['coinsnap_store_id'];
+            $url = 'https://app.coinsnap.io/api/v1/stores/' . $store_id . '/invoices';
+            $headers = array('headers' => array('x-api-key' => $api_key, 'Content-Type' => 'application/json'));
+        }
+        else {
+            $api_key = $options['btcpay_api_key'];
+            $store_id = $options['btcpay_store_id'];
+            $base_url = $options['btcpay_url'];
+            $url = $base_url . '/api/v1/stores/' . $store_id . '/invoices';
+            $headers = array('headers' => array('Authorization' => 'token ' . $api_key, 'Content-Type' => 'application/json'));
+        }
 
-		$response = wp_remote_get($url, $headers);
+        $response = wp_remote_get($url, $headers);
 		$body = wp_remote_retrieve_body($response);
 		$invoices = json_decode($body, true);
 		if (!is_array($invoices)) {
@@ -55,10 +50,10 @@ class Coinsnap_Bitcoin_Donation_List
 			});
 		}
 		return array_values($filtered_invoices);
-	}
+    }
 
-	public function render_donation_page()
-	{
+    public function render_donation_page(){
+        
 		if (!current_user_can('manage_options')) {
 			return;
 		}
@@ -82,21 +77,21 @@ class Coinsnap_Bitcoin_Donation_List
 		<div class="wrap">
 			<h1><?php echo esc_html(get_admin_page_title()); ?></h1>
 			<?php if ($provider === 'coinsnap'): ?>
-				<h4>Check <a href="https://app.coinsnap.io/transactions" target="_blank" rel="noopener noreferrer">Coinsnap app</a> for a detailed overview</h4>
+				<h4>Check <a href="https://app.coinsnap.io/transactions" target="_blank" rel="noopener noreferrer"><?php echo esc_html__('Coinsnap app','coinsnap-bitcoin-donation');?></a> <?php echo esc_html__('for a detailed overview','coinsnap-bitcoin-donation');?></h4>
 			<?php elseif ($provider === 'btcpay'): ?>
-				<h4>Check <a href="<?php echo esc_html($btcpay_href); ?>" target="_blank" rel="noopener noreferrer">BtcPay server</a> for a detailed overview</h4>
+				<h4>Check <a href="<?php echo esc_html($btcpay_href); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html__('BtcPay server','coinsnap-bitcoin-donation');?></a> <?php echo esc_html__('for a detailed overview','coinsnap-bitcoin-donation');?></h4>
 			<?php else: ?>
-				<p>Provider not recognized.</p>
+				<p><?php echo esc_html__('Provider not recognized.','coinsnap-bitcoin-donation');?></p>
 			<?php endif; ?>
 
 			<table class="wp-list-table widefat fixed striped donation-list-table">
 				<thead>
 					<tr>
-						<th>Date</th>
-						<th>Amount</th>
-						<th>Type</th>
-						<th>Message</th>
-						<th>Invoice ID</th>
+						<th><?php echo esc_html__('Date','coinsnap-bitcoin-donation');?></th>
+						<th><?php echo esc_html__('Amount','coinsnap-bitcoin-donation');?></th>
+						<th><?php echo esc_html__('Type','coinsnap-bitcoin-donation');?></th>
+						<th><?php echo esc_html__('Message','coinsnap-bitcoin-donation');?></th>
+						<th><?php echo esc_html__('Invoice ID','coinsnap-bitcoin-donation');?></th>
 					</tr>
 				</thead>
 				<tbody id="donation-list-body">

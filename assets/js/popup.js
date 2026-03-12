@@ -13,145 +13,184 @@ const checkDonationRequiredFieds = (fields) => {
     return valid;
 }
 
-const addDonationPopupListener = (prefix, sufix, type, exchangeRates, redirect) => {
+const addDonationPopupListener = (prefix, suffix, type, redirect) => {
     let walletHandler = null;
 
-    const resetPopup = (prefix, sufix) => {
-        hideElementsById(['qr-container', 'blur-overlay', 'payment-loading', 'payment-popup', 'thank-you-popup'], prefix, sufix)
-        showElementById('public-donor-popup', 'flex', prefix, sufix)
-        const button = document.getElementById(`${prefix}pay${sufix}`)
+    const resetPopup = (prefix, suffix) => {
+        hideDonationElementsById(['qr-container', 'blur-overlay', 'payment-loading', 'payment-popup', 'thank-you-popup'], prefix, suffix);
+        showDonationElementById('public-donor-popup', 'flex', prefix, suffix);
+        const button = document.getElementById(`${prefix}pay${suffix}`);
         button.disabled = false;
-        const payInWalletBtn = document.getElementById(`${prefix}pay-in-wallet${sufix}`);
+        const payInWalletBtn = document.getElementById(`${prefix}pay-in-wallet${suffix}`);
         if (walletHandler) {
             payInWalletBtn.removeEventListener('click', walletHandler);
             walletHandler = null;
         }
-    }
-
+    };
 
     window.addEventListener("click", function (event) {
-        const qrContainer = document.getElementById(`${prefix}qr-container${sufix}`);
+        const qrContainer = document.getElementById(`${prefix}qr-container${suffix}`);
         const element = event.target;
-        if (qrContainer.style.display == 'flex') {
+        if (qrContainer.style.display === 'flex') {
             if (element.classList.contains('close-popup') || (!qrContainer.contains(event.target) && !element.id.includes('pay'))) {
-                resetPopup(prefix, sufix)
+                resetPopup(prefix, suffix);
             }
         }
     });
 
-    document.getElementById(`${prefix}pay${sufix}`).addEventListener('click', async () => {
-        const button = document.getElementById(`${prefix}pay${sufix}`)
+    document.getElementById(`${prefix}pay${suffix}`).addEventListener('click', async () => {
+        const button = document.getElementById(`${prefix}pay${suffix}`)
         button.disabled = true;
         event.preventDefault();
-        const honeypot = document.getElementById(`${prefix}email${sufix}`);
+        const honeypot = document.getElementById(`${prefix}email${suffix}`);
         if (honeypot && honeypot.value) {
-            return
+            return;
         }
-        const amountValue = document.getElementById(`${prefix}amount${sufix}`)?.value
-        if (!amountValue) {
+        
+        const currency = document.getElementById(`${prefix}swap${suffix}`).value?.toUpperCase();
+        const amountValue = document.getElementById(`${prefix}amount${suffix}`)?.value;
+        const amountField = document.getElementById(`${prefix}amount${suffix}`);
+        
+        
+        console.log('Amount check');
+        if (!amountValue || parseFloat(amountValue) === 0) {
             button.disabled = false;
-            addErrorField(amountField)
-            return
+            addErrorDonationField(amountField,'');
+            return;
         }
-        const publicDonor = document.getElementById(`${prefix}qr-container${sufix}`).dataset.publicDonors;
+        
+        let data = {
+            action: 'coinsnap_bitcoin_donation_amount_check',
+            apiNonce: coinsnap_bitcoin_donation_ajax.nonce,
+            apiAmount: cleanDonationAmount(amountValue),
+            apiCurrency: currency
+        };
+
+        const queryData = new URLSearchParams();
+        for ( const key in data ) {
+            queryData.set( key, data[ key ] );
+        }
+        
+        const amountCheck = await fetch(coinsnap_bitcoin_donation_ajax.ajax_url, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Cache-Control': 'no-cache'
+            },
+            body: queryData
+        }).catch(error => {
+            console.log('Amount check request error' + error);
+        });
+        
+        const responseData = await amountCheck.json();
+  
+        if(responseData.result === false){
+            button.disabled = false;
+            addErrorDonationField(amountField,responseData.error);
+            return;
+        }
+        
+        const publicDonor = document.getElementById(`${prefix}qr-container${suffix}`).dataset.publicDonors;
         if (!publicDonor) {
-            const publicDonorsPay = document.getElementById(`${prefix}public-donors-pay${sufix}`)
-            publicDonorsPay.click()
+            const publicDonorsPay = document.getElementById(`${prefix}public-donors-pay${suffix}`);
+            publicDonorsPay.click();
         }
-        showElementsById(['blur-overlay', 'qr-container'], 'flex', prefix, sufix)
+        showDonationElementsById(['blur-overlay', 'qr-container'], 'flex', prefix, suffix);
     });
 
-    document.getElementById(`${prefix}public-donors-pay${sufix}`).addEventListener('click', async () => {
+    document.getElementById(`${prefix}public-donors-pay${suffix}`).addEventListener('click', async () => {
         event.preventDefault();
-        const publicDonor = document.getElementById(`${prefix}qr-container${sufix}`).dataset.publicDonors;
+        const publicDonor = document.getElementById(`${prefix}qr-container${suffix}`).dataset.publicDonors;
         var retryId = '';
 
-        const amountField = document.getElementById(`${prefix}amount${sufix}`);
-        const amount = cleanAmount(amountField.value);
-        const messageField = document.getElementById(`${prefix}message${sufix}`);
+        const messageField = document.getElementById(`${prefix}message${suffix}`);
         const message = messageField.value;
-        const currencyField = document.getElementById(`${prefix}swap${sufix}`);
+        
+        const currencyField = document.getElementById(`${prefix}swap${suffix}`);
         const currency = currencyField.value?.toUpperCase();
-
-        const firstNameField = document.getElementById(`${prefix}first-name${sufix}`);
-        const lastNameField = document.getElementById(`${prefix}last-name${sufix}`);
-        const emailField = document.getElementById(`${prefix}donor-email${sufix}`);
-        const streetField = document.getElementById(`${prefix}street${sufix}`);
-        const houseNumberField = document.getElementById(`${prefix}house-number${sufix}`);
-        const postalCodeField = document.getElementById(`${prefix}postal${sufix}`);
-        const cityField = document.getElementById(`${prefix}town${sufix}`);
-        const countryField = document.getElementById(`${prefix}country${sufix}`);
+        const currencyFiat = (currency === 'SATS')? 'EUR' : currency;
+        
+        const amountField = (currency === 'SATS')? document.getElementById(`${prefix}amount${suffix}`) : document.getElementById(`${prefix}satoshi${suffix}`);
+        var amount = (currency === 'SATS')? document.getElementById(`${prefix}amount${suffix}`).value : document.getElementById(`${prefix}satoshi${suffix}`).getAttribute('data-value');
+        amount = cleanDonationAmount(amount);
+        
+        const amountFiatField = (currency === 'SATS')? document.getElementById(`${prefix}satoshi${suffix}`) : document.getElementById(`${prefix}amount${suffix}`);
+        var amountFiat =  (currency === 'SATS')? document.getElementById(`${prefix}satoshi${suffix}`).getAttribute('data-value') : document.getElementById(`${prefix}amount${suffix}`).value;
+                
+        amountFiat = cleanDonationAmount(amountFiat);
+        
+        
+        const firstNameField = document.getElementById(`${prefix}first-name${suffix}`);
+        const lastNameField = document.getElementById(`${prefix}last-name${suffix}`);
+        const emailField = document.getElementById(`${prefix}donor-email${suffix}`);
+        const streetField = document.getElementById(`${prefix}street${suffix}`);
+        const houseNumberField = document.getElementById(`${prefix}house-number${suffix}`);
+        const postalCodeField = document.getElementById(`${prefix}postal${suffix}`);
+        const cityField = document.getElementById(`${prefix}town${suffix}`);
+        const countryField = document.getElementById(`${prefix}country${suffix}`);
         const address = `${streetField?.value ?? ''} ${houseNumberField?.value ?? ''}, ${postalCodeField?.value ?? ''} ${cityField?.value ?? ''}, ${countryField?.value ?? ''}`;
-        // const optOutField = document.getElementById(`${prefix}opt-out${sufix}`);
-        const customField = document.getElementById(`${prefix}custom${sufix}`);
-        const customNameField = document.getElementById(`${prefix}custom-name${sufix}`);
-        const customContent = customNameField?.textContent && customField?.value ? `${customNameField.textContent}: ${customField.value}` : ''
+        const customField = document.getElementById(`${prefix}custom${suffix}`);
+        const customNameField = document.getElementById(`${prefix}custom-name${suffix}`);
+        const customContent = customNameField?.textContent && customField?.value ? `${customNameField.textContent}: ${customField.value}` : '';
         const validForm = !publicDonor || checkDonationRequiredFieds([firstNameField, lastNameField, emailField, streetField, houseNumberField, postalCodeField, cityField, countryField, customField]);
-        const satsAmount = currency == 'SATS' ? amount : (amount / exchangeRates[currency]).toFixed(0);
+        
         const metadata = {
             donorName: `${firstNameField.value} ${lastNameField?.value ?? ''}`,
             donorEmail: emailField?.value,
-            donorAddress: address != ' ,  , ' ? address : '',
+            donorAddress: address !== ' ,  , ' ? address : '',
             donorMessage: message,
             donorCustom: customContent,
             formType: type,
-            amount: `${amount} ${currency}`,
+            amount: `${amount}`,
+            amountFiat: `${amountFiat} ${currencyFiat}`,
             publicDonor: publicDonor || 0,
             modal: true,
-            satsAmount: satsAmount,
+            orderNumber: "Bitcoin Donation",
         }
         if (!validForm) return;
 
-        showElementById('payment-loading', 'flex', prefix, sufix)
-        hideElementById('public-donor-popup', prefix, sufix)
+        showDonationElementById('payment-loading', 'flex', prefix, suffix);
+        hideDonationElementById('public-donor-popup', prefix, suffix);
 
         var name = undefined;
-        if (type == "Bitcoin Shoutout") {
-            const nameField = document.getElementById(`${prefix}name${sufix}`);
+        if (type === "Bitcoin Shoutout") {
+            const nameField = document.getElementById(`${prefix}name${suffix}`);
             name = nameField?.value || "Anonymous";
         }
 
-        const res = await createInvoice(amount, message, currency, name, type, false, metadata)
+        const res = await createDonationInvoice(amount, message, name, type, false, metadata);
 
         if (res) {
+            
+            console.log(res);
+            
             // Update addresses 
-            const qrLightning = res.lightningInvoice
-            const qrBitcoin = res.onchainAddress
+            const qrLightning = res.lightningInvoice;
+            const qrBitcoin = res.onchainAddress;
 
             if (qrBitcoin) {
-                showElementsById(['btc-wrapper', 'qr-btc-container'], 'flex', prefix, sufix)
+                showDonationElementsById(['btc-wrapper', 'qr-btc-container'], 'flex', prefix, suffix)
             }
 
             // Hide spinner and show qr code stuff
-            showElementsById(['qrCode', 'lightning-wrapper', 'qr-fiat', 'qrCodeBtc'], 'block', prefix, sufix)
-            showElementsById(['qr-summary', 'qr-lightning-container', 'pay-in-wallet'], 'flex', prefix, sufix)
-            hideElementById('payment-loading', prefix, sufix)
-            showElementById('payment-popup', 'flex', prefix, sufix)
+            showDonationElementsById(['qrCode', 'lightning-wrapper', 'qr-fiat', 'qrCodeBtc'], 'block', prefix, suffix)
+            showDonationElementsById(['qr-summary', 'qr-lightning-container', 'pay-in-wallet'], 'flex', prefix, suffix)
+            hideDonationElementById('payment-loading', prefix, suffix)
+            showDonationElementById('payment-popup', 'flex', prefix, suffix)
             // Update actuall data
-            document.getElementById(`${prefix}qrCode${sufix}`).src = res.qrCodes.lightningQR;
-            document.getElementById(`${prefix}qr-lightning${sufix}`).textContent = `${qrLightning.substring(0, 20)}...${qrLightning.slice(-15)}`;
-            document.getElementById(`${prefix}qr-btc${sufix}`).textContent = `${qrBitcoin.substring(0, 20)}...${qrBitcoin.slice(-15)}`;
-            document.getElementById(`${prefix}qr-amount${sufix}`).textContent = `Amount: ${res.amount} sats`;
+            document.getElementById(`${prefix}qrCode${suffix}`).src = res.qrCodes.lightningQR;
+            document.getElementById(`${prefix}qr-lightning${suffix}`).textContent = `${qrLightning.substring(0, 20)}...${qrLightning.slice(-15)}`;
+            document.getElementById(`${prefix}qr-btc${suffix}`).textContent = `${qrBitcoin.substring(0, 20)}...${qrBitcoin.slice(-15)}`;
+            document.getElementById(`${prefix}qr-amount${suffix}`).textContent = `Amount: ${res.amount} sats`;
 
             // Copy address functionallity 
-            const copyLightning = document.querySelector(`#${prefix}qr-lightning-container${sufix} .qr-copy-icon`);
-            const copyBtc = document.querySelector(`#${prefix}qr-btc-container${sufix} .qr-copy-icon`);
+            const copyLightning = document.querySelector(`#${prefix}qr-lightning-container${suffix} .qr-copy-icon`);
+            const copyBtc = document.querySelector(`#${prefix}qr-btc-container${suffix} .qr-copy-icon`);
             copyLightning.addEventListener('click', () => { navigator.clipboard.writeText(qrLightning); });
             copyBtc.addEventListener('click', () => { navigator.clipboard.writeText(qrBitcoin); });
-
-            // Add fiat amount
-            if (exchangeRates['EUR']) {
-                document.getElementById(`${prefix}qr-fiat${sufix}`).textContent = `≈ ${(res.amount * exchangeRates['EUR'])?.toFixed(3)} EUR`;
-                document.getElementById(`${prefix}pay-in-wallet${sufix}`).setAttribute('href', `lightning:${qrLightning}`);
-
-                //  Browser doesn't know how to redirect to unknown protocol
-                //  Store the handler function when adding the listener
-                //  walletHandler = function () {
-                //      window.location.replace(`lightning:${qrLightning}`);
-                //  };
-                //document.getElementById(`${prefix}pay-in-wallet${sufix}`).addEventListener('click', walletHandler);
-
-            }
+            document.getElementById(`${prefix}qr-fiat${suffix}`).textContent = `≈ ${amountFiat} ${currencyFiat}`;
+            document.getElementById(`${prefix}pay-in-wallet${suffix}`).setAttribute('href', `lightning:${qrLightning}`);
 
             // Reset retry counter
             var retryNum = 0;
@@ -161,13 +200,13 @@ const addDonationPopupListener = (prefix, sufix, type, exchangeRates, redirect) 
                 fetch(`/wp-json/coinsnap-bitcoin-donation/v1/check-payment-status/${res.id}`)
                     .then(response => response.json())
                     .then(data => {
-                        const qrContainer = document.getElementById(`${prefix}qr-container${sufix}`);
+                        const qrContainer = document.getElementById(`${prefix}qr-container${suffix}`);
 
                         if (data.status === 'completed') {
-                            showElementById('thank-you-popup', 'flex', prefix, sufix)
-                            hideElementById('payment-popup', prefix, sufix)
+                            showDonationElementById('thank-you-popup', 'flex', prefix, suffix)
+                            hideDonationElementById('payment-popup', prefix, suffix)
                             setTimeout(() => {
-                                resetPopup(prefix, sufix);
+                                resetPopup(prefix, suffix);
                                 if (redirect) {
                                     window.location.href = redirect;
                                 } else {

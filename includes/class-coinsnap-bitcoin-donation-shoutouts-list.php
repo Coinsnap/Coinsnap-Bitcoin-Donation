@@ -65,7 +65,7 @@ class Coinsnap_Bitcoin_Donation_Shoutouts_List
                         <div class="shoutout-form-wrapper"
                             style="display: flex;justify-content: center; flex-direction: column; align-items: center; margin: 0">
                             <h3>Shoutouts List</h3>
-                            <h4 style="text-align: center;">This form is not active</h4>
+                            <h4 style="text-align: center;"><?php __('This form is not active', 'coinsnap-bitcoin-donation');?></h4>
                         </div>
                     </div>
                 <?php
@@ -84,10 +84,10 @@ class Coinsnap_Bitcoin_Donation_Shoutouts_List
     {
 
         $highlight = false;
-        $name = "No Shoutouts Available";
-        $message = "There are no shoutouts yet. This is just an example of how they will be displayed once there are some available.";
-        $amount = "0 sats";
-        $daysAgo = "Today";
+        $name = __("No Shoutouts Available", 'coinsnap-bitcoin-donation');
+        $message = __("There are no shoutouts yet. This is just an example of how they will be displayed once there are some available.", 'coinsnap-bitcoin-donation');
+        $amount = __("0 sats", 'coinsnap-bitcoin-donation');
+        $daysAgo = __("Today", 'coinsnap-bitcoin-donation');
     ?>
         <div class="coinsnap-bitcoin-donation-shoutout <?php echo esc_attr($theme); ?> <?php echo $highlight ? 'highlight-shoutout' : ''; ?>">
             <div class="coinsnap-bitcoin-donation-shoutout-top">

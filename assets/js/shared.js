@@ -15,10 +15,32 @@ function setCookie(name, value, minutes) {
     document.cookie = name + "=" + value + ";" + expires + ";path=/";
 }
 
-const addErrorField = (field) => {
+const addErrorDonationField = (field,message) => {
+    field.classList.add('error');
+    
+    if(message !== ''){
+        if(jQuery(field).next('.donation-field-error').length){
+            jQuery(field).next('.donation-field-error').html(message);
+        }
+        else {
+            jQuery(field).after('<span class="donation-field-error">'+message+'</span>');
+        }
+        
+    }
+    removeDonationBorderOnFocus(field, field);
+    
+    
     field.css('border', '1px solid red');
     removeBorderOnFocus(field, field)
 }
+
+const removeDonationBorderOnFocus = (field1, field2) => {
+    field1.addEventListener('focus', function () {
+        field2.classList.remove('error');
+        jQuery(field1).next('.crowdfunding-field-error').remove();
+        jQuery(field2).next('.crowdfunding-field-error').remove();
+    });
+};
 
 const removeBorderOnFocus = (field1, field2) => {
     field1.on('focus', function () {
@@ -36,13 +58,13 @@ handleSnapClick = (buttonId, honeypotId, amountId, messageId, currency) => {
         event.preventDefault();
         return
     }
-    const amount = cleanAmount(document.getElementById(amountId).textContent)
+    const amount = cleanDonationAmount(document.getElementById(amountId).textContent)
     const messageField = document.getElementById(messageId)
     const message = messageField ? messageField.value : ""
-    createInvoice(amount, message, currency.toUpperCase(), undefined, 'Multi Amount Donation');
+    createDonationInvoice(amount, message, undefined, 'Multi Amount Donation');
 }
 
-const handleButtonClick = (buttonId, honeypotId, amountId, satoshiId, messageId, lastInputCurrency, name) => {
+const handleDonationButtonClick = (buttonId, honeypotId, amountId, satoshiId, messageId, lastInputCurrency, name) => {
     event.preventDefault();
 
     const button = document.getElementById(buttonId);
@@ -54,21 +76,21 @@ const handleButtonClick = (buttonId, honeypotId, amountId, satoshiId, messageId,
     }
 
     const amountField = document.getElementById(amountId);
-    const fiatAmount = cleanAmount(amountField.value);
+    const fiatAmount = cleanDonationAmount(amountField.value);
 
     let satoshiField = null;
     let satsAmount = null;
 
     if (satoshiId) {
         satoshiField = document.getElementById(satoshiId);
-        satsAmount = cleanAmount(satoshiField.value);
+        satsAmount = cleanDonationAmount(satoshiField.value);
     }
 
     if (isNaN(fiatAmount) && isNaN(satsAmount)) {
         button.disabled = false;
-        addErrorField(amountField);
+        addErrorDonationField(amountField);
         if (satoshiField) {
-            addErrorField(satoshiField);
+            addErrorDonationField(satoshiField);
             removeBorderOnFocus(satoshiField, amountField);
             removeBorderOnFocus(amountField, satoshiField);
         }
@@ -82,42 +104,42 @@ const handleButtonClick = (buttonId, honeypotId, amountId, satoshiId, messageId,
     const amount = currency === 'SATS' ? satsAmount : fiatAmount;
     if (!isNaN(amount) && amount > 0) {
         const type = name ? 'Shoutout Donation' : 'Donation Button';
-        createInvoice(amount, message, lastInputCurrency, name, type);
+        createDonationInvoice(amount, message, name, type);
     } else {
         button.disabled = false;
     }
 };
 
-const handleButtonClickMulti = (buttonId, honeypotId, amountId, messageId, lastInputCurrency, name) => {
-    const button = document.getElementById(buttonId)
+const handleDonationButtonClickMulti = (buttonId, honeypotId, amountId, messageId, lastInputCurrency, name) => {
+    const button = document.getElementById(buttonId);
     button.disabled = true;
     event.preventDefault();
-    const honeypot = document.getElementById(honeypotId)
+    const honeypot = document.getElementById(honeypotId);
     if (honeypot && honeypot.value) {
         event.preventDefault();
-        return
+        return;
     }
-    const amountField = document.getElementById(amountId)
-    const fiatAmount = cleanAmount(amountField.value)
+    const amountField = document.getElementById(amountId);
+    const fiatAmount = cleanDonationAmount(amountField.value);
 
     if (!fiatAmount) {
         button.disabled = false;
-        addErrorField(amountField)
+        addErrorDonationField(amountField);
         event.preventDefault();
-        return
+        return;
     }
 
-    const messageField = document.getElementById(messageId)
-    const message = messageField ? messageField.value : ""
-    const currency = lastInputCurrency.toUpperCase()
+    const messageField = document.getElementById(messageId);
+    const message = messageField ? messageField.value : "";
+    const currency = lastInputCurrency.toUpperCase();
     const amount = fiatAmount;
     if (amount) {
-        createInvoice(amount, message, currency, name, 'Multi Amount Donation');
+        createDonationInvoice(amount, message, name, 'Multi Amount Donation');
     }
-}
+};
 
-const updateValueField = (amount, fieldName, operation, exchangeRates, currency, multi = false) => {
-    const currencyRate = exchangeRates[currency?.toUpperCase()];
+const updateDonationValueField = (amount, fieldName, operation, exchangeRates, currency, multi = false) => {
+    const currencyRate = 1;//exchangeRates[currency?.toUpperCase()];
     const field = document.getElementById(fieldName);
 
     if (!field) {
@@ -125,76 +147,77 @@ const updateValueField = (amount, fieldName, operation, exchangeRates, currency,
         return;
     }
     if (multi && !isNaN(amount) && currencyRate) {
-        const value = operation == '*' ? amount * currencyRate : amount / currencyRate;
+        const value = operation === '*' ? amount * currencyRate : amount / currencyRate;
         const decimals = value > 1000 ? 4 : 8;
-        const valueDecimal = value.toFixed(operation == '*' ? decimals : 0);
-        const newVal = addNumSeparators(valueDecimal)
+        const valueDecimal = value.toFixed(operation === '*' ? decimals : 0);
+        const newVal = addNumSeparators(valueDecimal);
         field.textContent = newVal;
-        return
+        return;
     }
     if (!isNaN(amount) && currencyRate) {
-        const value = operation == '*' ? amount * currencyRate : amount / currencyRate;
-        const valueDecimal = value.toFixed(operation == '*' ? 8 : 0);
-        const newVal = addNumSeparators(valueDecimal)
-        field.value = newVal
+        const value = operation === '*' ? amount * currencyRate : amount / currencyRate;
+        const valueDecimal = value.toFixed(operation === '*' ? 8 : 0);
+        const newVal = addNumSeparators(valueDecimal);
+        field.value = newVal;
     } else {
         field.value = '';
     }
 };
 
-async function fetchCoinsnapExchangeRates() {
-    const exchangeRates = {}
+async function generateQRCodeDataURL(text) {
     try {
-        const response = await fetch(`https://app.coinsnap.io/api/v1/stores/${sharedData.coinsnapStoreId}/rates`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-api-key': sharedData.coinsnapApiKey
-            }
+        console.log('Invoice URL: ' + encodeURIComponent(text));
+        const response = await fetch(`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(text)}`);
+        const blob = await response.blob();
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.readAsDataURL(blob);
         });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        data
-            .filter(item => item.currencyPair.includes("SATS")) // Filter only SATS rates
-            .forEach(item => {
-                const currency = item.currencyPair.replace("SATS_", ""); // Remove "SATS_" prefix
-                exchangeRates[currency] = parseFloat(item.rate); // Update exchangeRates
-            });
-
-        return exchangeRates;
     } catch (error) {
-        console.error('Error fetching exchange rates:', error);
+        console.error('Error generating QR code:', error);
         return null;
     }
-}
+};
 
-const createActualInvoice = async (amount, message, lastInputCurrency, name, coinsnap, type, redirect, metadata) => {
-    deleteCookie('coinsnap_invoice_');
+const createActualDonationInvoice = async (amount, message, lastInputCurrency, name, coinsnap, type, redirect, metadata) => {
+    deleteCookie('coinsnap_invoice_donation');
+    
+    var provider = (coinsnap)? 'coinsnap' : 'btcpay';
+    var orderId = 'DNTN_' + (Date.now()).toString(36);
+    
+    if(provider === 'btcpay'){
+        metadata.orderId = orderId;
+    }
 
     const requestData = {
         amount: amount,
         currency: lastInputCurrency,
+        buyerEmail: metadata.donorEmail,
         redirectAutomatically: true,
+        checkout: {
+            redirectAutomatically: true
+        },
+        orderId: orderId,
+        walletMessage: message,
         metadata: {
             orderNumber: message,
-            referralCode: 'D19833',
             type: type,
             name: name,
             ...metadata
         }
     };
+    
+    requestData.provider = requestData.metadata.provider = provider;
 
-    if (type == 'Bitcoin Donation') {
-        requestData.redirectUrl = sharedData?.redirectUrl || window.location.href
-    } else if (type == 'Bitcoin Shoutout') {
-        requestData.redirectUrl = sharedData?.shoutoutRedirectUrl || window.location.href
-        requestData.provider = coinsnap ? 'coinsnap' : 'btcpay'
-    } else if (type == 'Multi Amount Donation') {
-        requestData.redirectUrl = sharedData?.multiRedirectUrl || window.location.href
+    if (type === 'Bitcoin Donation') {
+        requestData.redirectUrl = coinsnapDonationSharedData?.redirectUrl || window.location.href;
+    }
+    else if (type === 'Bitcoin Shoutout') {
+        requestData.redirectUrl = coinsnapDonationSharedData?.shoutoutRedirectUrl || window.location.href;
+    } 
+    else if (type === 'Multi Amount Donation') {
+        requestData.redirectUrl = coinsnapDonationSharedData?.multiRedirectUrl || window.location.href;
     }
 
     if (window.location.href.includes("localhost")) {
@@ -205,17 +228,17 @@ const createActualInvoice = async (amount, message, lastInputCurrency, name, coi
         requestData.referralCode = 'D19833';
     }
 
-    const url = coinsnap
-        ? `https://app.coinsnap.io/api/v1/stores/${sharedData?.coinsnapStoreId}/invoices`
-        : `${sharedData?.btcpayUrl}/api/v1/stores/${sharedData?.btcpayStoreId}/invoices`;
+    const url = (provider === 'coinsnap')
+        ? `https://app.coinsnap.io/api/v1/stores/${coinsnapDonationSharedData?.coinsnapStoreId}/invoices`
+        : `${coinsnapDonationSharedData?.btcpayUrl}/api/v1/stores/${coinsnapDonationSharedData?.btcpayStoreId}/invoices`;
 
-    const headers = coinsnap
+    const headers = (provider === 'coinsnap')
         ? {
-            'x-api-key': sharedData?.coinsnapApiKey,
+            'x-api-key': coinsnapDonationSharedData?.coinsnapApiKey,
             'Content-Type': 'application/json'
         }
         : {
-            'Authorization': `token ${sharedData?.btcpayApiKey}`,
+            'Authorization': `token ${coinsnapDonationSharedData?.btcpayApiKey}`,
             'Content-Type': 'application/json'
         };
 
@@ -241,7 +264,26 @@ const createActualInvoice = async (amount, message, lastInputCurrency, name, coi
             name: name
         };
 
-        setCookie('coinsnap_invoice_', JSON.stringify(invoiceCookieData), 15);
+        setCookie('coinsnap_invoice_donation', JSON.stringify(invoiceCookieData), 15);
+        
+        if (!coinsnap) {
+            const url = `${coinsnapDonationSharedData?.btcpayUrl}/api/v1/stores/${coinsnapDonationSharedData?.btcpayStoreId}/invoices/${responseData.id}/payment-methods`;
+            const response2 = await fetch(url, {
+                method: 'GET',
+                headers: headers
+            });
+            const responseData2 = await response2.json();
+            const paymentLink = responseData2[0].paymentLink;
+            console.log('Payment Link:', paymentLink);
+            responseData.lightningInvoice = paymentLink?.replace('lightning:', '');
+            responseData.onchainAddress = '';
+
+            // Generate QR code image from lightning invoice
+            const qrCodeImage = await generateQRCodeDataURL(paymentLink);
+            responseData.qrCodes = {
+                lightningQR: qrCodeImage || paymentLink
+            };
+        }
 
         if (redirect) {
             window.location.href = responseData.checkoutLink;
@@ -257,17 +299,17 @@ const createActualInvoice = async (amount, message, lastInputCurrency, name, coi
 const checkInvoiceStatus = async (invoiceId, amount, message, lastInputCurrency, name, coinsnap, type, redirect, metadata) => {
 
     const url = coinsnap
-        ? `https://app.coinsnap.io/api/v1/stores/${sharedData.coinsnapStoreId}/invoices/${invoiceId}`
-        : `${sharedData.btcpayUrl}/api/v1/stores/${sharedData.btcpayStoreId}/invoices/${invoiceId}`;
+        ? `https://app.coinsnap.io/api/v1/stores/${coinsnapDonationSharedData.coinsnapStoreId}/invoices/${invoiceId}`
+        : `${coinsnapDonationSharedData.btcpayUrl}/api/v1/stores/${coinsnapDonationSharedData.btcpayStoreId}/invoices/${invoiceId}`;
 
     const headers = coinsnap
         ? {
-            'x-api-key': sharedData.coinsnapApiKey,
+            'x-api-key': coinsnapDonationSharedData.coinsnapApiKey,
             'Content-Type': 'application/json'
 
         }
         : {
-            'Authorization': `token ${sharedData.btcpayApiKey}`,
+            'Authorization': `token ${coinsnapDonationSharedData.btcpayApiKey}`,
             'Content-Type': 'application/json'
         };
 
@@ -282,14 +324,33 @@ const checkInvoiceStatus = async (invoiceId, amount, message, lastInputCurrency,
         }
 
         const responseData = await response.json();
+        
+        if (!coinsnap) {
+            const url = `${coinsnapDonationSharedData?.btcpayUrl}/api/v1/stores/${coinsnapDonationSharedData?.btcpayStoreId}/invoices/${responseData.id}/payment-methods`;
+            const response2 = await fetch(url, {
+                method: 'GET',
+                headers: headers
+            });
+            const responseData2 = await response2.json();
+            const paymentLink = responseData2[0].paymentLink;
+            console.log('Payment Link:', paymentLink);
+            responseData.lightningInvoice = paymentLink?.replace('lightning:', '');
+            responseData.onchainAddress = '';
+
+            // Generate QR code image from lightning invoice
+            const qrCodeImage = await generateQRCodeDataURL(paymentLink);
+            responseData.qrCodes = {
+                lightningQR: qrCodeImage || paymentLink
+            }
+        }
 
         if (responseData?.status === 'Settled') {
-            return await createActualInvoice(amount, message, lastInputCurrency, name, coinsnap, type, redirect, metadata);
+            return await createActualDonationInvoice(amount, message, lastInputCurrency, name, coinsnap, type, redirect, metadata);
         } else if (responseData?.status === 'New') {
             if (redirect) {
                 window.location.href = responseData.checkoutLink;
             }
-            return responseData
+            return responseData;
         }
 
     } catch (error) {
@@ -298,8 +359,10 @@ const checkInvoiceStatus = async (invoiceId, amount, message, lastInputCurrency,
     }
 };
 
-const createInvoice = async (amount, message, lastInputCurrency, name, type, redirect = true, metadata) => {
-    existingInvoice = getCookie('coinsnap_invoice_')
+//  Invoice creation
+const createDonationInvoice = async (amount, message, name, type, redirect = true, metadata) => {
+    existingInvoice = getCookie('coinsnap_invoice_donation');
+    lastInputCurrency = 'SATS';
     if (existingInvoice) {
         invoiceJson = JSON.parse(existingInvoice)
         if (
@@ -316,7 +379,7 @@ const createInvoice = async (amount, message, lastInputCurrency, name, type, red
                 message,
                 lastInputCurrency,
                 name,
-                sharedData.provider == 'coinsnap',
+                coinsnapDonationSharedData.provider === 'coinsnap',
                 type,
                 redirect,
                 metadata
@@ -324,24 +387,24 @@ const createInvoice = async (amount, message, lastInputCurrency, name, type, red
             return cs
         }
         else {
-            return await createActualInvoice(
+            return await createActualDonationInvoice(
                 amount,
                 message,
                 lastInputCurrency,
                 name,
-                sharedData.provider == 'coinsnap',
+                coinsnapDonationSharedData.provider === 'coinsnap',
                 type,
                 redirect,
                 metadata
             )
         }
     } else {
-        return await createActualInvoice(
+        return await createActualDonationInvoice(
             amount,
             message,
             lastInputCurrency,
             name,
-            sharedData.provider == 'coinsnap',
+            coinsnapDonationSharedData.provider === 'coinsnap',
             type,
             redirect,
             metadata
@@ -353,7 +416,7 @@ const addNumSeparators = (amount) => {
     var tmp = removeThousandSeparator(amount)
     var val = Number(tmp).toLocaleString("en-GB");
 
-    if (tmp == '') {
+    if (tmp === '') {
         return '';
     } else {
         return val;
@@ -371,7 +434,7 @@ const removeThousandSeparator = (amount) => {
 
 }
 
-const cleanAmount = (amount) => {
+const cleanDonationAmount = (amount) => {
     return parseFloat(removeThousandSeparator(amount))
 
 }
@@ -397,21 +460,21 @@ const unformatNumericInput = (target) => {
 const NumericInput = (inputFieldName) => {
     const inp = document.getElementById(inputFieldName)
     if (inp) {
-        const sep = getThousandSeparator() == "." ? "," : ".";
+        const sep = (getThousandSeparator() === ".")? "," : ".";
         var numericKeys = `0123456789${sep}`;
 
         inp.addEventListener('keypress', function (e) {
             var event = e || window.event;
             var target = event.target;
 
-            if (event.charCode == 0) {
+            if (event.charCode === 0) {
                 return;
             }
-            if (`${inp.value}`.includes(sep) && event.key == sep) {
+            if (`${inp.value}`.includes(sep) && event.key === sep) {
                 event.preventDefault();
                 return;
             }
-            if (-1 == numericKeys.indexOf(event.key)) {
+            if (-1 === numericKeys.indexOf(event.key)) {
                 event.preventDefault();
                 return;
             }
@@ -433,6 +496,7 @@ const NumericInput = (inputFieldName) => {
 
 const limitCursorMovement = (e, primaryCurrency) => {
     const field = e.target;
+    //console.log('Amount field: ' + field.id);
     const position = field.selectionStart;
     const satsOffset = primaryCurrency === 'sats' ? 5 : 4;
     const satsStart = field.value.length - satsOffset;
@@ -462,19 +526,22 @@ const limitCursorMovement = (e, primaryCurrency) => {
     }
 }
 
-const hideElementById = (id, prefix = '', sufix = '') => {
-    document.getElementById(`${prefix}${id}${sufix}`).style.display = 'none'
-}
-const hideElementsById = (ids, prefix = '', sufix = '') => {
+const hideDonationElementById = (id, prefix = '', sufix = '') => {
+    document.getElementById(`${prefix}${id}${sufix}`).style.display = 'none';
+};
+
+const hideDonationElementsById = (ids, prefix = '', sufix = '') => {
     ids.forEach(id => {
-        hideElementById(id, prefix, sufix)
-    })
-}
-const showElementById = (id, display, prefix = '', sufix = '') => {
-    document.getElementById(`${prefix}${id}${sufix}`).style.display = display
-}
-const showElementsById = (ids, display, prefix = '', sufix = '') => {
+        hideDonationElementById(id, prefix, sufix);
+    });
+};
+
+const showDonationElementById = (id, display, prefix = '', sufix = '') => {
+    document.getElementById(`${prefix}${id}${sufix}`).style.display = display;
+};
+
+const showDonationElementsById = (ids, display, prefix = '', sufix = '') => {
     ids.forEach(id => {
-        showElementById(id, display, prefix, sufix)
-    })
-}
+        showDonationElementById(id, display, prefix, sufix);
+    });
+};

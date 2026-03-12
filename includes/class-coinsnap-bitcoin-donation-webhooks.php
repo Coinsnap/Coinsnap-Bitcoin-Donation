@@ -1,6 +1,6 @@
 <?php
-class coinsnap_bitcoin_donation_Webhooks
-{
+if (!defined('ABSPATH')){ exit; }
+class coinsnap_bitcoin_donation_Webhooks {
 
     public function __construct()
     {
@@ -159,14 +159,14 @@ class coinsnap_bitcoin_donation_Webhooks
             if (isset($payload_data['metadata']['type']) && $payload_data['metadata']['type'] == "Bitcoin Shoutout") {
                 $invoiceId = $payload_data['invoiceId'];
                 //error_log(print_r($payload_data, true));
-                $name = $payload_data['metadata']['name'];
-                $message = $payload_data['metadata']['orderNumber'];
+                $name = $payload_data['metadata']['donorName'];
+                $message = $payload_data['metadata']['donorMessage'];
                 $amount = $payload_data['metadata']['amount'];
                 $provider = $payload_data['metadata']['provider'];
 
                 // Get sats amount from payload if available, otherwise set to empty
                 $sats_amount = isset($payload_data['metadata']['satsAmount']) ? $payload_data['metadata']['satsAmount'] : '';
-                error_log(print_r($payload_data, true));
+                //error_log(print_r($payload_data, true));
                 $post_data = array(
                     'post_title'    => 'Shoutout from ' . $name,
                     'post_status'   => 'publish',

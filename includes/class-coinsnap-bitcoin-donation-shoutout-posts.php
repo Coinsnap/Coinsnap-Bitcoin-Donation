@@ -22,17 +22,17 @@ class coinsnap_bitcoin_donation_Shoutout_Metabox
 	{
 		register_post_type('bitcoin-shoutouts', [
 			'labels' => [
-				'name'               => 'Shoutouts',
-				'singular_name'      => 'Shoutout',
-				'menu_name'          => 'Shoutouts',
-				'add_new'            => 'Add New',
-				'add_new_item'       => 'Add New Shoutout',
-				'edit_item'          => 'Edit Shoutout',
-				'new_item'           => 'New Shoutout',
-				'view_item'          => 'View Shoutout',
-				'search_items'       => 'Search Shoutouts',
-				'not_found'          => 'No shoutouts found',
-				'not_found_in_trash' => 'No shoutouts found in Trash',
+				'name'               => __('Shoutouts', 'coinsnap-bitcoin-donation'),
+				'singular_name'      => __('Shoutout', 'coinsnap-bitcoin-donation'),
+				'menu_name'          => __('Shoutouts', 'coinsnap-bitcoin-donation'),
+				'add_new'            => __('Add New', 'coinsnap-bitcoin-donation'),
+				'add_new_item'       => __('Add New Shoutout', 'coinsnap-bitcoin-donation'),
+				'edit_item'          => __('Edit Shoutout', 'coinsnap-bitcoin-donation'),
+				'new_item'           => __('New Shoutout', 'coinsnap-bitcoin-donation'),
+				'view_item'          => __('View Shoutout', 'coinsnap-bitcoin-donation'),
+				'search_items'       => __('Search Shoutouts', 'coinsnap-bitcoin-donation'),
+				'not_found'          => __('No shoutouts found', 'coinsnap-bitcoin-donation'),
+				'not_found_in_trash' => __('No shoutouts found in Trash', 'coinsnap-bitcoin-donation'),
 			],
 			'public'             => false,
 			'publicly_queryable' => false,
@@ -121,7 +121,7 @@ class coinsnap_bitcoin_donation_Shoutout_Metabox
 		<table class="form-table">
 			<tr>
 				<th scope="row">
-					<label for="coinsnap_bitcoin_donation_shoutouts_name"><?php echo esc_html_e('Name', 'coinsnap-bitcoin-donation') ?></label>
+					<label for="coinsnap_bitcoin_donation_shoutouts_name"><?php esc_html_e('Name', 'coinsnap-bitcoin-donation') ?></label>
 				</th>
 				<td>
 					<input
@@ -134,7 +134,7 @@ class coinsnap_bitcoin_donation_Shoutout_Metabox
 			</tr>
 			<tr>
 				<th scope="row">
-					<label for="coinsnap_bitcoin_donation_shoutouts_amount"><?php echo esc_html_e('Amount', 'coinsnap-bitcoin-donation') ?></label>
+					<label for="coinsnap_bitcoin_donation_shoutouts_amount"><?php esc_html_e('Amount', 'coinsnap-bitcoin-donation') ?></label>
 				</th>
 				<td>
 					<input
@@ -147,7 +147,7 @@ class coinsnap_bitcoin_donation_Shoutout_Metabox
 			</tr>
 			<tr>
 				<th scope="row">
-					<label for="coinsnap_bitcoin_donation_shoutouts_sats_amount"><?php echo esc_html_e('Sats Amount', 'coinsnap-bitcoin-donation') ?></label>
+					<label for="coinsnap_bitcoin_donation_shoutouts_sats_amount"><?php esc_html_e('Sats Amount', 'coinsnap-bitcoin-donation') ?></label>
 				</th>
 				<td>
 					<input
@@ -160,7 +160,7 @@ class coinsnap_bitcoin_donation_Shoutout_Metabox
 			</tr>
 			<tr>
 				<th scope="row">
-					<label for="coinsnap_bitcoin_donation_shoutouts_invoice_id"><?php echo esc_html_e('Invoice Id', 'coinsnap-bitcoin-donation') ?></label>
+					<label for="coinsnap_bitcoin_donation_shoutouts_invoice_id"><?php esc_html_e('Invoice Id', 'coinsnap-bitcoin-donation') ?></label>
 				</th>
 				<td>
 					<input
@@ -173,7 +173,7 @@ class coinsnap_bitcoin_donation_Shoutout_Metabox
 			</tr>
 			<tr>
 				<th scope="row">
-					<label for="coinsnap_bitcoin_donation_shoutouts_message"><?php echo esc_html_e('Message', 'coinsnap-bitcoin-donation') ?></label>
+					<label for="coinsnap_bitcoin_donation_shoutouts_message"><?php esc_html_e('Message', 'coinsnap-bitcoin-donation') ?></label>
 				</th>
 				<td>
 					<textarea
@@ -187,7 +187,7 @@ class coinsnap_bitcoin_donation_Shoutout_Metabox
 			</tr>
 			<tr>
 				<th scope="row">
-					<label for="coinsnap_bitcoin_donation_shoutouts_provider"><?php echo esc_html_e('Provider', 'coinsnap-bitcoin-donation') ?></label>
+					<label for="coinsnap_bitcoin_donation_shoutouts_provider"><?php esc_html_e('Provider', 'coinsnap-bitcoin-donation') ?></label>
 				</th>
 				<td>
 					<input
@@ -284,11 +284,11 @@ class coinsnap_bitcoin_donation_Shoutout_Metabox
 		$new_columns = [
 			'cb' => $columns['cb'],
 			'title' => $columns['title'],
-			'name' => 'Name',
-			'amount' => 'Amount',
-			'sats_amount' => 'Sats Amount',
-			'invoice_id' => 'Invoice id',
-			'message' => 'Message'
+			'name' => __('Name', 'coinsnap-bitcoin-donation'),
+			'amount' => __('Amount', 'coinsnap-bitcoin-donation'),
+			'sats_amount' => __('Sats Amount', 'coinsnap-bitcoin-donation'),
+			'invoice_id' => __('Invoice id', 'coinsnap-bitcoin-donation'),
+			'message' => __('Message', 'coinsnap-bitcoin-donation')
 		];
 
 		return $new_columns;
@@ -298,7 +298,7 @@ class coinsnap_bitcoin_donation_Shoutout_Metabox
 	{
 		switch ($column) {
 			case 'name':
-				echo esc_html(get_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_name', true) ?: 'Anonymous');
+				echo esc_html(get_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_name', true) ?: __('Anonymous', 'coinsnap-bitcoin-donation'));
 				break;
 			case 'amount':
 				echo esc_html(get_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_amount', true) ?: '');
