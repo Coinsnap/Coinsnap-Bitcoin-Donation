@@ -277,7 +277,7 @@
             
             if(_el.attr('data-currency-field') !== undefined){
                 console.log(_el.attr('data-currency-field'));
-                _currency = $(_el.attr('data-currency-field')).val();
+                _currency = $('#' + _el.attr('data-currency-field')).val();
             }
             
             let data = {
