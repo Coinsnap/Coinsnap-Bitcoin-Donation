@@ -21,14 +21,16 @@
         localStorage.setItem('activeTab', target);
       });
     });
+    
     const restoreTabs = () => {
       const savedTab = localStorage.getItem('activeTab');
       const activeTab = document.querySelector(`.nav-tab[data-tab="${savedTab}"]`);
       if (activeTab) {
-        activeTab.click()
+        activeTab.click();
       }
-    }
-    restoreTabs()
+    };
+    
+    restoreTabs();
 
     const coinsnapStoreIdField = document.getElementById('coinsnap_store_id');
     const coinsnapApiKeyField = document.getElementById('coinsnap_api_key');
@@ -58,10 +60,10 @@
     }
 
     function checkConnection(storeId, apiKey, btcpayUrl) {
-      const headers = btcpayUrl ? { 'Authorization': `token ${apiKey}` } : { 'x-api-key': apiKey, };
+      const headers = btcpayUrl ? { 'Authorization': `token ${apiKey}` } : { 'x-api-key': apiKey };
       const url = btcpayUrl
         ? `${btcpayUrl}/api/v1/stores/${storeId}/invoices`
-        : `https://app.coinsnap.io/api/v1/stores/${storeId}`
+        : `https://app.coinsnap.io/api/v1/stores/${storeId}`;
 
       return $.ajax({
         url: url,
@@ -77,13 +79,13 @@
       const response = await fetch('/wp-json/coinsnap-bitcoin-donation/v1/get-wh-secret');
       const data = await response.json();
       return data;
-    }
+    };
 
     function checkWebhooks(storeId, apiKey, btcpayUrl) {
-      const headers = btcpayUrl ? { 'Authorization': `token ${apiKey}` } : { 'x-api-key': apiKey, };
+      const headers = btcpayUrl ? { 'Authorization': `token ${apiKey}` } : { 'x-api-key': apiKey };
       const url = btcpayUrl
         ? `${btcpayUrl}/api/v1/stores/${storeId}/webhooks`
-        : `https://app.coinsnap.io/api/v1/stores/${storeId}/webhooks`
+        : `https://app.coinsnap.io/api/v1/stores/${storeId}/webhooks`;
 
       return $.ajax({
         url: url,
@@ -101,11 +103,12 @@
         url: webhookUrl,
         events: ['Settled'],
         secret: webhookSecret
-      }
-      const headers = btcpayUrl ? { 'Authorization': `token ${apiKey}` } : { 'x-api-key': apiKey, };
+      };
+      
+      const headers = btcpayUrl ? { 'Authorization': `token ${apiKey}` } : { 'x-api-key': apiKey };
       const url = btcpayUrl
         ? `${btcpayUrl}/api/v1/stores/${storeId}/webhooks/${webhookId}`
-        : `https://app.coinsnap.io/api/v1/stores/${storeId}/webhooks/${webhookId}`
+        : `https://app.coinsnap.io/api/v1/stores/${storeId}/webhooks/${webhookId}`;
 
       return $.ajax({
         url: url,
@@ -125,7 +128,7 @@
         url: webhookUrl,
         events: ['Settled'],
         secret: webhookSecret
-      }
+      };
 
       const headers = btcpayUrl
         ? { 'Authorization': `token ${apiKey}` }
@@ -133,7 +136,7 @@
 
       const url = btcpayUrl
         ? `${btcpayUrl}/api/v1/stores/${storeId}/webhooks`
-        : `https://app.coinsnap.io/api/v1/stores/${storeId}/webhooks`
+        : `https://app.coinsnap.io/api/v1/stores/${storeId}/webhooks`;
 
       return $.ajax({
         url: url,
@@ -141,7 +144,7 @@
         contentType: 'application/json',
         headers: headers,
         data: JSON.stringify(data)
-      })
+      });
     }
 
     function toggleProviderSettings() {
@@ -170,41 +173,41 @@
       document.cookie = name + "=" + value + ";" + expires + ";path=/";
     }
 
-    async function handleCheckConnection(isSubmit = false) {
-      event.preventDefault();
-      var connection = false
+    async function donationConnectionCheckHandler(isSubmit = false) {
+      //event.preventDefault();
+      var connection = false;
       const ngrokLiveUrl = document.getElementById('ngrok_url')?.value;
       const origin = ngrokLiveUrl ? ngrokLiveUrl : new URL(window.location.href).origin;
-      const webhookUrl = `${origin}/wp-json/coinsnap-bitcoin-donation/v1/webhook`
-      if ($providerSelector?.val() == 'coinsnap') {
+      const webhookUrl = `${origin}/wp-json/coinsnap-bitcoin-donation/v1/webhook`;
+      if ($providerSelector?.val() === 'coinsnap') {
         const coinsnapStoreId = $('#coinsnap_store_id').val();
         const coinsnapApiKey = $('#coinsnap_api_key').val();
-        connection = await checkConnection(coinsnapStoreId, coinsnapApiKey)
+        connection = await checkConnection(coinsnapStoreId, coinsnapApiKey);
         if (connection) {
-          const webhooks = await checkWebhooks(coinsnapStoreId, coinsnapApiKey)
+          const webhooks = await checkWebhooks(coinsnapStoreId, coinsnapApiKey);
           const webhookFound = webhooks?.find(webhook => webhook.url === webhookUrl);
           if (!webhookFound) {
-            await createWebhook(coinsnapStoreId, coinsnapApiKey, webhookUrl)
+            await createWebhook(coinsnapStoreId, coinsnapApiKey, webhookUrl);
           } else {
-            await updateWebhook(coinsnapStoreId, coinsnapApiKey, webhookUrl, webhookFound.id)
+            await updateWebhook(coinsnapStoreId, coinsnapApiKey, webhookUrl, webhookFound.id);
           }
         }
       } else {
         const btcpayStoreId = $('#btcpay_store_id').val();
         const btcpayApiKey = $('#btcpay_api_key').val();
         const btcpayUrl = $('#btcpay_url').val();
-        connection = await checkConnection(btcpayStoreId, btcpayApiKey, btcpayUrl)
+        connection = await checkConnection(btcpayStoreId, btcpayApiKey, btcpayUrl);
         if (connection) {
-          const webhooks = await checkWebhooks(btcpayStoreId, btcpayApiKey, btcpayUrl)
+          const webhooks = await checkWebhooks(btcpayStoreId, btcpayApiKey, btcpayUrl);
           const webhookFound = webhooks?.find(webhook => webhook.url === webhookUrl);
           if (!webhookFound) {
-            await createWebhook(btcpayStoreId, btcpayApiKey, webhookUrl, btcpayUrl)
+            await createWebhook(btcpayStoreId, btcpayApiKey, webhookUrl, btcpayUrl);
           } else {
-            await updateWebhook(btcpayStoreId, btcpayApiKey, webhookUrl, webhookFound.id, btcpayUrl)
+            await updateWebhook(btcpayStoreId, btcpayApiKey, webhookUrl, webhookFound.id, btcpayUrl);
           }
         }
       }
-      setCookie('coinsnap_connection_', JSON.stringify({ 'connection': connection }), 20)
+      setCookie('coinsnap_bitcoin_donation_connection', JSON.stringify({ 'connection': connection }), 20);
       if (!isSubmit) {
         $('#submit').click();
 
@@ -212,17 +215,17 @@
     }
 
     $('#submit').click(async function (event) {
-      await handleCheckConnection(true);
+      await donationConnectionCheckHandler(true);
       $('#submit').click();
     });
 
-    $checkConnectionCoisnanpButton.on('click', async (event) => { await handleCheckConnection(); })
-    $checkConnectionBtcPayButton.on('click', async (event) => { await handleCheckConnection(); });
+    $checkConnectionCoisnanpButton.on('click', async (event) => { await donationConnectionCheckHandler(); });
+    $checkConnectionBtcPayButton.on('click', async (event) => { await donationConnectionCheckHandler(); });
 
-    const connectionCookie = getCookie('coinsnap_connection_')
+    const connectionCookie = getCookie('coinsnap_bitcoin_donation_connection');
     if (connectionCookie) {
-      const connectionState = JSON.parse(connectionCookie)?.connection
-      const checkConnection = $(`#check_connection_${$providerSelector?.val()}`)
+      const connectionState = JSON.parse(connectionCookie)?.connection;
+      const checkConnection = $(`#check_connection_${$providerSelector?.val()}`);
       connectionState
         ? checkConnection.css({ color: 'green' }).text('Connection successful')
         : checkConnection.css({ color: 'red' }).text('Connection failed');
@@ -245,14 +248,54 @@
                     window.location = response.data.url;
 		}
             }).fail( function() {
-		alert('Error processing your request. Please make sure to enter a valid BTCPay Server instance URL.')
+		alert('Error processing your request. Please make sure to enter a valid BTCPay Server instance URL.');
             });
 	}
         else {
-            alert('Please enter a valid url including https:// in the BTCPay Server URL input field.')
+            alert('Please enter a valid url including https:// in the BTCPay Server URL input field.');
         }
     });
+    /*
+    if($('#coinsnap_bitcoin_donation_currency').length){
+        
+        setStep();
+        $('#coinsnap_bitcoin_donation_currency').change(
+            function(){
+                setStep();
+            }    
+        );
+        
+    }*/
     
+    if($('.coinsnapConnectionStatus').length){
+        
+        let ajaxurl = coinsnap_bitcoin_donation_ajax.ajax_url;
+        
+        $('.coinsnapConnectionStatus').each(function(){
+            var _el = $(this);
+            _currency = '';
+            
+            if(_el.attr('data-currency-field') !== undefined){
+                console.log(_el.attr('data-currency-field'));
+                _currency = $('#' + _el.attr('data-currency-field')).val();
+            }
+            
+            let data = {
+                action: 'coinsnap_bitcoin_donation_connection_handler',
+                apiNonce: coinsnap_bitcoin_donation_ajax.nonce,
+                apiPost: coinsnap_bitcoin_donation_ajax.post,
+                apiCurrency: _currency
+            };
+
+            jQuery.post( ajaxurl, data, function( response ){
+
+                connectionCheckResponse = $.parseJSON(response);
+                let resultClass = (connectionCheckResponse.result === true)? 'success' : 'error';
+                _el.html('<span class="'+resultClass+'">'+ connectionCheckResponse.message +'</span>');
+
+            });
+        });
+    }
   });
   
     function isDonationValidUrl(serverUrl) {
@@ -275,85 +318,84 @@
     }
 
 
-  function togglePublicDonorFields(section, force) {
-    section = section.replace(/-/g, '_')
-    const element = document.getElementById(section + '_public_donors');
-    var isChecked = element?.checked;
-    if (force !== undefined) {
-      isChecked = force;
+    function togglePublicDonorFields(section, force) {
+        section = section.replace(/-/g, '_');
+        const element = document.getElementById(section + '_public_donors');
+        var isChecked = element?.checked;
+        if (force !== undefined) {
+            isChecked = force;
+        }
+        $('.public-donor-field.' + section.replace(/_/g, '-')).closest('tr').toggle(isChecked);
     }
-    $('.public-donor-field.' + section.replace(/_/g, '-')).closest('tr').toggle(isChecked);
-  }
 
-  // function toggleShoutoutFields(section) {
-  //   var isChecked = $('#' + section + '_donation_active').is(':checked');
-  //   section = section.replace(/_/g, '-')
-  //   if (section == 'shoutout') {
-  //     $('#' + section + '-donation table tr')
-  //       .not(':first')
-  //       .toggle(isChecked);
-  //   } else {
-  //     $('#' + section + '-donation table tbody tr')
-  //       .not(':first')
-  //       .toggle(isChecked);
-  //   }
-  //   if (!isChecked) {
-  //     togglePublicDonorFields(section, false);
-  //   } else {
-  //     togglePublicDonorFields(section);
-  //   }
-  // }
-
-  function toggleShortcode(value, section) {
-    const regular = document.getElementById(`shortcode_${section}`);
-    const wide = document.getElementById(`shortcode_${section}_wide`);
-    if (!regular || !wide) {
-      return;
+    function toggleShoutoutFields(section) {
+        var isChecked = $('#' + section + '_donation_active').is(':checked');
+        section = section.replace(/_/g, '-');
+        if (section === 'shoutout'){
+            $('#' + section + '-donation table tr').not(':first').toggle(isChecked);
+        } else {
+            $('#' + section + '-donation table tbody tr').not(':first').toggle(isChecked);
+        }
+        if (!isChecked) {
+            togglePublicDonorFields(section, false);
+        } else {
+            togglePublicDonorFields(section);
+        }
     }
-    if (value == 'WIDE') {
-      regular.style.display = 'none';
-      wide.classList.remove('hiddenRow');
-      wide.style.display = 'table-row!important';
-    } else {
-      regular.style.display = 'table-row';
-      wide.classList.add('hiddenRow');
+
+    function toggleShortcode(value, section) {
+        const regular = document.getElementById(`shortcode_${section}`);
+        const wide = document.getElementById(`shortcode_${section}_wide`);
+        if (!regular || !wide) {
+            return;
+        }
+        if (value === 'WIDE') {
+            regular.style.display = 'none';
+            wide.classList.remove('hiddenRow');
+            wide.style.display = 'table-row!important';
+        } else {
+            regular.style.display = 'table-row';
+            wide.classList.add('hiddenRow');
+        }
     }
-  }
 
-  if ($('#form_type')?.val) {
-    const value = $('#form_type').val();
-    toggleShortcode(value, 'coinsnap_bitcoin_donation');
-  }
-  if ($('#multi_amount_form_type')?.val) {
-    const value = $('#multi_amount_form_type').val();
-    toggleShortcode(value, 'multi_amount_donation');
+    if ($('#form_type')?.val) {
+        const value = $('#form_type').val();
+        toggleShortcode(value, 'coinsnap_bitcoin_donation');
+    }
+    
+    if ($('#multi_amount_form_type')?.val) {
+        const value = $('#multi_amount_form_type').val();
+        toggleShortcode(value, 'multi_amount_donation');
+    }
 
-  }
-
-  // Initial state
-  togglePublicDonorFields('simple_donation');
-  togglePublicDonorFields('shoutout');
-  togglePublicDonorFields('multi_amount');
-  // toggleShoutoutFields('shoutout');
-  // toggleShoutoutFields('multi_amount');
-
-  // Change handlers
-  $('#simple_donation_public_donors').change(function () {
+    // Initial state
     togglePublicDonorFields('simple_donation');
-  });
-  $('#shoutout_public_donors').change(function () {
     togglePublicDonorFields('shoutout');
-  });
-  $('#multi_amount_public_donors').change(function () {
     togglePublicDonorFields('multi_amount');
-  });
-  // $('#shoutout_donation_active').change(function () {
-  //   toggleShoutoutFields('shoutout');
-  // });
+    toggleShoutoutFields('shoutout');
+    toggleShoutoutFields('multi_amount');
 
-  // $('#multi_amount_donation_active').change(function () {
-  //   toggleShoutoutFields('multi_amount');
-  // });
+    // Change handlers
+    $('#simple_donation_public_donors').change(function () {
+        togglePublicDonorFields('simple_donation');
+    });
+    
+    $('#shoutout_public_donors').change(function () {
+        togglePublicDonorFields('shoutout');
+    });
+    
+    $('#multi_amount_public_donors').change(function () {
+        togglePublicDonorFields('multi_amount');
+    });
+    
+    $('#shoutout_donation_active').change(function () {
+        toggleShoutoutFields('shoutout');
+    });
+
+    $('#multi_amount_donation_active').change(function () {
+        toggleShoutoutFields('multi_amount');
+    });
 
   $('#form_type').change(function () {
     const value = $(this).val();

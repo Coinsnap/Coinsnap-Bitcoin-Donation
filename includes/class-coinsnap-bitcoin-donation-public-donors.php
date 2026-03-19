@@ -19,17 +19,17 @@ class Coinsnap_Bitcoin_Donation_Public_Donors
     {
         register_post_type('bitcoin-pds', [
             'labels' => [
-                'name'               => 'Donor Information',
-                'singular_name'      => 'Donor Information',
-                'menu_name'          => 'Donor Information',
-                'add_new'            => 'Add New',
-                'add_new_item'       => 'Add New Donor',
-                'edit_item'          => 'Edit Donor',
-                'new_item'           => 'New Donor',
-                'view_item'          => 'View Donor',
-                'search_items'       => 'Search Donors',
-                'not_found'          => 'No donors found',
-                'not_found_in_trash' => 'No donors found in Trash',
+                'name'               => __('Donor Information', 'coinsnap-bitcoin-donation'),
+                'singular_name'      => __('Donor Information', 'coinsnap-bitcoin-donation'),
+                'menu_name'          => __('Donor Information', 'coinsnap-bitcoin-donation'),
+                'add_new'            => __('Add New', 'coinsnap-bitcoin-donation'),
+                'add_new_item'       => __('Add New Donor', 'coinsnap-bitcoin-donation'),
+                'edit_item'          => __('Edit Donor', 'coinsnap-bitcoin-donation'),
+                'new_item'           => __('New Donor', 'coinsnap-bitcoin-donation'),
+                'view_item'          => __('View Donor', 'coinsnap-bitcoin-donation'),
+                'search_items'       => __('Search Donors', 'coinsnap-bitcoin-donation'),
+                'not_found'          => __('No donors found', 'coinsnap-bitcoin-donation'),
+                'not_found_in_trash' => __('No donors found in Trash', 'coinsnap-bitcoin-donation'),
             ],
             'public'             => false,
             'publicly_queryable' => false,
@@ -108,7 +108,7 @@ class Coinsnap_Bitcoin_Donation_Public_Donors
     {
         add_meta_box(
             'coinsnap_bitcoin_donation_public_donors_details',
-            'Donor Details',
+            __('Donor Details', 'coinsnap-bitcoin-donation'),
             [$this, 'render_public_donors_metabox'],
             'bitcoin-pds',
             'normal',
@@ -132,7 +132,7 @@ class Coinsnap_Bitcoin_Donation_Public_Donors
         <table class="form-table">
             <tr>
                 <th scope="row">
-                    <label for="coinsnap_bitcoin_donation_donor_name"><?php echo esc_html_e('Name', 'coinsnap-bitcoin-donation') ?></label>
+                    <label for="coinsnap_bitcoin_donation_donor_name"><?php echo esc_html__('Name', 'coinsnap-bitcoin-donation') ?></label>
                 </th>
                 <td>
                     <input type="text" id="coinsnap_bitcoin_donation_donor_name" name="coinsnap_bitcoin_donation_donor_name" class="regular-text" value="<?php echo esc_attr($name); ?>" readonly>
@@ -140,7 +140,7 @@ class Coinsnap_Bitcoin_Donation_Public_Donors
             </tr>
             <tr>
                 <th scope="row">
-                    <label for="coinsnap_bitcoin_donation_amount"><?php echo esc_html_e('Amount', 'coinsnap-bitcoin-donation') ?></label>
+                    <label for="coinsnap_bitcoin_donation_amount"><?php echo esc_html__('Amount', 'coinsnap-bitcoin-donation') ?></label>
                 </th>
                 <td>
                     <input type="text" id="coinsnap_bitcoin_donation_amount" name="coinsnap_bitcoin_donation_amount" class="regular-text" value="<?php echo esc_attr($amount); ?>" readonly>
@@ -148,7 +148,7 @@ class Coinsnap_Bitcoin_Donation_Public_Donors
             </tr>
             <tr>
                 <th scope="row">
-                    <label for="coinsnap_bitcoin_donation_message"><?php echo esc_html_e('Message', 'coinsnap-bitcoin-donation') ?></label>
+                    <label for="coinsnap_bitcoin_donation_message"><?php echo esc_html__('Message', 'coinsnap-bitcoin-donation') ?></label>
                 </th>
                 <td>
                     <textarea id="coinsnap_bitcoin_donation_message" name="coinsnap_bitcoin_donation_message" class="regular-text" rows="3" readonly><?php echo esc_textarea($message); ?></textarea>
@@ -156,7 +156,7 @@ class Coinsnap_Bitcoin_Donation_Public_Donors
             </tr>
             <tr>
                 <th scope="row">
-                    <label for="coinsnap_bitcoin_donation_form_type"><?php echo esc_html_e('Form Type', 'coinsnap-bitcoin-donation') ?></label>
+                    <label for="coinsnap_bitcoin_donation_form_type"><?php echo esc_html__('Form Type', 'coinsnap-bitcoin-donation') ?></label>
                 </th>
                 <td>
                     <input type="text" id="coinsnap_bitcoin_donation_form_type" name="coinsnap_bitcoin_donation_form_type" class="regular-text" value="<?php echo esc_attr($form_type); ?>" readonly>
@@ -164,7 +164,7 @@ class Coinsnap_Bitcoin_Donation_Public_Donors
             </tr>
             <tr>
                 <th scope="row">
-                    <label for="coinsnap_bitcoin_donation_email"><?php echo esc_html_e('Email', 'coinsnap-bitcoin-donation') ?></label>
+                    <label for="coinsnap_bitcoin_donation_email"><?php echo esc_html__('Email', 'coinsnap-bitcoin-donation') ?></label>
                 </th>
                 <td>
                     <input type="email" id="coinsnap_bitcoin_donation_email" name="coinsnap_bitcoin_donation_email" class="regular-text" value="<?php echo esc_attr($email); ?>" readonly>
@@ -172,7 +172,7 @@ class Coinsnap_Bitcoin_Donation_Public_Donors
             </tr>
             <tr>
                 <th scope="row">
-                    <label for="coinsnap_bitcoin_donation_address"><?php echo esc_html_e('Address', 'coinsnap-bitcoin-donation') ?></label>
+                    <label for="coinsnap_bitcoin_donation_address"><?php echo esc_html__('Address', 'coinsnap-bitcoin-donation') ?></label>
                 </th>
                 <td>
                     <input type="text" id="coinsnap_bitcoin_donation_address" name="coinsnap_bitcoin_donation_address" class="regular-text" value="<?php echo esc_attr($address); ?>" readonly>
@@ -180,7 +180,7 @@ class Coinsnap_Bitcoin_Donation_Public_Donors
             </tr>
             <tr>
                 <th scope="row">
-                    <label for="coinsnap_bitcoin_donation_payment_id"><?php echo esc_html_e('Payment ID', 'coinsnap-bitcoin-donation') ?></label>
+                    <label for="coinsnap_bitcoin_donation_payment_id"><?php echo esc_html__('Payment ID', 'coinsnap-bitcoin-donation') ?></label>
                 </th>
                 <td>
                     <input type="text" id="coinsnap_bitcoin_donation_payment_id" name="coinsnap_bitcoin_donation_payment_id" class="regular-text" value="<?php echo esc_attr($payment_id); ?>" readonly>
@@ -188,7 +188,7 @@ class Coinsnap_Bitcoin_Donation_Public_Donors
             </tr>
             <tr>
                 <th scope="row">
-                    <label for="coinsnap_bitcoin_donation_custom_field"><?php echo esc_html_e('Custom Field', 'coinsnap-bitcoin-donation') ?></label>
+                    <label for="coinsnap_bitcoin_donation_custom_field"><?php echo esc_html__('Custom Field', 'coinsnap-bitcoin-donation') ?></label>
                 </th>
                 <td>
                     <input type="text" id="coinsnap_bitcoin_donation_custom_field" name="coinsnap_bitcoin_donation_custom_field" class="regular-text" value="<?php echo esc_attr($custom_field); ?>" readonly>
@@ -234,14 +234,14 @@ class Coinsnap_Bitcoin_Donation_Public_Donors
         return [
             'cb' => $columns['cb'],
             'title' => $columns['title'],
-            'name' => 'Name',
-            'email' => 'Email',
-            'amount' => 'Amount',
-            'message' => 'Message',
-            'address' => 'Address',
-            'payment_id' => 'Payment ID',
-            'form_type' => 'Form Type',
-            'custom_field' => 'Custom Field'
+            'name' => __('Name', 'coinsnap-bitcoin-donation'),
+            'email' => __('Email', 'coinsnap-bitcoin-donation'),
+            'amount' => __('Amount', 'coinsnap-bitcoin-donation'),
+            'message' => __('Message', 'coinsnap-bitcoin-donation'),
+            'address' => __('Address', 'coinsnap-bitcoin-donation'),
+            'payment_id' => __('Payment ID', 'coinsnap-bitcoin-donation'),
+            'form_type' => __('Form Type', 'coinsnap-bitcoin-donation'),
+            'custom_field' => __('Custom Field', 'coinsnap-bitcoin-donation')
         ];
     }
 
