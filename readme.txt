@@ -3,7 +3,7 @@
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, donation, BTCPay
 Tested up to: 6.9
-Stable tag: 1.4.0
+Stable tag: 1.4.2
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -202,8 +202,16 @@ Plugin's page on Coinsnap website: [https://coinsnap.io/modules/bitcoin-donation
 * Update: Deleted currency exchange check on frontend.
 * Update: Added plugin isolation from other plugins in backend.
 
-= 1.4.0 :: 2026-03-12 =
+= 1.4.0 :: 2026-03-11 =
 * Update: Fiat/Crypto amount calculation in frontend.
 * Update: Minimum and premium donation amounts in Shoutout form.
 * Udpate: Name and message values in shoutout list in frontend.
 * Compatibility with Wordpress 6.9.4 is tested.
+
+= 1.4.1 :: 2026-03-12 =
+* Fixed: CSS and JS files enqueue conditions.
+* Fixed: Class Coinsnap_Bitcoin_Donation_Client() call during payment amount check. 
+* Update: Donation widget theme application.
+
+= 1.4.2 :: 2026-03-13 =
+* Update: Shortcode check on CSS and JS files enqueue conditions is temporary removed.

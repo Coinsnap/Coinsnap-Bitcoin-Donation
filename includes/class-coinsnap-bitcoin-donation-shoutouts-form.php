@@ -63,8 +63,8 @@ class Coinsnap_Bitcoin_Donation_Shoutouts_Form
         $coinsnapCurrencies = $client->getCurrencies();
         $rates = $client->loadExchangeRates();
         ?>
-        <div id="coinsnap-bitcoin-donation-shoutouts-form" class="coinsnap-bitcoin-donation-form">
-            <div class="shoutout-form-wrapper <?php echo esc_attr($theme_class);?> <?php echo esc_attr($modal_theme) ?>">
+        <div id="coinsnap-bitcoin-donation-shoutouts-form" class="coinsnap-bitcoin-donation-form <?php echo esc_attr($theme_class);?>">
+            <div class="shoutout-form-wrapper <?php echo esc_attr($modal_theme) ?>">
                 <form method="post">
                     <?php wp_nonce_field('shoutout_nonce', 'shoutout_nonce'); ?>
                     <input type="hidden" name="shoutout_submitted" value="1">

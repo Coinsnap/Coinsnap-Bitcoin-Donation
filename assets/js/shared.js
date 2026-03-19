@@ -37,8 +37,8 @@ const addErrorDonationField = (field,message) => {
 const removeDonationBorderOnFocus = (field1, field2) => {
     field1.addEventListener('focus', function () {
         field2.classList.remove('error');
-        jQuery(field1).next('.crowdfunding-field-error').remove();
-        jQuery(field2).next('.crowdfunding-field-error').remove();
+        jQuery(field1).next('.donation-field-error').remove();
+        jQuery(field2).next('.donation-field-error').remove();
     });
 };
 

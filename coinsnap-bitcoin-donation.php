@@ -3,7 +3,7 @@
  * Plugin Name:        Coinsnap Bitcoin Donation
  * Plugin URI:         https://coinsnap.io/wp-plugins/wp-bitcoin-donation/
  * Description:        Easy Bitcoin donations on a WordPress website
- * Version:            1.4.0
+ * Version:            1.4.2
  * Author:             Coinsnap
  * Author URI:         https://coinsnap.io/
  * Text Domain:        coinsnap-bitcoin-donation
@@ -18,7 +18,7 @@
 defined( 'ABSPATH' ) || exit;
 
 if(!defined( 'COINSNAP_BITCOIN_DONATION_REFERRAL_CODE' ) ) { define( 'COINSNAP_BITCOIN_DONATION_REFERRAL_CODE', 'D19833' );}
-if(!defined( 'COINSNAP_BITCOIN_DONATION_VERSION' ) ) { define( 'COINSNAP_BITCOIN_DONATION_VERSION', '1.4.0' );}
+if(!defined( 'COINSNAP_BITCOIN_DONATION_VERSION' ) ) { define( 'COINSNAP_BITCOIN_DONATION_VERSION', '1.4.2' );}
 if(!defined( 'COINSNAP_BITCOIN_DONATION_PHP_VERSION' ) ) { define( 'COINSNAP_BITCOIN_DONATION_PHP_VERSION', '8.0' );}
 if(!defined( 'COINSNAP_BITCOIN_DONATION_PLUGIN_DIR' ) ){define('COINSNAP_BITCOIN_DONATION_PLUGIN_DIR',plugin_dir_url(__FILE__));}
 if(!defined('COINSNAP_CURRENCIES')){define( 'COINSNAP_CURRENCIES', array("EUR","USD","SATS","BTC","CAD","JPY","GBP","CHF","RUB") );}
@@ -84,7 +84,7 @@ class coinsnap_bitcoin_donation
             wp_die('Unauthorized!', '', ['response' => 401]);
         }
         
-        $client = new Coinsnap_Bitcoin_Crowdfunding_Client();
+        $client = new Coinsnap_Bitcoin_Donation_Client();
         $amount = filter_input(INPUT_POST,'apiAmount',FILTER_SANITIZE_STRING);
         $currency = filter_input(INPUT_POST,'apiCurrency',FILTER_SANITIZE_STRING);
         
@@ -299,15 +299,16 @@ class coinsnap_bitcoin_donation
     function coinsnap_bitcoin_donation_enqueue_scripts(){
         
         global $post;
-    
-        if(is_a($post, 'WP_Post') && (
+    /*
+        if(
                 has_shortcode($post->post_content, 'coinsnap_bitcoin_donation') || 
                 has_shortcode($post->post_content, 'coinsnap_bitcoin_donation_wide') || 
                 has_shortcode($post->post_content, 'multi_amount_donation') || 
                 has_shortcode($post->post_content, 'multi_amount_donation_wide') || 
                 has_shortcode($post->post_content, 'shoutout_form') || 
-                has_shortcode($post->post_content, 'shoutout_list'))
-        ){
+                has_shortcode($post->post_content, 'shoutout_list')
+       )*/
+       {
             
             wp_enqueue_style('coinsnap-bitcoin-donation-style', plugin_dir_url(__FILE__) . 'assets/css/style.css', [], COINSNAP_BITCOIN_DONATION_VERSION);
             wp_enqueue_style('coinsnap-bitcoin-donation-style-wide', plugin_dir_url(__FILE__) . 'assets/css/style-wide.css', [], COINSNAP_BITCOIN_DONATION_VERSION);
@@ -386,11 +387,11 @@ class coinsnap_bitcoin_donation
             ));
             
         }  
-        
-        if(is_a($post, 'WP_Post') && (
+        /*
+        if((
             has_shortcode($post->post_content, 'coinsnap_bitcoin_donation') || 
             has_shortcode($post->post_content, 'coinsnap_bitcoin_donation_wide'))
-        ){
+        )*/{
         
             //Localize script for donationData
             wp_enqueue_script('coinsnap-bitcoin-donation-form-script', plugin_dir_url(__FILE__) . 'assets/js/donations.js', ['jquery'], COINSNAP_BITCOIN_DONATION_VERSION, true);
@@ -401,11 +402,11 @@ class coinsnap_bitcoin_donation
                 'redirectUrl' => $forms_options['redirect_url'],
             ]);
         }
-        
-        if(is_a($post, 'WP_Post') && (
+        /*
+        if((
             has_shortcode($post->post_content, 'multi_amount_donation') || 
             has_shortcode($post->post_content, 'multi_amount_donation_wide'))
-        ){
+        )*/{
             // Localize script for multiData
             wp_enqueue_script('coinsnap-bitcoin-donation-multi-script',plugin_dir_url(__FILE__).'assets/js/multi.js',['jquery'],COINSNAP_BITCOIN_DONATION_VERSION, true);
             wp_localize_script('coinsnap-bitcoin-donation-multi-script', 'coinsnapDonationMultiData', [
@@ -420,10 +421,10 @@ class coinsnap_bitcoin_donation
             
         }
 
-        if(is_a($post, 'WP_Post') && (
+        /*if((
             has_shortcode($post->post_content, 'shoutout_form') || 
             has_shortcode($post->post_content, 'shoutout_list'))
-        ){
+        )*/{
         
             // Localize script for shoutoutsData
             wp_enqueue_script('coinsnap-bitcoin-donation-shoutout-script',plugin_dir_url(__FILE__).'assets/js/shoutouts.js',['jquery'],COINSNAP_BITCOIN_DONATION_VERSION, true);

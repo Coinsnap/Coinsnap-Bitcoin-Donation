@@ -60,8 +60,8 @@ class Coinsnap_Bitcoin_Donation_Shortcode_Wide
         $coinsnapCurrencies = $client->getCurrencies();
         $rates = $client->loadExchangeRates();
         ?>
-        <div class="coinsnap-bitcoin-donation-form wide-form">
-            <div id="coinsnap-bitcoin-donation-form-wide" data-name="<?php echo esc_attr($title_text); ?>" class="<?php echo esc_attr($theme_class); echo " " . esc_attr($modal_theme) ?>">
+        <div class="coinsnap-bitcoin-donation-form wide-form <?php echo esc_attr($theme_class);?>">
+            <div id="coinsnap-bitcoin-donation-form-wide" data-name="<?php echo esc_attr($title_text); ?>" class="<?php echo esc_attr($modal_theme);?>">
                 <div class="coinsnap-bitcoin-donation-title-wrapper">
                     <h3><?php echo esc_html($title_text); ?></h3>
                     <select style="max-width: 172px;" id="coinsnap-bitcoin-donation-swap-wide" class="currency-swapper"><?php

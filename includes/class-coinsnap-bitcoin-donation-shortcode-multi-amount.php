@@ -66,8 +66,8 @@ class Coinsnap_Bitcoin_Donation_Shortcode_Multi_Amount
         ?>
 
 
-    <div class="coinsnap-bitcoin-donation-form narrow-form">
-        <div id="coinsnap-bitcoin-donation-multi" data-name="<?php echo esc_attr($title_text); ?>" class="<?php echo esc_attr($theme_class); echo " " . esc_attr($modal_theme) ?>">
+    <div class="coinsnap-bitcoin-donation-form narrow-form <?php echo esc_attr($theme_class);?>">
+        <div id="coinsnap-bitcoin-donation-multi" data-name="<?php echo esc_attr($title_text); ?>" class="<?php echo esc_attr($modal_theme) ?>">
 
             <div class="coinsnap-bitcoin-donation-title-wrapper">
                 <h3><?php echo esc_html($title_text); ?></h3>

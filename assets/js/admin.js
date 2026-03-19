@@ -255,17 +255,17 @@
             alert('Please enter a valid url including https:// in the BTCPay Server URL input field.');
         }
     });
-    
-    if($('#coinsnap_bitcoin_voting_polls_currency').length){
+    /*
+    if($('#coinsnap_bitcoin_donation_currency').length){
         
         setStep();
-        $('#coinsnap_bitcoin_voting_polls_currency').change(
+        $('#coinsnap_bitcoin_donation_currency').change(
             function(){
                 setStep();
             }    
         );
         
-    }
+    }*/
     
     if($('.coinsnapConnectionStatus').length){
         

@@ -55,8 +55,8 @@ jQuery(document).ready(function ($) {
                 for (let i = 1; i <= 3; i++) {
                     updateSecondaryMultiCurrency(
                         wide,
-                        `coinsnap-bitcoin-donation-pay-multi-snap${i}-primary-wide`,
-                        `coinsnap-bitcoin-donation-pay-multi-snap${i}-secondary-wide`,
+                        `coinsnap-bitcoin-donation-pay-multi-snap${i}-primary${widePart}`,
+                        `coinsnap-bitcoin-donation-pay-multi-snap${i}-secondary${widePart}`,
                         coinsnapDonationMultiData[`snap${i}Amount`]
                     );
                 }
