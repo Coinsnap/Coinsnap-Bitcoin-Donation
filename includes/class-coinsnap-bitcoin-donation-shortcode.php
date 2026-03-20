@@ -10,9 +10,16 @@ class Coinsnap_Bitcoin_Donation_Shortcode {
     }
 
     private function get_template($template_name, $args = []){
-        if ($args && is_array($args)) {
-            extract($args);
-        }
+        // Variables are extracted for use in the template
+        $prefix = $args['prefix'] ?? '';
+        $sufix = $args['sufix'] ?? '';
+        $first_name = $args['first_name'] ?? 'hidden';
+        $last_name = $args['last_name'] ?? 'hidden';
+        $email = $args['email'] ?? 'hidden';
+        $address = $args['address'] ?? 'hidden';
+        $public_donors = $args['public_donors'] ?? '';
+        $custom = $args['custom'] ?? 'hidden';
+        $custom_name = $args['custom_name'] ?? '';
 
         $template = plugin_dir_path(__FILE__) . '../templates/' . $template_name . '.php';
 
@@ -24,20 +31,22 @@ class Coinsnap_Bitcoin_Donation_Shortcode {
     function coinsnap_bitcoin_donation_render_shortcode(){
         $options = get_option('coinsnap_bitcoin_donation_forms_options');
         $options = is_array($options) ? $options : [];
-        $options_general = get_option('coinsnap_bitcoin_donation_options');
-        $theme_class = $options_general['theme'] === 'dark' ? 'coinsnap-bitcoin-donation-dark-theme' : 'coinsnap-bitcoin-donation-light-theme';
-        $modal_theme = $options_general['theme'] === 'dark' ? 'dark-theme' : 'light-theme';
+        $core = coinsnap_bitcoin_donation_get_core();
+        $core_settings = \CoinsnapCore\Admin\SettingsPage::get_settings_for( $core );
+        $theme = $core_settings['theme'] ?? 'light';
+        $theme_class = $theme === 'dark' ? 'coinsnap-bitcoin-donation-dark-theme' : 'coinsnap-bitcoin-donation-light-theme';
+        $modal_theme = $theme === 'dark' ? 'dark-theme' : 'light-theme';
         $button_text = $options['button_text'] ?? __('Donate', 'coinsnap-bitcoin-donation');
         $title_text = $options['title_text'] ?? __('Donate with Bitcoin', 'coinsnap-bitcoin-donation');
-        $first_name = $options['simple_donation_first_name'];
-        $last_name = $options['simple_donation_last_name'];
-        $email = $options['simple_donation_email'];
-        $address = $options['simple_donation_address'];
-        $public_donors = $options['simple_donation_public_donors'];
-        $custom = $options['simple_donation_custom_field_visibility'];
-        $custom_name = $options['simple_donation_custom_field_name'];
+        $first_name = $options['simple_donation_first_name'] ?? 'hidden';
+        $last_name = $options['simple_donation_last_name'] ?? 'hidden';
+        $email = $options['simple_donation_email'] ?? 'hidden';
+        $address = $options['simple_donation_address'] ?? 'hidden';
+        $public_donors = $options['simple_donation_public_donors'] ?? '';
+        $custom = $options['simple_donation_custom_field_visibility'] ?? 'hidden';
+        $custom_name = $options['simple_donation_custom_field_name'] ?? '';
         $active = $options['simple_donation_active'] ?? '1';
-        $default_currency = $options['currency'];
+        $default_currency = $options['currency'] ?? 'EUR';
         
         if (!$active){
             ob_start();
@@ -55,9 +64,9 @@ class Coinsnap_Bitcoin_Donation_Shortcode {
         }
 
         ob_start();
-        $client = new Coinsnap_Bitcoin_Donation_Client();
-        $coinsnapCurrencies = $client->getCurrencies();
-        $rates = $client->loadExchangeRates();
+        $coinsnapCurrencies = defined('COINSNAP_CURRENCIES') ? COINSNAP_CURRENCIES : array("EUR","USD","SATS","BTC","CAD","JPY","GBP","CHF","RUB");
+        $exchange = new \CoinsnapCore\Util\ExchangeRates();
+        $rates = $exchange->load_rates();
         ?>
     <div class="coinsnap-bitcoin-donation-form narrow-form <?php echo esc_attr($theme_class);?>">
         <div id="coinsnap-bitcoin-donation-form" data-name="<?php echo esc_attr($title_text); ?>" class="<?php echo esc_attr($modal_theme) ?>">
@@ -82,6 +91,7 @@ class Coinsnap_Bitcoin_Donation_Shortcode {
             <label for="coinsnap-bitcoin-donation-amount"><?php esc_html_e('Amount', 'coinsnap-bitcoin-donation');?></label>
             <div class="amount-wrapper">
                 <input type="text" id="coinsnap-bitcoin-donation-amount">
+                <span class="donation-amount-currency" id="coinsnap-bitcoin-donation-currency-label"><?php echo esc_html($default_currency); ?></span>
                 <div class="secondary-amount">
                     <span id="coinsnap-bitcoin-donation-satoshi"></span>
                 </div>

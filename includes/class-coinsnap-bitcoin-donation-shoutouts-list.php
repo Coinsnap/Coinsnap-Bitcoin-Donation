@@ -12,10 +12,12 @@ class Coinsnap_Bitcoin_Donation_Shoutouts_List
 
     function coinsnap_bitcoin_donation_render_shortcode()
     {
-        $options_general = get_option('coinsnap_bitcoin_donation_options');
         $options = get_option('coinsnap_bitcoin_donation_forms_options');
 
-        $theme_class = $options_general['theme'] === 'dark' ? 'coinsnap-bitcoin-donation-dark-theme' : 'coinsnap-bitcoin-donation-light-theme';
+        $core = coinsnap_bitcoin_donation_get_core();
+        $core_settings = \CoinsnapCore\Admin\SettingsPage::get_settings_for( $core );
+        $theme = $core_settings['theme'] ?? 'light';
+        $theme_class = $theme === 'dark' ? 'coinsnap-bitcoin-donation-dark-theme' : 'coinsnap-bitcoin-donation-light-theme';
         $args = array(
             'post_type'      => 'bitcoin-shoutouts',
             'post_status'    => 'publish',
@@ -23,6 +25,8 @@ class Coinsnap_Bitcoin_Donation_Shoutouts_List
         $active = $options['shoutout_donation_active'] ?? '1';
 
         $query = new WP_Query($args);
+
+        $shoutouts = array();
 
         if ($query->have_posts()) {
             $posts = $query->posts;
@@ -44,6 +48,7 @@ class Coinsnap_Bitcoin_Donation_Shoutouts_List
                 );
             }
         }
+        wp_reset_postdata();
 
         ob_start();
 ?>
@@ -65,7 +70,7 @@ class Coinsnap_Bitcoin_Donation_Shoutouts_List
                         <div class="shoutout-form-wrapper"
                             style="display: flex;justify-content: center; flex-direction: column; align-items: center; margin: 0">
                             <h3>Shoutouts List</h3>
-                            <h4 style="text-align: center;"><?php __('This form is not active', 'coinsnap-bitcoin-donation');?></h4>
+                            <h4 style="text-align: center;"><?php esc_html_e('This form is not active', 'coinsnap-bitcoin-donation');?></h4>
                         </div>
                     </div>
                 <?php

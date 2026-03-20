@@ -8,14 +8,11 @@ class Coinsnap_Bitcoin_Donation_Forms {
 
     function coinsnap_bitcoin_donation_forms_settings_init(){
         
-        $client = new Coinsnap_Bitcoin_Donation_Client();
-        $coinsnapCurrencies = $client->getCurrencies();
+        $coinsnapCurrencies = defined('COINSNAP_CURRENCIES') ? COINSNAP_CURRENCIES : array("EUR","USD","SATS","BTC","CAD","JPY","GBP","CHF","RUB");
         $coinsnapCurrenciesOptions = array();
         foreach($coinsnapCurrencies as $coinsnapCurrency){
             $coinsnapCurrenciesOptions[$coinsnapCurrency] = $coinsnapCurrency;
         }
-        if ( empty( $currency ) ) { $currency = 'EUR'; }
-
         register_setting('coinsnap_bitcoin_donation_forms_settings', 'coinsnap_bitcoin_donation_forms_options', [
             'type'              => 'array',
             'sanitize_callback' => [$this, 'sanitize_forms_options']
@@ -517,45 +514,6 @@ class Coinsnap_Bitcoin_Donation_Forms {
 				'options'   => $coinsnapCurrenciesOptions
 			]
 		);
-                
-                /*
-
-		add_settings_field(
-			'multi_amount_primary_currency',
-			'Primary Currency',
-			[$this, 'render_field'],
-			'bitcoin_donation',
-			'bitcoin_donation_multi_amount_section',
-			[
-				'label_for' => 'multi_amount_primary_currency',
-				'type'      => 'select',
-				'options'   => [
-					"SATS" => "SATS",
-					"FIAT" => "FIAT"
-				]
-			]
-		);
-
-		add_settings_field(
-			'multi_amount_fiat_currency',
-			'Fiat Currency',
-			[$this, 'render_field'],
-			'bitcoin_donation',
-			'bitcoin_donation_multi_amount_section',
-			[
-				'label_for' => 'multi_amount_fiat_currency',
-				'type'      => 'select',
-				'options'   => [
-					"EUR" => "EUR",
-					"USD" => "USD",
-					"CAD" => "CAD",
-					"JPY" => "JPY",
-					"GBP" => "GBP",
-					"CHF" => "CHF"
-				]
-			]
-		);
-                */
 
 		add_settings_field(
 			'multi_amount_button_text',
@@ -841,28 +799,33 @@ class Coinsnap_Bitcoin_Donation_Forms {
 
 	private function render_shortcode_row($name, $shortcode)
 	{
-		echo "<tr id='shortcode_" . esc_html($shortcode) . "'>";
-		echo "<th>";
-		echo esc_html($name);
-		echo '</th>';
-		echo "<td>";
-		echo "<input type='text' name='shortcode' class='regular-text' readonly value='[" . esc_html($shortcode) . "]'>";
-		echo '</td>';
-		echo '</tr>';
+		$sc = '[' . esc_attr($shortcode) . ']';
+		echo '<div class="csc-shortcode-row" id="shortcode_' . esc_attr($shortcode) . '">';
+		echo '  <span class="csc-shortcode-label">' . esc_html($name) . '</span>';
+		echo '  <button type="button" class="csc-shortcode-copy" data-shortcode="' . esc_attr($sc) . '" title="' . esc_attr__('Click to copy', 'coinsnap-bitcoin-donation') . '">';
+		echo '    <code class="csc-shortcode-code">' . esc_html($sc) . '</code>';
+		echo '    <span class="csc-shortcode-icon">';
+		echo '      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+		echo '    </span>';
+		echo '    <span class="csc-shortcode-copied">' . esc_html__('Copied!', 'coinsnap-bitcoin-donation') . '</span>';
+		echo '  </button>';
+		echo '</div>';
 	}
 
 	private function render_shortcode_section($section_id)
 	{
+		echo '<div class="csc-shortcode-group">';
 		if ($section_id == 'bitcoin_donation_simple_donation_section') {
-			$this->render_shortcode_row('Shortcode narrow form', 'coinsnap_bitcoin_donation');
-			$this->render_shortcode_row('Shortcode wide form', 'coinsnap_bitcoin_donation_wide');
+			$this->render_shortcode_row('Narrow form', 'coinsnap_bitcoin_donation');
+			$this->render_shortcode_row('Wide form', 'coinsnap_bitcoin_donation_wide');
 		} elseif ($section_id == 'bitcoin_donation_shoutout_donation_section') {
-			$this->render_shortcode_row('Shortcode form', 'shoutout_form');
-			$this->render_shortcode_row('Shortcode list', 'shoutout_list');
+			$this->render_shortcode_row('Shoutout form', 'shoutout_form');
+			$this->render_shortcode_row('Shoutouts list', 'shoutout_list');
 		} elseif ($section_id == 'bitcoin_donation_multi_amount_section') {
-			$this->render_shortcode_row('Shortcode narrow form', 'multi_amount_donation');
-			$this->render_shortcode_row('Shortcode wide form', 'multi_amount_donation_wide');
+			$this->render_shortcode_row('Narrow form', 'multi_amount_donation');
+			$this->render_shortcode_row('Wide form', 'multi_amount_donation_wide');
 		}
+		echo '</div>';
 	}
 
 	/**
@@ -1007,53 +970,114 @@ class Coinsnap_Bitcoin_Donation_Forms {
 		}
 	}
 
-    public function render_donation_forms_page(){?>
-        <div class="wrap">
-            <h1>Bitcoin Donation Settings</h1>
+    public function render_donation_forms_page(){
+        $saved = isset($_GET['settings-updated']) && $_GET['settings-updated'] === 'true';
+        $core = coinsnap_bitcoin_donation_get_core();
+        $plugin_icon_url = $core->get('plugin_icon_url');
+        ?>
+        <div class="wrap csc-admin csc-settings-page">
+            <?php if ( $saved ) : ?>
+            <div class="csc-toast" id="csc-save-toast">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                <?php esc_html_e('Settings saved successfully', 'coinsnap-bitcoin-donation'); ?>
+            </div>
+            <?php endif; ?>
 
-            <!-- Display any registered settings errors -->
-            <?php settings_errors('bitcoin_donation_settings'); ?>
-                        
-            <!-- Tab Navigation -->
-            <h2 class="nav-tab-wrapper">
-                <a href="#coinsnap" class="nav-tab" data-tab="simple-donation">Donation Button</a>
-                <a href="#multi" class="nav-tab" data-tab="multi-amount-donation">Multi Amount Donation</a>
-                <a href="#shoutouts" class="nav-tab" data-tab="shoutout-donation">Shoutout Donation</a>
-            </h2>
-            
-            
+            <div class="csc-settings-header">
+                <div class="csc-settings-header-left">
+                    <h1>
+                        <?php if ( ! empty( $plugin_icon_url ) ) : ?>
+                            <span class="csc-header-icon">
+                                <img src="<?php echo esc_url( $plugin_icon_url ); ?>" alt="" />
+                            </span>
+                        <?php endif; ?>
+                        <?php esc_html_e('Donation Forms', 'coinsnap-bitcoin-donation'); ?>
+                    </h1>
+                    <p class="csc-settings-subtitle"><?php esc_html_e('Configure the donation form types displayed on your site.', 'coinsnap-bitcoin-donation'); ?></p>
+                </div>
+            </div>
+
             <form method="post" action="options.php">
-		<?php
+                <?php settings_fields('coinsnap_bitcoin_donation_forms_settings'); ?>
 
-		// Render the settings fields for the Bitcoin Donation
-		settings_fields('coinsnap_bitcoin_donation_forms_settings');
+                <!-- Form Type Card (matches settings page card with provider toggle) -->
+                <div class="csc-card">
+                    <div class="csc-card-header">
+                        <h2><?php esc_html_e('Form Type', 'coinsnap-bitcoin-donation'); ?></h2>
+                        <p class="description"><?php esc_html_e('Select a form type to configure its settings.', 'coinsnap-bitcoin-donation'); ?></p>
+                    </div>
+                    <div class="csc-card-body">
+                        <div class="csc-tabs">
+                            <a href="#" class="csc-tab" data-tab="simple-donation"><?php esc_html_e('Donation Button', 'coinsnap-bitcoin-donation'); ?></a>
+                            <a href="#" class="csc-tab" data-tab="multi-amount-donation"><?php esc_html_e('Multi Amount', 'coinsnap-bitcoin-donation'); ?></a>
+                            <a href="#" class="csc-tab" data-tab="shoutout-donation"><?php esc_html_e('Shoutouts', 'coinsnap-bitcoin-donation'); ?></a>
+                        </div>
 
-		echo '<div id="simple-donation" class="tab-content"><div class="coinsnapConnectionStatus" data-currency-field="currency"></div>';
-		$this->render_section('bitcoin_donation_simple_donation_section');
-		echo '</div>';
-		
-                echo '<div id="multi-amount-donation" class="tab-content"><div class="coinsnapConnectionStatus" data-currency-field="multi_amount_currency"></div>';
-		$this->render_section('bitcoin_donation_multi_amount_section');
-		echo '</div>';
-		
-                echo '<div id="shoutout-donation" class="tab-content"><div class="coinsnapConnectionStatus" data-currency-field="shoutout_currency"></div>';
-		$this->render_section('bitcoin_donation_shoutout_donation_section');
-		echo '</div>';
-				
-                                
-		// Render submit button
-		submit_button(
-                    __('Save Settings', 'coinsnap-bitcoin-donation'),
-                    'primary',
-                    'coinsnap_bitcoin_donation_forms_options[submit]',
-                    false,
-                    [
-			'id' => 'submit-button'
-                    ]
-		);
-		?>
+                        <div id="simple-donation" class="csc-tab-content">
+                            <div class="csc-form-fields">
+                                <?php $this->render_section_fields('bitcoin_donation_simple_donation_section'); ?>
+                            </div>
+                        </div>
+
+                        <div id="multi-amount-donation" class="csc-tab-content">
+                            <div class="csc-form-fields">
+                                <?php $this->render_section_fields('bitcoin_donation_multi_amount_section'); ?>
+                            </div>
+                        </div>
+
+                        <div id="shoutout-donation" class="csc-tab-content">
+                            <div class="csc-form-fields">
+                                <?php $this->render_section_fields('bitcoin_donation_shoutout_donation_section'); ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="csc-save-bar">
+                    <p class="csc-save-hint"><?php esc_html_e('Save your form settings', 'coinsnap-bitcoin-donation'); ?></p>
+                    <?php submit_button(
+                        __('Save Settings', 'coinsnap-bitcoin-donation'),
+                        'primary',
+                        'coinsnap_bitcoin_donation_forms_options[submit]',
+                        false,
+                        ['id' => 'submit-button']
+                    ); ?>
+                </div>
             </form>
         </div>
 <?php
+    }
+
+    /**
+     * Render settings fields for a section inside a card (without table wrapper).
+     */
+    private function render_section_fields($section_id) {
+        global $wp_settings_fields;
+        if ( empty($wp_settings_fields['bitcoin_donation'][$section_id]) ) {
+            return;
+        }
+        echo '<div class="csc-form-fields">';
+        foreach ( $wp_settings_fields['bitcoin_donation'][$section_id] as $field ) {
+            $class = '';
+            if ( ! empty( $field['args']['class'] ) ) {
+                $class = ' ' . esc_attr( $field['args']['class'] );
+            }
+            echo '<div class="csc-field-row' . $class . '">';
+            if ( ! empty( $field['title'] ) ) {
+                $label_for = ! empty( $field['args']['label_for'] ) ? $field['args']['label_for'] : '';
+                if ( $label_for ) {
+                    echo '<label for="' . esc_attr( $label_for ) . '">' . esc_html( $field['title'] ) . '</label>';
+                } else {
+                    echo '<label>' . esc_html( $field['title'] ) . '</label>';
+                }
+            }
+            echo '<div class="csc-field-input">';
+            call_user_func( $field['callback'], $field['args'] );
+            echo '</div>';
+            echo '</div>';
+        }
+        // Render shortcode section if applicable
+        $this->render_shortcode_section($section_id);
+        echo '</div>';
     }
 }

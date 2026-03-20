@@ -1,121 +1,191 @@
-/* Common Styles */
+/* ==========================================================================
+   Coinsnap Bitcoin Donation - Frontend Form Styles
+   Modern, minimal design with clean lines and good spacing.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Design Tokens
+   -------------------------------------------------------------------------- */
+:root {
+  --cbd-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  --cbd-color-bitcoin: #f7931a;
+  --cbd-color-bitcoin-hover: #e8860f;
+  --cbd-color-bitcoin-active: #d67a0d;
+  --cbd-color-text-primary: #1e1e1e;
+  --cbd-color-text-secondary: #757575;
+  --cbd-color-text-muted: #a7a7a7;
+  --cbd-color-border: #e0e0e0;
+  --cbd-color-border-hover: #c0c0c0;
+  --cbd-color-border-focus: #f7931a;
+  --cbd-color-bg-card: #ffffff;
+  --cbd-color-bg-input: #ffffff;
+  --cbd-color-bg-input-hover: #fafafa;
+  --cbd-color-bg-page: #f6f7f7;
+  --cbd-color-error: #cc1818;
+  --cbd-color-focus-ring: rgba(247, 147, 26, 0.25);
+  --cbd-radius-sm: 4px;
+  --cbd-radius-md: 8px;
+  --cbd-radius-lg: 12px;
+  --cbd-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --cbd-shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --cbd-transition: 200ms ease;
+}
+
+/* --------------------------------------------------------------------------
+   Common Form Container
+   -------------------------------------------------------------------------- */
 .coinsnap-bitcoin-donation-form {
   margin: 20px auto;
-  border-radius: 8px;
-  font-family: Arial, sans-serif;
+  border-radius: var(--cbd-radius-lg);
+  font-family: var(--cbd-font-family);
   font-size: 14px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  line-height: 1.5;
+  box-shadow: var(--cbd-shadow-card);
+  border: 1px solid var(--cbd-color-border);
+  box-sizing: border-box;
 }
 
+.coinsnap-bitcoin-donation-form *,
+.coinsnap-bitcoin-donation-form *::before,
+.coinsnap-bitcoin-donation-form *::after {
+  box-sizing: border-box;
+}
+
+/* Narrow form layout */
 .narrow-form {
-  /* max-width: 220px;
-  padding: 30px; */
-  max-width: 268px;
-  padding: 42px 30px;
+  max-width: 320px;
+  padding: 28px;
 }
 
-.narrow-form .currency-swapper {
-  width: 32%;
+/* Multi-amount narrow form */
+.multi-form {
+  max-width: 320px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
 }
 
+/* --------------------------------------------------------------------------
+   Labels
+   -------------------------------------------------------------------------- */
 .coinsnap-bitcoin-donation-form label {
   display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--cbd-color-text-primary);
+  letter-spacing: 0.01em;
 }
 
+/* --------------------------------------------------------------------------
+   Inputs (text)
+   -------------------------------------------------------------------------- */
 .coinsnap-bitcoin-donation-form input {
   width: 100%;
-  padding: 8px !important;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px !important;
+  padding: 10px 12px !important;
+  border: 1px solid var(--cbd-color-border) !important;
+  border-radius: var(--cbd-radius-md) !important;
   box-sizing: border-box;
-}
-
-.coinsnap-bitcoin-donation-form button {
-  margin-top: 20px;
-  width: 100%;
-  padding: 10px;
-  background-color: #6393c7;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+  font-family: var(--cbd-font-family);
   font-size: 14px;
-  font-weight: bold;
-  justify-content: center;
-  align-items: center;
-  display: flex
+  color: var(--cbd-color-text-primary);
+  background-color: var(--cbd-color-bg-input);
+  transition: border-color var(--cbd-transition), box-shadow var(--cbd-transition);
+  outline: none;
 }
 
-.coinsnap-bitcoin-donation-form button:hover {
-  transition: 250ms;
-  background-color: #f7a70a;
+.coinsnap-bitcoin-donation-form input:hover {
+  border-color: var(--cbd-color-border-hover) !important;
+  background-color: var(--cbd-color-bg-input-hover);
 }
 
-/* Light Theme */
-.coinsnap-bitcoin-donation-light-theme {
-  background-color: #f2f2f2 !important;
-  color: #333333 !important;
+.coinsnap-bitcoin-donation-form input:focus {
+  border-color: var(--cbd-color-border-focus) !important;
+  box-shadow: 0 0 0 3px var(--cbd-color-focus-ring) !important;
+  background-color: var(--cbd-color-bg-input);
 }
 
-.coinsnap-bitcoin-donation-light-theme input {
-  background-color: #f9f9f9 !important;
-  border: 1px solid #ddd !important;
-  color: #333 !important;
-}
-
-.coinsnap-bitcoin-donation-light-theme textarea {
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  color: #333;
-}
-
-.coinsnap-bitcoin-donation-light-theme textarea:focus {
-  /* border: 2px solid #5e5ad6d8 !important; */
-  background-color: #f9f9f9;
-}
-
-/* Dark Theme */
-.coinsnap-bitcoin-donation-dark-theme {
-  background-color: #2c2c2cf7 !important;
-  color: #f1f1f1 !important;
-}
-
-.coinsnap-bitcoin-donation-dark-theme input {
-  background-color: #3a3a3a !important;
-  border: 1px solid #555 !important;
-  color: #f1f1f1 !important;
-}
-
-.coinsnap-bitcoin-donation-dark-theme textarea {
-  background-color: #3a3a3a !important;
-  border: 1px solid #555 !important;
-  color: #f1f1f1 !important;
-}
-
+/* --------------------------------------------------------------------------
+   Textarea (Message)
+   -------------------------------------------------------------------------- */
 .coinsnap-bitcoin-donation-message {
   width: 100%;
-  resize: none;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 8px;
+  resize: vertical;
+  border: 1px solid var(--cbd-color-border);
+  border-radius: var(--cbd-radius-md);
+  padding: 10px 12px;
   box-sizing: border-box;
   min-height: 30px !important;
+  font-family: var(--cbd-font-family);
+  font-size: 14px;
+  color: var(--cbd-color-text-primary);
+  background-color: var(--cbd-color-bg-input);
+  transition: border-color var(--cbd-transition), box-shadow var(--cbd-transition);
+  outline: none;
+}
 
+.coinsnap-bitcoin-donation-message:hover {
+  border-color: var(--cbd-color-border-hover);
+}
+
+.coinsnap-bitcoin-donation-message:focus {
+  border-color: var(--cbd-color-border-focus);
+  box-shadow: 0 0 0 3px var(--cbd-color-focus-ring);
 }
 
 .narrow-form .coinsnap-bitcoin-donation-message {
-  min-height: 100px !important;
+  min-height: 80px !important;
 }
 
+/* --------------------------------------------------------------------------
+   Donate / Pay Button
+   -------------------------------------------------------------------------- */
+.coinsnap-bitcoin-donation-form button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 12px 20px;
+  background-color: var(--cbd-color-bitcoin);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--cbd-radius-md);
+  cursor: pointer;
+  font-family: var(--cbd-font-family);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  transition: background-color var(--cbd-transition), box-shadow var(--cbd-transition), transform var(--cbd-transition);
+}
+
+.coinsnap-bitcoin-donation-form button:hover {
+  background-color: var(--cbd-color-bitcoin-hover);
+  box-shadow: 0 2px 8px rgba(247, 147, 26, 0.35);
+  transform: translateY(-1px);
+}
+
+.coinsnap-bitcoin-donation-form button:active {
+  background-color: var(--cbd-color-bitcoin-active);
+  box-shadow: none;
+  transform: translateY(0);
+}
+
+.coinsnap-bitcoin-donation-form button:focus-visible {
+  outline: 2px solid var(--cbd-color-bitcoin);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Title Wrapper (title + currency selector row)
+   -------------------------------------------------------------------------- */
 .coinsnap-bitcoin-donation-title-wrapper {
   display: flex;
   width: 100%;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 22px;
+  margin-bottom: 24px;
+  gap: 12px;
 }
 
 .wide-form .coinsnap-bitcoin-donation-title-wrapper {
@@ -125,124 +195,277 @@
 }
 
 .coinsnap-bitcoin-donation-title-wrapper h3 {
-  font-weight: bold;
+  font-weight: 700;
+  font-size: 17px;
   margin: 0;
   max-width: 67%;
-  /* color: #f7a70a; */
+  color: var(--cbd-color-text-primary);
+  line-height: 1.3;
 }
 
-.coinsnap-bitcoin-donation-dark-theme h3 {
-  color: white !important;
+/* --------------------------------------------------------------------------
+   Currency Swapper (dropdown)
+   -------------------------------------------------------------------------- */
+.currency-swapper {
+  padding: 6px 28px 6px 10px !important;
+  border: 1px solid var(--cbd-color-border) !important;
+  border-radius: var(--cbd-radius-md) !important;
+  background-color: var(--cbd-color-bg-input) !important;
+  font-family: var(--cbd-font-family);
+  font-size: 12px !important;
+  font-weight: 600;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14"><path fill="%23757575" d="M7 10l5 5 5-5H7z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 14px;
+  color: var(--cbd-color-text-secondary);
+  cursor: pointer;
+  width: auto;
+  min-width: 72px;
+  text-align: left;
+  margin: 0;
+  transition: border-color var(--cbd-transition), box-shadow var(--cbd-transition);
 }
 
-/* Multi amount */
+.narrow-form .currency-swapper {
+  width: auto;
+  min-width: 72px;
+}
 
+.currency-swapper:hover {
+  border-color: var(--cbd-color-border-hover) !important;
+  background-color: var(--cbd-color-bg-input-hover) !important;
+}
+
+.currency-swapper:focus {
+  outline: none;
+  border-color: var(--cbd-color-border-focus) !important;
+  box-shadow: 0 0 0 3px var(--cbd-color-focus-ring);
+}
+
+/* --------------------------------------------------------------------------
+   Amount Wrapper & Secondary Amount Display
+   -------------------------------------------------------------------------- */
 .amount-wrapper {
   position: relative;
-
 }
 
-.multi-form {
-  max-width: 280px;
-  padding: 32px 34px 42px 34px;
-  display: flex;
-  flex-direction: column;
+/* Amount input: add right padding to make room for the currency suffix */
+.amount-wrapper input {
+  padding-right: 52px !important;
 }
 
-.secondary-amount {
+/* Currency suffix label positioned inside the input */
+.donation-amount-currency {
   position: absolute;
-  top: 10px;
-  right: 9px;
-  font-size: 11px;
-  color: #9d9d9d;
+  top: 12px;
+  right: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cbd-color-text-muted);
+  pointer-events: none;
   user-select: none;
-  z-index: 999;
+  line-height: 1;
 }
 
-.snap-button {
-  width: 31% !important;
-  margin-top: 8px !important;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+/* Secondary amount (e.g., "≈ 52,000 SATS") shown below the input */
+.secondary-amount {
+  font-size: 12px;
+  color: var(--cbd-color-text-muted);
+  user-select: none;
+  margin-bottom: 8px;
+  padding-left: 2px;
 }
 
-.snap-container {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-
+/* --------------------------------------------------------------------------
+   Snap Donation Buttons (multi-amount forms)
+   -------------------------------------------------------------------------- */
 .snap-title-container {
   display: flex;
   justify-content: center;
 }
 
 .snap-title-container h4 {
-  font-weight: bold;
-  font-size: 16px !important;
-  margin-bottom: 4px;
-  margin-top: 8px;
+  font-weight: 600;
+  font-size: 14px !important;
+  margin-bottom: 8px;
+  margin-top: 12px;
+  color: var(--cbd-color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
 
+.snap-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  gap: 8px;
+}
+
+.snap-button {
+  width: 31% !important;
+  margin-top: 0px !important;
+  padding: 10px 8px !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--cbd-color-bg-input) !important;
+  border: 1px solid var(--cbd-color-border) !important;
+  border-radius: var(--cbd-radius-md) !important;
+  color: var(--cbd-color-text-primary) !important;
+  cursor: pointer;
+  transition: border-color var(--cbd-transition), background-color var(--cbd-transition), box-shadow var(--cbd-transition);
+  gap: 2px;
+}
+
+.snap-button:hover {
+  border-color: var(--cbd-color-bitcoin) !important;
+  background-color: rgba(247, 147, 26, 0.04) !important;
+  box-shadow: 0 0 0 1px rgba(247, 147, 26, 0.15);
+  transform: none;
+}
+
+.snap-button:active {
+  background-color: rgba(247, 147, 26, 0.08) !important;
+}
+
+.snap-primary-amount {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cbd-color-text-primary);
 }
 
 .snap-secondary-amount {
   font-size: 10px;
-  font-weight: 300;
+  font-weight: 400;
+  color: var(--cbd-color-text-muted);
 }
 
-.snap-primary-amount {
-  font-size: 12px;
+/* --------------------------------------------------------------------------
+   Light Theme
+   -------------------------------------------------------------------------- */
+.coinsnap-bitcoin-donation-light-theme {
+  background-color: var(--cbd-color-bg-card) !important;
+  color: var(--cbd-color-text-primary) !important;
 }
 
-.currency-swapper {
-  padding: 4px 8px !important;
-  border: 1px solid #e2e8f0 !important;
-  border-radius: 6px !important;
-  background-color: #f7f7f7 !important;
-  font-size: 12px !important;
-  font-weight: 500;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  position: relative;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path fill="black" d="M7 10l5 5 5-5H7z"/></svg>');
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-size: 16px;
-  color: #1a202cc6;
-  cursor: pointer;
-  width: 31%;
-  text-align: center;
-  margin: 0;
+.coinsnap-bitcoin-donation-light-theme input {
+  background-color: var(--cbd-color-bg-input) !important;
+  border: 1px solid var(--cbd-color-border) !important;
+  color: var(--cbd-color-text-primary) !important;
 }
 
-.currency-swapper:hover {
-  border-color: #cbd5e0;
-  background-color: #f7fafc;
+.coinsnap-bitcoin-donation-light-theme textarea {
+  background-color: var(--cbd-color-bg-input);
+  border: 1px solid var(--cbd-color-border);
+  color: var(--cbd-color-text-primary);
 }
 
-.currency-swapper:focus {
-  outline: none;
-  border-color: #4299e1;
-  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+.coinsnap-bitcoin-donation-light-theme textarea:focus {
+  background-color: var(--cbd-color-bg-input);
+}
+
+/* --------------------------------------------------------------------------
+   Dark Theme
+   -------------------------------------------------------------------------- */
+.coinsnap-bitcoin-donation-dark-theme {
+  background-color: #1e1e1e !important;
+  color: #e0e0e0 !important;
+  border-color: #3a3a3a !important;
+}
+
+.coinsnap-bitcoin-donation-dark-theme input {
+  background-color: #2c2c2c !important;
+  border: 1px solid #444444 !important;
+  color: #e0e0e0 !important;
+}
+
+.coinsnap-bitcoin-donation-dark-theme input:hover {
+  border-color: #555555 !important;
+  background-color: #333333 !important;
+}
+
+.coinsnap-bitcoin-donation-dark-theme input:focus {
+  border-color: var(--cbd-color-bitcoin) !important;
+  box-shadow: 0 0 0 3px rgba(247, 147, 26, 0.2) !important;
+  background-color: #2c2c2c !important;
+}
+
+.coinsnap-bitcoin-donation-dark-theme textarea {
+  background-color: #2c2c2c !important;
+  border: 1px solid #444444 !important;
+  color: #e0e0e0 !important;
+}
+
+.coinsnap-bitcoin-donation-dark-theme textarea:hover {
+  border-color: #555555 !important;
+}
+
+.coinsnap-bitcoin-donation-dark-theme textarea:focus {
+  border-color: var(--cbd-color-bitcoin) !important;
+  box-shadow: 0 0 0 3px rgba(247, 147, 26, 0.2) !important;
+}
+
+.coinsnap-bitcoin-donation-dark-theme h3 {
+  color: #ffffff !important;
+}
+
+.coinsnap-bitcoin-donation-dark-theme label {
+  color: #c0c0c0;
 }
 
 .coinsnap-bitcoin-donation-dark-theme .currency-swapper {
-  background-color: #3a3a3a !important;
-  border: 1px solid #555 !important;
-  color: #f1f1f1 !important;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path fill="white" d="M7 10l5 5 5-5H7z"/></svg>');
-
+  background-color: #2c2c2c !important;
+  border: 1px solid #444444 !important;
+  color: #c0c0c0 !important;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14"><path fill="%23999999" d="M7 10l5 5 5-5H7z"/></svg>');
 }
 
 .coinsnap-bitcoin-donation-dark-theme .currency-swapper:hover {
-  background-color: #4a4a4a !important;
-  border: 1px solid #555 !important;
-  color: #f1f1f1 !important;
+  background-color: #333333 !important;
+  border-color: #555555 !important;
 }
 
+.coinsnap-bitcoin-donation-dark-theme .currency-swapper:focus {
+  border-color: var(--cbd-color-bitcoin) !important;
+  box-shadow: 0 0 0 3px rgba(247, 147, 26, 0.2) !important;
+}
+
+.coinsnap-bitcoin-donation-dark-theme .secondary-amount,
+.coinsnap-bitcoin-donation-dark-theme .donation-amount-currency {
+  color: #888888;
+}
+
+.coinsnap-bitcoin-donation-dark-theme .snap-button {
+  background-color: #2c2c2c !important;
+  border-color: #444444 !important;
+  color: #e0e0e0 !important;
+}
+
+.coinsnap-bitcoin-donation-dark-theme .snap-button:hover {
+  border-color: var(--cbd-color-bitcoin) !important;
+  background-color: rgba(247, 147, 26, 0.08) !important;
+}
+
+.coinsnap-bitcoin-donation-dark-theme .snap-primary-amount {
+  color: #e0e0e0;
+}
+
+.coinsnap-bitcoin-donation-dark-theme .snap-secondary-amount {
+  color: #888888;
+}
+
+.coinsnap-bitcoin-donation-dark-theme .snap-title-container h4 {
+  color: #999999;
+}
+
+/* --------------------------------------------------------------------------
+   QR Container / Payment Popup
+   -------------------------------------------------------------------------- */
 .qr-container h4 {
   margin-bottom: 0px;
 }
@@ -253,10 +476,10 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: white;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  background: #ffffff;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16), 0 2px 8px rgba(0, 0, 0, 0.08);
   z-index: 99999;
-  border-radius: 8px;
+  border-radius: var(--cbd-radius-lg);
   text-align: center;
   flex-direction: column;
   align-items: center;
@@ -274,34 +497,42 @@
 
 .close-popup {
   position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 24px;
+  top: 12px;
+  right: 16px;
+  font-size: 22px;
   cursor: pointer;
-  color: black;
+  color: var(--cbd-color-text-secondary);
+  transition: color var(--cbd-transition);
+  line-height: 1;
 }
 
+.close-popup:hover {
+  color: var(--cbd-color-text-primary);
+}
+
+/* --------------------------------------------------------------------------
+   Loader
+   -------------------------------------------------------------------------- */
 .loader {
-  border: 16px solid #f3f3f3;
-  border-top: 16px solid #3498db;
+  border: 4px solid #f0f0f0;
+  border-top: 4px solid var(--cbd-color-bitcoin);
   border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  animation: spin 2s linear infinite;
+  width: 40px;
+  height: 40px;
+  animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
+/* --------------------------------------------------------------------------
+   QR Payment Details
+   -------------------------------------------------------------------------- */
 .qr-amount {
-  font-weight: bold;
+  font-weight: 700;
+  color: var(--cbd-color-text-primary);
 }
 
 .qr-lightning-container {
@@ -309,39 +540,38 @@
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-  color: #3d3d3d;
+  color: var(--cbd-color-text-secondary);
   font-size: 14px !important;
 }
 
 .qr-address-title {
-  font-weight: bold;
+  font-weight: 600;
   text-align: left;
-  color: #3d3d3d;
-
+  color: var(--cbd-color-text-secondary);
 }
 
 .qr-copy-icon {
   cursor: pointer;
+  transition: opacity var(--cbd-transition);
 }
 
 .qr-copy-icon:hover {
-  transition: 0.3s;
-  stroke: #555555;
+  opacity: 0.7;
 }
 
 .qr-help-text {
   width: 300px;
-  color: #9d9d9d;
+  color: var(--cbd-color-text-muted);
 }
 
 .end-text {
   text-align: right;
-  color: #585858;
+  color: var(--cbd-color-text-secondary);
 }
 
 .qr-summary {
   cursor: pointer;
-  color: #3498db;
+  color: var(--cbd-color-bitcoin);
   display: none;
   user-select: none;
   gap: 4px;
@@ -369,41 +599,39 @@
 }
 
 @keyframes slideDown {
-  from {
-    max-height: 0;
-    opacity: 0;
-  }
-
-  to {
-    max-height: 100px;
-    opacity: 1;
-  }
+  from { max-height: 0; opacity: 0; }
+  to { max-height: 100px; opacity: 1; }
 }
 
 .qr-address-wrapper {
   display: flex;
   flex-direction: column;
-
 }
 
 .qr-pay-in-wallet {
   margin-top: 20px;
   width: 100%;
-  padding: 10px;
-  background-color: #6393c7;
+  padding: 12px;
+  background-color: var(--cbd-color-bitcoin);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--cbd-radius-md);
   cursor: pointer;
+  font-family: var(--cbd-font-family);
   font-size: 14px;
-  font-weight: bold;
+  font-weight: 600;
   justify-content: center;
   align-items: center;
-  display: none
+  display: none;
+  transition: background-color var(--cbd-transition);
+}
+
+.qr-pay-in-wallet:hover {
+  background-color: var(--cbd-color-bitcoin-hover);
 }
 
 .qr-fiat {
-  color: #585858;
+  color: var(--cbd-color-text-secondary);
   margin-bottom: 2px;
   display: none;
   font-size: 14px !important;
@@ -418,6 +646,9 @@
   transform: translate(-50%, -50%);
 }
 
+/* --------------------------------------------------------------------------
+   Thank You Popup
+   -------------------------------------------------------------------------- */
 #thank-you-popup {
   display: none;
   flex-direction: column;
@@ -431,16 +662,19 @@
 
 .check-results {
   border: none;
-  padding: 2px 8px;
-  border-radius: 3px;
-  color: #3d3d3d;
-  outline: 1px solid rgba(61, 61, 61, 0.5);
-  background-color: #f2f2f2;
+  padding: 4px 12px;
+  border-radius: var(--cbd-radius-sm);
+  color: var(--cbd-color-text-secondary);
+  outline: 1px solid var(--cbd-color-border);
+  background-color: var(--cbd-color-bg-page);
   cursor: pointer;
+  font-family: var(--cbd-font-family);
+  font-size: 13px;
+  transition: background-color var(--cbd-transition);
 }
 
 .check-results:hover {
-  background-color: #dadada;
+  background-color: #e8e8e8;
 }
 
 .title-container {
@@ -449,17 +683,20 @@
 }
 
 .return-button {
-  height: 18px;
+  height: 20px;
   border: none;
   padding: 0px 12px;
-  border-radius: 8px;
+  border-radius: var(--cbd-radius-md);
   justify-content: center;
   align-items: center;
   padding-bottom: 1px;
-  color: #3d3d3d;
-  outline: 1px solid rgba(61, 61, 61, 0.24);
-  background-color: #f2f2f2;
+  color: var(--cbd-color-text-secondary);
+  outline: 1px solid var(--cbd-color-border);
+  background-color: var(--cbd-color-bg-page);
   cursor: pointer;
+  font-family: var(--cbd-font-family);
+  font-size: 12px;
+  transition: background-color var(--cbd-transition);
 }
 
 .return-buton-visible {
@@ -471,18 +708,20 @@
 }
 
 .return-button:hover {
-  background-color: #dadada;
-  transition: 0.3s;
+  background-color: #e8e8e8;
 }
 
+/* --------------------------------------------------------------------------
+   Dark Theme - QR / Popup Overrides
+   -------------------------------------------------------------------------- */
 .dark-theme .qr-lightning-container,
 .dark-theme .qr-address-title {
-  color: #f2f2f2;
+  color: #e0e0e0;
 }
 
 .dark-theme .qr-container {
-  background-color: #2c2c2c;
-  color: white;
+  background-color: #1e1e1e;
+  color: #e0e0e0;
 }
 
 .dark-theme .check-results,
@@ -492,20 +731,23 @@
 .dark-theme h3,
 .dark-theme h4,
 .dark-theme .close-popup {
-  color: white;
+  color: #e0e0e0;
 }
 
 .dark-theme .check-results,
 .dark-theme .return-button {
-  background: #3a3a3a;
-  color: white;
+  background: #2c2c2c;
+  color: #e0e0e0;
 }
 
 .dark-theme .check-results:hover,
 .dark-theme .return-button:hover {
-  background: #4a4a4a;
+  background: #3a3a3a;
 }
 
+/* --------------------------------------------------------------------------
+   Blur Overlay (behind popups)
+   -------------------------------------------------------------------------- */
 .blur-overlay {
   display: none;
   position: fixed;
@@ -513,13 +755,17 @@
   left: 0;
   right: 0;
   bottom: 0;
-  backdrop-filter: blur(4px);
-  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  background-color: rgba(0, 0, 0, 0.35);
   z-index: 9999;
-  max-width: 100%!important;
-  max-height: 100%!important;
+  max-width: 100% !important;
+  max-height: 100% !important;
 }
 
+/* --------------------------------------------------------------------------
+   Public Donor Popup / Payment Flow
+   -------------------------------------------------------------------------- */
 .public-donor-popup {
   text-align: left;
   display: flex;
@@ -553,14 +799,32 @@
   margin: 20px;
 }
 
+/* --------------------------------------------------------------------------
+   Error States
+   -------------------------------------------------------------------------- */
 .error {
-  border: 2px solid #ff4444 !important;
+  border: 2px solid var(--cbd-color-error) !important;
 }
 
+.donation-input-field.error {
+  border: 1px solid var(--cbd-color-error) !important;
+}
+
+.donation-field-error {
+  font-size: 12px;
+  color: var(--cbd-color-error);
+  margin-top: -12px;
+  margin-bottom: 8px;
+}
+
+/* --------------------------------------------------------------------------
+   Opt-out / Checkbox Wrapper
+   -------------------------------------------------------------------------- */
 .opt-out-wrapper {
   display: flex;
   gap: 12px;
   justify-content: space-between;
+  align-items: center;
 }
 
 .opt-out-wrapper input {
@@ -571,10 +835,16 @@
   font-weight: normal;
 }
 
+/* --------------------------------------------------------------------------
+   QR Container Buttons
+   -------------------------------------------------------------------------- */
 .qr-container button {
   width: 100% !important;
 }
 
+/* --------------------------------------------------------------------------
+   Public Donor List
+   -------------------------------------------------------------------------- */
 .public-donor-list-container {
   width: 100%;
   display: flex;
@@ -588,18 +858,21 @@
 }
 
 .coinsnap-bitcoin-donation-pagination .current {
-  color: #3498db;
+  color: var(--cbd-color-bitcoin);
 }
 
+/* --------------------------------------------------------------------------
+   Person / Address Grid (Public Donor Form)
+   -------------------------------------------------------------------------- */
 .person-grid {
-    display: flex;
-    gap: 8px;
+  display: flex;
+  gap: 8px;
 }
 
-@media screen and (max-width: 600px) {  
-    .person-grid {
-        flex-direction: column;
-    }
+@media screen and (max-width: 600px) {
+  .person-grid {
+    flex-direction: column;
+  }
 }
 
 .address-grid {
@@ -616,11 +889,11 @@
 }
 
 .address-row .address-cell.half {
-    width:50%;
+  width: 50%;
 }
 
 .address-row .address-cell.quart {
-    width:25%;
+  width: 25%;
 }
 
 .qr-container .public-donor-popup .public-donor-form .address-row input {
@@ -630,19 +903,72 @@
 .public-donor-form button {
   margin-top: 20px;
   width: 100%;
-  padding: 10px;
-  background-color: #6393c7;
+  padding: 12px;
+  background-color: var(--cbd-color-bitcoin);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--cbd-radius-md);
   cursor: pointer;
+  font-family: var(--cbd-font-family);
   font-size: 14px;
-  font-weight: bold;
+  font-weight: 600;
   justify-content: center;
   align-items: center;
   display: flex;
+  transition: background-color var(--cbd-transition);
 }
 
-.donation-input-field.error {border: 1px solid #CC0000}
+.public-donor-form button:hover {
+  background-color: var(--cbd-color-bitcoin-hover);
+}
 
-.donation-field-error   {font-size:70%; color:#CC0000;}
+/* --------------------------------------------------------------------------
+   Iframe Checkout Modal
+   -------------------------------------------------------------------------- */
+.coinsnap-donation-modal-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 999999;
+  justify-content: center;
+  align-items: center;
+}
+
+.coinsnap-donation-modal {
+  width: 420px;
+  height: 90vh;
+  max-width: 95vw;
+  max-height: 920px;
+  border-radius: var(--cbd-radius-lg);
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.coinsnap-donation-payment-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Adjustments
+   -------------------------------------------------------------------------- */
+@media screen and (max-width: 400px) {
+  .narrow-form,
+  .multi-form {
+    max-width: 100%;
+    padding: 20px;
+  }
+
+  .coinsnap-bitcoin-donation-title-wrapper h3 {
+    font-size: 15px;
+  }
+}

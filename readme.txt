@@ -3,7 +3,7 @@
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, donation, BTCPay
 Tested up to: 6.9
-Stable tag: 1.4.2
+Stable tag: 1.5.0
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -212,6 +212,31 @@ Plugin's page on Coinsnap website: [https://coinsnap.io/modules/bitcoin-donation
 * Fixed: CSS and JS files enqueue conditions.
 * Fixed: Class Coinsnap_Bitcoin_Donation_Client() call during payment amount check. 
 * Update: Donation widget theme application.
+
+= 1.5.0 :: 2026-03-20 =
+* Major: Migrated to coinsnap-core shared library for payment providers, settings, and webhooks.
+* New: Server-side payment creation via WordPress REST API — API keys no longer exposed in frontend JavaScript.
+* New: Iframe checkout modal replaces custom QR code popup for consistent payment experience.
+* New: Dual webhook endpoints (Coinsnap and BTCPay) with core signature verification.
+* New: Modern card-based admin settings page with connection badge and BTCPay wizard.
+* New: Donation Forms admin page redesigned with tabbed card layout.
+* New: Transactions page for viewing payment history.
+* New: Logs page for debugging.
+* New: Toast notification on settings save.
+* New: Click-to-copy shortcodes in admin.
+* New: Theme setting (Light/Dark) moved to shared core settings.
+* Update: Frontend donation forms redesigned — modern styling, Bitcoin orange accents, clean inputs.
+* Update: Amount field no longer embeds currency in input value — currency shown as visual label.
+* Update: Settings key migration (provider → payment_provider, btcpay_url → btcpay_host) for core compatibility.
+* Update: Webhook secrets managed by core with auto-registration.
+* Fixed: Inverted nonce check in donor meta save — donor edits now save correctly from admin.
+* Fixed: Missing null coalescing on form options — no more PHP warnings on fresh installs.
+* Fixed: PHP operator precedence bug in shoutout min/premium amounts.
+* Fixed: Hardcoded BTCPay URL replaced with dynamic setting.
+* Fixed: Webhook signature failure now returns 401 instead of 200.
+* Fixed: XSS vector in error message display.
+* Fixed: Missing wp_reset_postdata() after WP_Query in shoutouts list.
+* Fixed: Exchange rate null check prevents crashes when API is unavailable.
 
 = 1.4.2 :: 2026-03-13 =
 * Update: Shortcode check on CSS and JS files enqueue conditions is temporary removed.

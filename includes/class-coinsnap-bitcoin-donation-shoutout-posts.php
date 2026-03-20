@@ -310,7 +310,10 @@ class coinsnap_bitcoin_donation_Shoutout_Metabox
 				$invoice_id = get_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_invoice_id', true) ?: '';
 				if (!empty($invoice_id)) {
 					$provider = get_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_provider', true) ?: '';
-					$url = $provider === 'btcpay' ? 'https://btcpay.coincharge.io/invoices/' : 'https://app.coinsnap.io/td/';
+					$core = coinsnap_bitcoin_donation_get_core();
+					$core_settings = \CoinsnapCore\Admin\SettingsPage::get_settings_for( $core );
+					$btcpay_host = $core_settings['btcpay_host'] ?? '';
+					$url = $provider === 'btcpay' ? rtrim($btcpay_host, '/') . '/invoices/' : 'https://app.coinsnap.io/td/';
 					$href = $url . esc_attr($invoice_id);
 					echo '<a href="' . esc_url($href) . '" class="button button-small" target="_blank" rel="noopener noreferrer">' .
 						esc_html($invoice_id) . '</a>';

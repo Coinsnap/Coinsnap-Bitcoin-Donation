@@ -1,155 +1,148 @@
-/* styles/admin-style.css */
-.wrap h1 {
-  margin-bottom: 20px;
-}
+/* Coinsnap Bitcoin Donation - Admin Styles */
 
-.coinsnapConnectionStatus{
-    font-size:1.3em;
-        font-weight: 600;
-        margin-top:1em;
-        margin-bottom:1em;
-}
+/* =============================================
+   Forms Page - Card-based layout
+   ============================================= */
 
-.coinsnapConnectionStatus span:before {
-    content:"";
-    border-radius: 50%;
-    display:inline-block;
-    vertical-align: baseline;
-    width:10px; height:10px;
-    margin:0 5px 0 0;
-}
+/* Forms page — uses core's csc-settings-page, csc-tabs, csc-tab, csc-tab-content,
+   csc-card, csc-field-row, csc-field-input classes from coinsnap-core admin.css */
 
-.coinsnapConnectionStatus span.error {
-    color: #d63638;
-}
-
-.coinsnapConnectionStatus span.error:before {
-    background:#d63638;
-}
-
-.coinsnapConnectionStatus span.success {
-    color: #00a32a;
-}
-
-.coinsnapConnectionStatus span.success:before {
-    background:#00a32a;
-}
-
-.button.btcpay-apikey-link {margin:10px 0;}
-
-.coinsnap-bitcoin-donation-settings-form input[type="text"],
-.coinsnap-bitcoin-donation-settings-form select {
-  width: 100%;
-  max-width: 500px;
-  padding: 8px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  margin-bottom: 15px;
-}
-
-.coinsnap-bitcoin-donation-settings-form label {
-  font-weight: bold;
-  margin-bottom: 5px;
-  display: block;
-}
-
-.provider-settings {
-  display: none;
+/* Shortcode group */
+.csc-shortcode-group {
   margin-top: 20px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  background: #f9f9f9;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-/* Admin styles for donation list */
-.donation-controls {
-  margin: 20px 0;
+.csc-shortcode-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
-#check_connection_coinsnap_button {
-  margin-right: 40px;
-  background-color: #f6f6f6;
-  border: 1px solid #444444;
+.csc-shortcode-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #50575e;
+  min-width: 100px;
+  flex-shrink: 0;
+}
+
+.csc-shortcode-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: #f6f7f7;
+  border: 1px solid #dcdcde;
+  border-radius: 6px;
   cursor: pointer;
-  padding: 6px 14px;
-  border-radius: 10%;
+  transition: all 0.15s ease;
+  position: relative;
 }
 
-#check_connection_coinsnap_button:hover {
-  background-color: #f1f1f1;
+.csc-shortcode-copy:hover {
+  background: #f0f0f1;
+  border-color: #c3c4c7;
 }
 
-#check_connection_btcpay_button {
-  margin-right: 40px;
-  background-color: #f6f6f6;
-  border: 1px solid #444444;
-  cursor: pointer;
-  padding: 6px 14px;
-  border-radius: 8px;
+.csc-shortcode-copy:active {
+  background: #e8e8e8;
 }
 
-#check_connection_btcpay_button:hover {
-  background-color: #f1f1f1;
+.csc-shortcode-code {
+  font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1d2327;
+  letter-spacing: 0.2px;
 }
 
-.shortcode_text {
+.csc-shortcode-icon {
+  display: inline-flex;
+  color: #a7aaad;
+  transition: color 0.15s ease;
+}
+
+.csc-shortcode-copy:hover .csc-shortcode-icon {
+  color: #50575e;
+}
+
+.csc-shortcode-copied {
+  display: none;
   font-size: 12px;
-  font-weight: bold;
-  background-color: #6393C7;
-  color: white;
-  padding: 4px;
-  border-radius: 2px;
+  font-weight: 500;
+  color: #00a32a;
+  white-space: nowrap;
 }
 
+.csc-shortcode-copy.is-copied .csc-shortcode-icon {
+  display: none;
+}
+
+.csc-shortcode-copy.is-copied .csc-shortcode-copied {
+  display: inline;
+}
+
+.csc-shortcode-copy.is-copied {
+  border-color: #00a32a;
+  background: #edfcf2;
+}
+
+/* Toast CSS is in coinsnap-core admin.css */
+
+/* Legacy shortcode wrappers (keep for backward compat) */
 .shortcode_text_wrapper {
-  font-size: 12px;
-  margin-bottom: 16px;
+  display: none;
 }
 
 .shortcode_text_wrapper_disabled {
   display: none;
 }
 
-.tab-content {
+/* Public donor field styling */
+.csc-field-row.public-donor-field {
+  padding-left: 16px;
+  border-left: 3px solid #f0f0f1;
+  margin-left: 4px;
+}
+
+/* Hidden row */
+.hiddenRow {
+  display: none !important;
+}
+
+/* =============================================
+   Legacy styles (donation list, connection)
+   ============================================= */
+
+.coinsnapConnectionStatus {
   display: none;
 }
 
-.tab-content.active {
-  display: block;
-}
-
 .donation-list-table th:nth-child(1),
-.donation-list-table td:nth-child(1) {
-  width: 150px;
-  /* Adjust for Date column */
-}
-
+.donation-list-table td:nth-child(1) { width: 150px; }
 .donation-list-table th:nth-child(2),
-.donation-list-table td:nth-child(2) {
-  width: 100px;
-  /* Adjust for Amount column */
-}
-
+.donation-list-table td:nth-child(2) { width: 100px; }
 .donation-list-table th:nth-child(3),
-.donation-list-table td:nth-child(3) {
-  width: 140px;
-  /* Adjust for Type column */
-}
-
+.donation-list-table td:nth-child(3) { width: 140px; }
 .donation-list-table th:nth-child(5),
-.donation-list-table td:nth-child(5) {
-  width: 200px;
-  /* Adjust for InvoiceId column */
-}
+.donation-list-table td:nth-child(5) { width: 200px; }
 
-.form-table th {
-  width: 240px
-}
+/* =============================================
+   Responsive
+   ============================================= */
 
-.hiddenRow {
-  display: none !important;
+@media (max-width: 600px) {
+  .csc-forms-tabs {
+    flex-direction: column;
+  }
+
+  .csc-forms-tab {
+    text-align: left;
+    justify-content: flex-start;
+  }
 }

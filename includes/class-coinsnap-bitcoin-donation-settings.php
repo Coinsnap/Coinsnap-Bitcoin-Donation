@@ -1,503 +1,112 @@
 <?php
-if (! defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-require_once plugin_dir_path(__FILE__) . 'class-coinsnap-bitcoin-donation-forms.php';
-require_once plugin_dir_path(__FILE__) . 'class-coinsnap-bitcoin-donation-list.php';
+require_once plugin_dir_path( __FILE__ ) . 'class-coinsnap-bitcoin-donation-forms.php';
 
-class Coinsnap_Bitcoin_Donation_Settings
-{
+class Coinsnap_Bitcoin_Donation_Settings {
+
     private $donation_forms;
-    private $donation_list;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->donation_forms = new Coinsnap_Bitcoin_Donation_Forms();
-        $this->donation_list = new Coinsnap_Bitcoin_Donation_List();
-
-        // Register menus
-        add_action('admin_menu', [$this, 'coinsnap_bitcoin_donation_add_admin_menu']);
-        add_action('admin_init', [$this, 'coinsnap_bitcoin_donation_settings_init']);
+        add_action( 'admin_menu', array( $this, 'register_admin_menu' ) );
     }
 
-    function coinsnap_bitcoin_donation_add_admin_menu(){
-        
+    public function register_admin_menu() {
+        $core = coinsnap_bitcoin_donation_get_core();
+
+        $render_settings = function () use ( $core ) {
+            \CoinsnapCore\Admin\SettingsPage::render_page_for( $core );
+        };
+
         add_menu_page(
-            __('Coinsnap Bitcoin Donation', 'coinsnap-bitcoin-donation'),
-            __('Coinsnap Bitcoin Donation', 'coinsnap-bitcoin-donation'),
+            __( 'Coinsnap Bitcoin Donation', 'coinsnap-bitcoin-donation' ),
+            __( 'Coinsnap Bitcoin Donation', 'coinsnap-bitcoin-donation' ),
             'manage_options',
-            'coinsnap_bitcoin_donation',
-            [$this, 'coinsnap_bitcoin_donation_options_page'],
-            plugin_dir_url(dirname(__FILE__)) . 'assets/images/bitcoin.svg',
+            'coinsnap-bitcoin-donation',
+            $render_settings,
+            plugin_dir_url( dirname( __FILE__ ) ) . 'assets/images/bitcoin.svg',
             100
         );
-        
+
+        // Replace the auto-generated first submenu label with "Settings"
         add_submenu_page(
-            'coinsnap_bitcoin_donation',
-            __('Settings', 'coinsnap-bitcoin-donation'),
-            __('Settings', 'coinsnap-bitcoin-donation'),
+            'coinsnap-bitcoin-donation',
+            __( 'Settings', 'coinsnap-bitcoin-donation' ),
+            __( 'Settings', 'coinsnap-bitcoin-donation' ),
             'manage_options',
-            'coinsnap_bitcoin_donation',
-            [$this, 'coinsnap_bitcoin_donation_options_page']
+            'coinsnap-bitcoin-donation'
+        );
+
+        // Hidden submenu for BTCPay callback redirect (slug matches what BTCPayAuthorizer expects)
+        add_submenu_page(
+            null,
+            __( 'Settings', 'coinsnap-bitcoin-donation' ),
+            '',
+            'manage_options',
+            'coinsnap-bitcoin-donation-settings',
+            $render_settings
         );
 
         add_submenu_page(
-            'coinsnap_bitcoin_donation',
-            __('Donation Forms', 'coinsnap-bitcoin-donation'),
-            __('Donation Forms', 'coinsnap-bitcoin-donation'),
+            'coinsnap-bitcoin-donation',
+            __( 'Donation Forms', 'coinsnap-bitcoin-donation' ),
+            __( 'Donation Forms', 'coinsnap-bitcoin-donation' ),
             'manage_options',
             'coinsnap-bitcoin-donation-forms',
-            [$this->donation_forms, 'render_donation_forms_page']
+            array( $this->donation_forms, 'render_donation_forms_page' )
         );
+
         add_submenu_page(
-            'coinsnap_bitcoin_donation',
-            __('Donations', 'coinsnap-bitcoin-donation'),
-            __('Donations', 'coinsnap-bitcoin-donation'),
+            'coinsnap-bitcoin-donation',
+            __( 'Transactions', 'coinsnap-bitcoin-donation' ),
+            __( 'Transactions', 'coinsnap-bitcoin-donation' ),
             'manage_options',
-            'coinsnap-bitcoin-donation-list',
-            [$this->donation_list, 'render_donation_page']
+            'coinsnap-bitcoin-donation-transactions',
+            function () use ( $core ) {
+                \CoinsnapCore\Admin\TransactionsPage::render_page_for( $core );
+            }
         );
 
-        $options = get_option('coinsnap_bitcoin_donation_forms_options', []);
-        $shoutout_active = isset($options['shoutout_donation_active']) ? $options['shoutout_donation_active'] : false;
+        add_submenu_page(
+            'coinsnap-bitcoin-donation',
+            __( 'Logs', 'coinsnap-bitcoin-donation' ),
+            __( 'Logs', 'coinsnap-bitcoin-donation' ),
+            'manage_options',
+            'coinsnap-bitcoin-donation-logs',
+            function () use ( $core ) {
+                $logger = new \CoinsnapCore\Util\Logger(
+                    'donation-logs',
+                    'donation.log',
+                    \CoinsnapCore\Admin\SettingsPage::get_settings_for( $core )['log_level'] ?? 'error'
+                );
+                \CoinsnapCore\Admin\LogsPage::render_page_for( $core, $logger );
+            }
+        );
 
-        if ($shoutout_active) {
+        $options = get_option( 'coinsnap_bitcoin_donation_forms_options', array() );
+        $shoutout_active = isset( $options['shoutout_donation_active'] ) ? $options['shoutout_donation_active'] : false;
+
+        if ( $shoutout_active ) {
             add_submenu_page(
-                'coinsnap_bitcoin_donation',
-                __('Shoutouts', 'coinsnap-bitcoin-donation'),
-                __('Shoutouts', 'coinsnap-bitcoin-donation'),
+                'coinsnap-bitcoin-donation',
+                __( 'Shoutouts', 'coinsnap-bitcoin-donation' ),
+                __( 'Shoutouts', 'coinsnap-bitcoin-donation' ),
                 'manage_options',
                 'edit.php?post_type=bitcoin-shoutouts'
             );
         }
 
         add_submenu_page(
-            'coinsnap_bitcoin_donation',
-            __('Donor Information', 'coinsnap-bitcoin-donation'),
-            __('Donor Information', 'coinsnap-bitcoin-donation'),
+            'coinsnap-bitcoin-donation',
+            __( 'Donor Information', 'coinsnap-bitcoin-donation' ),
+            __( 'Donor Information', 'coinsnap-bitcoin-donation' ),
             'manage_options',
             'edit.php?post_type=bitcoin-pds'
         );
     }
-
-    function coinsnap_bitcoin_donation_settings_init()
-    {
-        register_setting('coinsnap_bitcoin_donation_settings', 'coinsnap_bitcoin_donation_options', [
-            'type'              => 'array',
-            'sanitize_callback' => [$this, 'sanitize_options']
-        ]);
-
-        // Provider Section
-        add_settings_section(
-            'coinsnap_bitcoin_donation_provider_section',
-            __('General Settings', 'coinsnap-bitcoin-donation'),
-            [$this, 'provider_section_callback'],
-            'coinsnap_bitcoin_donation'
-        );
-
-        add_settings_field(
-            'provider',
-            __('Payment Gateway', 'coinsnap-bitcoin-donation'),
-            [$this, 'render_field'],
-            'coinsnap_bitcoin_donation',
-            'coinsnap_bitcoin_donation_provider_section',
-            [
-                'label_for' => 'provider',
-                'type'      => 'select',
-                'options'   => [
-                    'coinsnap' => 'Coinsnap',
-                    'btcpay'   => 'BTCPay'
-                ]
-            ]
-        );
-
-        add_settings_field(
-            'theme',
-            __('Theme', 'coinsnap-bitcoin-donation'),
-            [$this, 'render_field'],
-            'coinsnap_bitcoin_donation',
-            'coinsnap_bitcoin_donation_provider_section',
-            [
-                'label_for' => 'theme',
-                'type'      => 'select',
-                'options'   => [
-                    'light' => 'Light',
-                    'dark'   => 'Dark'
-                ]
-            ]
-        );
-
-        // Add ngrok field if site is running on localhost
-        if (strpos(get_site_url(), 'localhost') !== false) {
-            add_settings_field(
-                'ngrok_url',
-                __('Ngrok URL', 'coinsnap-bitcoin-donation'),
-                [$this, 'render_field'],
-                'coinsnap_bitcoin_donation',
-                'coinsnap_bitcoin_donation_provider_section',
-                [
-                    'label_for' => 'ngrok_url',
-                    'type'      => 'text',
-                    'description' => 'Enter your ngrok URL for webhook testing (e.g., https://your-tunnel.ngrok.io)'
-                ]
-            );
-        }
-
-        // Coinsnap Section
-        add_settings_section(
-            'coinsnap_bitcoin_donation_coinsnap_section',
-            __('Coinsnap Settings', 'coinsnap-bitcoin-donation'),
-            [$this, 'coinsnap_section_callback'],
-            'coinsnap_bitcoin_donation'
-        );
-
-        add_settings_field(
-            'coinsnap_store_id',
-            __('Coinsnap Store ID', 'coinsnap-bitcoin-donation'),
-            [$this, 'render_field'],
-            'coinsnap_bitcoin_donation',
-            'coinsnap_bitcoin_donation_coinsnap_section',
-            [
-                'label_for' => 'coinsnap_store_id',
-                'type'      => 'text'
-            ]
-        );
-
-        add_settings_field(
-            'coinsnap_api_key',
-            __('Coinsnap API Key', 'coinsnap-bitcoin-donation'),
-            [$this, 'render_field'],
-            'coinsnap_bitcoin_donation',
-            'coinsnap_bitcoin_donation_coinsnap_section',
-            [
-                'label_for' => 'coinsnap_api_key',
-                'type'      => 'text'
-            ]
-        );
-
-        add_settings_field(
-            'check_connection_coinsnap',
-            __('Check Connection', 'coinsnap-bitcoin-donation'),
-            [$this, 'render_field'],
-            'coinsnap_bitcoin_donation',
-            'coinsnap_bitcoin_donation_coinsnap_section',
-            [
-                'label_for' => 'check_connection_coinsnap',
-                'type'      => 'check_connection',
-                'id'        => 'check_connection_coinsnap'
-
-            ]
-        );
-
-        // BTCPay Section
-        add_settings_section(
-            'coinsnap_bitcoin_donation_btcpay_section',
-            __('BTCPay Settings', 'coinsnap-bitcoin-donation'),
-            [$this, 'btcpay_section_callback'],
-            'coinsnap_bitcoin_donation'
-        );
-
-        add_settings_field(
-            'btcpay_url',
-            __('BTCPay URL', 'coinsnap-bitcoin-donation'),
-            [$this, 'render_field'],
-            'coinsnap_bitcoin_donation',
-            'coinsnap_bitcoin_donation_btcpay_section',
-            [
-                'label_for' => 'btcpay_url',
-                'type'      => 'text',
-                'description' => '<button class="button btcpay-apikey-link" type="button" id="coinsnap_bitcoin_donation_btcpay_wizard_button" target="_blank">'. esc_html__('Generate API key','coinsnap-bitcoin-donation') .'</button>'
-            ]
-        );
-        
-        add_settings_field(
-            'btcpay_store_id',
-            __('BTCPay Store ID', 'coinsnap-bitcoin-donation'),
-            [$this, 'render_field'],
-            'coinsnap_bitcoin_donation',
-            'coinsnap_bitcoin_donation_btcpay_section',
-            [
-                'label_for' => 'btcpay_store_id',
-                'type'      => 'text'
-            ]
-        );
-
-        add_settings_field(
-            'btcpay_api_key',
-            __('BTCPay API Key', 'coinsnap-bitcoin-donation'),
-            [$this, 'render_field'],
-            'coinsnap_bitcoin_donation',
-            'coinsnap_bitcoin_donation_btcpay_section',
-            [
-                'label_for' => 'btcpay_api_key',
-                'type'      => 'text'
-            ]
-        );
-
-        add_settings_field(
-            'check_connection_btcpay',
-            __('Check Connection', 'coinsnap-bitcoin-donation'),
-            [$this, 'render_field'],
-            'coinsnap_bitcoin_donation',
-            'coinsnap_bitcoin_donation_btcpay_section',
-            [
-                'label_for' => 'check_connection_btcpay',
-                'type'      => 'check_connection',
-                'id'        => 'check_connection_btcpay'
-            ]
-        );
-    }
-
-    public function sanitize_options($options)
-    {
-        $sanitized = [];
-
-        if (isset($options['provider'])) {
-            $sanitized['provider'] = sanitize_text_field($options['provider']);
-        }
-
-        if (isset($options['theme'])) {
-            $sanitized['theme'] = sanitize_text_field($options['theme']);
-        }
-
-        if (isset($options['coinsnap_store_id'])) {
-            $sanitized['coinsnap_store_id'] = sanitize_text_field($options['coinsnap_store_id']);
-        }
-
-        if (isset($options['coinsnap_api_key'])) {
-            $sanitized['coinsnap_api_key'] = sanitize_text_field($options['coinsnap_api_key']);
-        }
-
-        if (isset($options['btcpay_store_id'])) {
-            $sanitized['btcpay_store_id'] = sanitize_text_field($options['btcpay_store_id']);
-        }
-
-        if (isset($options['btcpay_api_key'])) {
-            $sanitized['btcpay_api_key'] = sanitize_text_field($options['btcpay_api_key']);
-        }
-
-        if (isset($options['btcpay_url'])) {
-            $sanitized['btcpay_url'] = esc_url_raw($options['btcpay_url']);
-        }
-
-        if (isset($options['ngrok_url'])) {
-            $sanitized['ngrok_url'] = esc_url_raw($options['ngrok_url']);
-        }
-
-        // Check if provider is working
-        if (isset($sanitized['provider']) && $sanitized['provider'] === 'coinsnap') {
-            $this->check_coinsnap_connection($sanitized['coinsnap_store_id'], $sanitized['coinsnap_api_key']);
-        } else if (isset($sanitized['provider']) && $sanitized['provider'] === 'btcpay') {
-            $this->check_btcpay_connection($sanitized['btcpay_store_id'], $sanitized['btcpay_api_key'], $sanitized['btcpay_url']);
-        }
-
-        return $sanitized;
-    }
-
-    public function check_coinsnap_connection($coinsnap_store_id, $coinsnap_api_key)
-    {
-        $response = wp_remote_get("https://app.coinsnap.io/api/v1/stores/{$coinsnap_store_id}", [
-            'headers' => [
-                'X-api-key' => $coinsnap_api_key,
-            ],
-        ]);
-
-        if (is_wp_error($response)) {
-            add_settings_error(
-                'coinsnap_bitcoin_donation_settings',
-                'coinsnap_connection_error',
-                __('Error connecting to Coinsnap. Please check your API key and store ID.', 'coinsnap-bitcoin-donation'),
-                'error'
-            );
-        } else {
-
-            $response_code = wp_remote_retrieve_response_code($response);
-
-            if ($response_code !== 200) {
-                add_settings_error(
-                    'coinsnap_bitcoin_donation_settings',
-                    'coinsnap_response_error',
-                    __('Coinsnap responded with an error. Please verify your credentials.', 'coinsnap-bitcoin-donation'),
-                    'error'
-                );
-            }
-        }
-    }
-
-    public function check_btcpay_connection($btcpay_store_id, $btcpay_api_key, $btcpay_url)
-    {
-
-        $response = wp_remote_get("{$btcpay_url}/api/v1/stores/{$btcpay_store_id}/invoices", [
-            'headers' => [
-                'Authorization' => 'token ' . $btcpay_api_key,
-            ],
-        ]);
-
-        if (is_wp_error($response)) {
-            add_settings_error(
-                'coinsnap_bitcoin_donation_settings',
-                'btcpay_connection_error',
-                __('Error connecting to Btcpay. Please check your API key and store ID.', 'coinsnap-bitcoin-donation'),
-                'error'
-            );
-        } else {
-
-            $response_code = wp_remote_retrieve_response_code($response);
-
-            if ($response_code !== 200) {
-                add_settings_error(
-                    'coinsnap_bitcoin_donation_settings',
-                    'btcpay_response_error',
-                    __('Btcpay responded with an error. Please verify your credentials.', 'coinsnap-bitcoin-donation'),
-                    'error'
-                );
-            }
-        }
-    }
-
-    // Optional section callbacks for additional descriptions
-    public function provider_section_callback()
-    {
-        echo esc_html__('Select your preferred payment provider and configure its settings below.', 'coinsnap-bitcoin-donation');
-    }
-
-    public function coinsnap_section_callback()
-    {
-        echo esc_html__('Enter your Coinsnap credentials here if you selected Coinsnap as your payment provider.', 'coinsnap-bitcoin-donation');
-    }
-
-    public function btcpay_section_callback()
-    {
-        echo esc_html__('Enter your BTCPay credentials here if you selected BTCPay as your payment provider.', 'coinsnap-bitcoin-donation');
-    }
-
-    function coinsnap_bitcoin_donation_section_general_callback()
-    {
-        echo esc_html__('Configure the plugin settings below.', 'coinsnap-bitcoin-donation');
-    }
-
-    /**
-     * Renders a specific settings section manually.
-     *
-     * @param string $section_id The ID of the section to render.
-     */
-    private function render_section($section_id)
-    {
-        global $wp_settings_sections, $wp_settings_fields;
-        if (! isset($wp_settings_sections['coinsnap_bitcoin_donation'][$section_id])) {
-            return;
-        }
-
-        $section = $wp_settings_sections['coinsnap_bitcoin_donation'][$section_id];
-
-        if ($section['title']) {
-            echo '<h3>' . esc_html($section['title']) . '</h3>';
-        }
-        if ($section['callback']) {
-            call_user_func($section['callback'], $section);
-        }
-
-        if (! empty($wp_settings_fields['coinsnap_bitcoin_donation'][$section_id])) {
-            echo '<table class="form-table">';
-            do_settings_fields('coinsnap_bitcoin_donation', $section_id);
-            echo '</table>';
-        }
-    }
-
-    public function render_field($args)
-    {
-        $options     = get_option('coinsnap_bitcoin_donation_options', []);
-        $field_id    = $args['label_for'];
-        $field_type  = $args['type'];
-        $field_value = isset($options[$field_id]) ? $options[$field_id] : '';
-        $defaults = [
-            'default_message' => __('Thank you for your support','coinsnap-bitcoin-donation'),
-            'default_amount'  => '5',
-            'button_text'     => __('Donate','coinsnap-bitcoin-donation'),
-            'title_text'      => __('Donate with Bitcoin','coinsnap-bitcoin-donation'),
-            'shoutout_default_message' => __('Thank you!','coinsnap-bitcoin-donation'),
-            'shoutout_default_amount'  => '5',
-            'shoutout_button_text'     => __('Shoutout','coinsnap-bitcoin-donation'),
-            'shoutout_title_text'      => __('Bitcoin Shoutouts','coinsnap-bitcoin-donation'),
-            'shoutout_minimum_amount'  => '21',
-            'shoutout_premium_amount'  => '21000'
-        ];
-        if ($field_type == 'text') {
-            $field_value = isset($options[$field_id]) ? $options[$field_id] : ($defaults[$field_id] ?? '');
-        }
-        switch ($field_type) {
-            case 'select':
-                echo '<select 
-                id="' . esc_attr($field_id) . '" 
-                name="coinsnap_bitcoin_donation_options[' . esc_attr($field_id) . ']"
-                class="regular-text">';
-                foreach ($args['options'] as $value => $label) {
-                    echo '<option value="' . esc_attr($value) . '"' .
-                        selected($field_value, $value, false) . '>' .
-                        esc_html($label) . '</option>';
-                }
-                echo '</select>';
-                break;
-
-            case 'check_connection':
-                $id = isset($args['id']) ? $args['id'] : 'check_connection';
-
-                echo '<div >' . '<button id="' . esc_attr($id) . '_button">'.esc_html__('Check','coinsnap-bitcoin-donation').'</button>' . '<span style="" id="' . esc_attr($id) .  '">' . '</span>' . '</div>';
-                break;
-
-            case 'text':
-                echo '<input type="text" 
-                id="' . esc_attr($field_id) . '" 
-                name="coinsnap_bitcoin_donation_options[' . esc_attr($field_id) . ']" 
-                value="' . esc_attr($field_value) . '" 
-                class="regular-text"' .
-                    (isset($args['readonly']) && $args['readonly'] ? ' readonly' : '') .
-                    (isset($args['value']) ? ' value="' . esc_attr($args['value']) . '"' : '') .
-                    '>';
-                break;
-        }
-
-        if (isset($args['description']) && !empty($args['description'])) {
-            echo '<p class="description">' . wp_kses($args['description'],[
-                'a' => ['href'  => true,'title' => true,'class' => true], 
-                'b' => [], 
-                'button' => ['class' => true,'type' => true, 'id' => true, 'target' => true]
-                ]) . '</p>';
-        }
-    }
-
-    public function coinsnap_bitcoin_donation_options_page()
-    {
-?>
-        <div class="wrap">
-            <h1>Bitcoin Donation Settings</h1>
-            <div class="coinsnapConnectionStatus"></div>
-            <?php settings_errors('coinsnap_bitcoin_donation_settings'); ?>
-            <form method="post" action="options.php">
-                <?php
-                settings_fields('coinsnap_bitcoin_donation_settings');
-                // Render the General Settings Section
-                echo '<div id="general" class="tab-content active">';
-                $this->render_section('coinsnap_bitcoin_donation_provider_section');
-                // Render Coinsnap Settings inside a wrapper
-                echo '<div id="coinsnap-settings-wrapper" class="provider-settings tab-content">';
-                $this->render_section('coinsnap_bitcoin_donation_coinsnap_section');
-                echo '</div>';
-
-                // Render BTCPay Settings inside a wrapper
-                echo '<div id="btcpay-settings-wrapper" class="provider-settings tab-content">';
-                $this->render_section('coinsnap_bitcoin_donation_btcpay_section');
-                echo '</div>';
-                echo '</div>';
-                ?>
-                <?php
-                // Render submit button
-                submit_button();
-                ?>
-            </form>
-        </div>
-<?php
-    }
 }
+
 new Coinsnap_Bitcoin_Donation_Settings();

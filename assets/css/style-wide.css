@@ -1,52 +1,90 @@
-.wide-form input {
-  margin-bottom: 0px !important;
-}
+/* ==========================================================================
+   Coinsnap Bitcoin Donation - Wide Form Styles
+   Extends the base style.css for horizontal/wide form layouts.
+   ========================================================================== */
 
+/* --------------------------------------------------------------------------
+   Wide Form Layout
+   -------------------------------------------------------------------------- */
 .wide-form {
   max-width: 645px;
 }
 
-.wide-form-button {
-  width: 80% !important;
-  height: 40px !important;
-  align-self: flex-end !important;
-  margin-top: 0px !important;
+.wide-form input {
+  margin-bottom: 0px !important;
 }
 
+/* --------------------------------------------------------------------------
+   Wide Form Inner Padding
+   -------------------------------------------------------------------------- */
+#coinsnap-bitcoin-donation-form-wide {
+  padding: 28px 8px 8px 8px;
+}
+
+/* --------------------------------------------------------------------------
+   Wide Form Field Wrapper (stacked layout below title)
+   -------------------------------------------------------------------------- */
+.coinsnap-bitcoin-donation-wide-field-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0px 28px 28px 28px;
+}
+
+/* Multi-amount wide wrapper */
+.coinsnap-bitcoin-donation-multi-wide-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 28px;
+}
+
+/* --------------------------------------------------------------------------
+   Wide Form Top Row (amount + button side by side)
+   -------------------------------------------------------------------------- */
+.coinsnap-bitcoin-donation-wide-up {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.coinsnap-bitcoin-donation-wide-up .secondary-amount {
+  position: absolute;
+}
+
+/* --------------------------------------------------------------------------
+   Wide Form Button
+   -------------------------------------------------------------------------- */
+.wide-form-button {
+  width: 80% !important;
+  height: 42px !important;
+  align-self: flex-end !important;
+  margin-top: 0px !important;
+  flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Wide Form Bottom Row (message area)
+   -------------------------------------------------------------------------- */
+.coinsnap-bitcoin-donation-wide-down {
+  display: flex;
+  flex-direction: column;
+  margin-top: 16px;
+}
+
+/* Amount field in wide layout */
 .amount-field {
   width: 140px;
 }
 
+/* Message textarea fills remaining space */
 .wide-message-text-area {
   flex-grow: 1;
 }
 
-.coinsnap-bitcoin-donation-wide-down {
-  height: 80px;
-  display: flex;
-  flex-direction: column;
-}
-
-.coinsnap-bitcoin-donation-wide-field-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 0px 30px 30px 30px;
-
-}
-
-.coinsnap-bitcoin-donation-multi-wide-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 30px;
-}
-
-.coinsnap-bitcoin-donation-wide-up {
-  display: flex;
-  gap: 8px;
-}
-
+/* --------------------------------------------------------------------------
+   Multi-amount Wide Specific
+   -------------------------------------------------------------------------- */
 .multi-wide-button {
   width: 31% !important;
   align-self: center;
@@ -58,11 +96,6 @@
 
 .mulit-wide-label-right {
   width: 69%;
-  /* Nice */
-}
-
-#coinsnap-bitcoin-donation-form-wide {
-  padding: 38px 8px 8px 8px;
 }
 
 .wide-form .snap-primary-amount {
@@ -71,4 +104,64 @@
 
 .wide-form .snap-secondary-amount {
   font-size: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   Wide Form Responsive
+   -------------------------------------------------------------------------- */
+@media screen and (max-width: 600px) {
+  .coinsnap-bitcoin-donation-wide-up {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .wide-form-button {
+    width: 100% !important;
+  }
+
+  .mulit-wide-label-left,
+  .mulit-wide-label-right {
+    width: 100%;
+  }
+
+  .coinsnap-bitcoin-donation-wide-field-wrapper,
+  .coinsnap-bitcoin-donation-multi-wide-wrapper {
+    padding: 0px 20px 20px 20px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Iframe Checkout Modal
+   -------------------------------------------------------------------------- */
+.coinsnap-donation-modal-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 999999;
+  justify-content: center;
+  align-items: center;
+}
+
+.coinsnap-donation-modal {
+  width: 420px;
+  height: 90vh;
+  max-width: 95vw;
+  max-height: 920px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.coinsnap-donation-payment-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #ffffff;
 }

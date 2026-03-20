@@ -204,7 +204,7 @@ class Coinsnap_Bitcoin_Donation_Public_Donors
         if (!current_user_can('edit_post', $post_id)){ return;}
         if ($post->post_type !== 'bitcoin-pds'){ return;}
 
-        if (null !== filter_input(INPUT_POST,'coinsnap_bitcoin_donation_public_donors_nonce',FILTER_SANITIZE_FULL_SPECIAL_CHARS) || !wp_verify_nonce(filter_input(INPUT_POST,'coinsnap_bitcoin_donation_public_donors_nonce',FILTER_SANITIZE_FULL_SPECIAL_CHARS), 'coinsnap_bitcoin_donation_public_donors_nonce')){
+        if (null === filter_input(INPUT_POST,'coinsnap_bitcoin_donation_public_donors_nonce',FILTER_SANITIZE_FULL_SPECIAL_CHARS) || !wp_verify_nonce(filter_input(INPUT_POST,'coinsnap_bitcoin_donation_public_donors_nonce',FILTER_SANITIZE_FULL_SPECIAL_CHARS), 'coinsnap_bitcoin_donation_public_donors_nonce')){
             return;
         }
 

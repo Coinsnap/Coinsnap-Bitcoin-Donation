@@ -1,22 +1,28 @@
 <?php
-if (!defined('ABSPATH')){ exit; }
-if (!defined('WP_UNINSTALL_PLUGIN')){ exit; }
+if ( ! defined( 'ABSPATH' ) ) { exit; }
+if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) { exit; }
 
 global $wpdb;
-$coinsnap_bitcoin_donation_tables = array(
-    $wpdb->prefix . 'donation_payments'
+
+// Drop both old and new tables
+$tables = array(
+    $wpdb->prefix . 'donation_payments',
+    $wpdb->prefix . 'coinsnap_donation_payments',
 );
 
-foreach ($coinsnap_bitcoin_donation_tables as $coinsnap_bitcoin_donation_table) {
-    $wpdb->query($wpdb->prepare("DROP TABLE IF EXISTS %s",$coinsnap_bitcoin_donation_table));
+foreach ( $tables as $table ) {
+    $wpdb->query( "DROP TABLE IF EXISTS `{$table}`" );
 }
 
-$coinsnap_bitcoin_donation_options = array(
+// Delete all options
+$options = array(
     'coinsnap_bitcoin_donation_options',
     'coinsnap_bitcoin_donation_forms_options',
-    'coinsnap_webhook_secret'
+    'coinsnap_webhook_secret',
+    'coinsnap_donation_webhook',
+    'coinsnap_donation_db_version',
 );
 
-foreach ($coinsnap_bitcoin_donation_options as $coinsnap_bitcoin_donation_option) {
-    delete_option($coinsnap_bitcoin_donation_option);
+foreach ( $options as $option ) {
+    delete_option( $option );
 }

@@ -12,9 +12,16 @@ class Coinsnap_Bitcoin_Donation_Shoutouts_Form
 
     private function get_template($template_name, $args = [])
     {
-        if ($args && is_array($args)) {
-            extract($args);
-        }
+        // Variables are extracted for use in the template
+        $prefix = $args['prefix'] ?? '';
+        $sufix = $args['sufix'] ?? '';
+        $first_name = $args['first_name'] ?? 'hidden';
+        $last_name = $args['last_name'] ?? 'hidden';
+        $email = $args['email'] ?? 'hidden';
+        $address = $args['address'] ?? 'hidden';
+        $public_donors = $args['public_donors'] ?? '';
+        $custom = $args['custom'] ?? 'hidden';
+        $custom_name = $args['custom_name'] ?? '';
 
         $template = plugin_dir_path(__FILE__) . '../templates/' . $template_name . '.php';
 
@@ -27,22 +34,24 @@ class Coinsnap_Bitcoin_Donation_Shoutouts_Form
     {
         $options = get_option('coinsnap_bitcoin_donation_forms_options');
         $options = is_array($options) ? $options : [];
-        $options_general = get_option('coinsnap_bitcoin_donation_options');
-        $theme_class = $options_general['theme'] === 'dark' ? 'coinsnap-bitcoin-donation-dark-theme' : 'coinsnap-bitcoin-donation-light-theme';
-        $modal_theme = $options_general['theme'] === 'dark' ? 'dark-theme' : 'light-theme';
+        $core = coinsnap_bitcoin_donation_get_core();
+        $core_settings = \CoinsnapCore\Admin\SettingsPage::get_settings_for( $core );
+        $theme = $core_settings['theme'] ?? 'light';
+        $theme_class = $theme === 'dark' ? 'coinsnap-bitcoin-donation-dark-theme' : 'coinsnap-bitcoin-donation-light-theme';
+        $modal_theme = $theme === 'dark' ? 'dark-theme' : 'light-theme';
         $button_text = $options['shoutout_button_text'] ?? __('Shoutout', 'coinsnap-bitcoin-donation');
         $title_text = $options['shoutout_title_text'] ?? __('Bitcoin Shoutouts', 'coinsnap-bitcoin-donation');
-        $min_amount = (float)$options['shoutout_minimum_amount'] ?? 20;
-        $premium_amount = (float)$options['shoutout_premium_amount'] ?? 2000;
+        $min_amount = (float)($options['shoutout_minimum_amount'] ?? 20);
+        $premium_amount = (float)($options['shoutout_premium_amount'] ?? 2000);
         $active = $options['shoutout_donation_active'] ?? '1';
-        $first_name = $options['shoutout_first_name'];
-        $last_name = $options['shoutout_last_name'];
-        $email = $options['shoutout_email'];
-        $address = $options['shoutout_address'];
-        $custom = $options['shoutout_custom_field_visibility'];
-        $custom_name = $options['shoutout_custom_field_name'];
-        $public_donors = $options['shoutout_public_donors'];
-        $default_currency = $options['shoutout_currency'];
+        $first_name = $options['shoutout_first_name'] ?? 'hidden';
+        $last_name = $options['shoutout_last_name'] ?? 'hidden';
+        $email = $options['shoutout_email'] ?? 'hidden';
+        $address = $options['shoutout_address'] ?? 'hidden';
+        $custom = $options['shoutout_custom_field_visibility'] ?? 'hidden';
+        $custom_name = $options['shoutout_custom_field_name'] ?? '';
+        $public_donors = $options['shoutout_public_donors'] ?? '';
+        $default_currency = $options['shoutout_currency'] ?? 'EUR';
         if (!$active) {
             ob_start();
 ?>
@@ -59,9 +68,9 @@ class Coinsnap_Bitcoin_Donation_Shoutouts_Form
         }
 
         ob_start();
-        $client = new Coinsnap_Bitcoin_Donation_Client();
-        $coinsnapCurrencies = $client->getCurrencies();
-        $rates = $client->loadExchangeRates();
+        $coinsnapCurrencies = defined('COINSNAP_CURRENCIES') ? COINSNAP_CURRENCIES : array("EUR","USD","SATS","BTC","CAD","JPY","GBP","CHF","RUB");
+        $exchange = new \CoinsnapCore\Util\ExchangeRates();
+        $rates = $exchange->load_rates();
         ?>
         <div id="coinsnap-bitcoin-donation-shoutouts-form" class="coinsnap-bitcoin-donation-form <?php echo esc_attr($theme_class);?>">
             <div class="shoutout-form-wrapper <?php echo esc_attr($modal_theme) ?>">
@@ -73,7 +82,7 @@ class Coinsnap_Bitcoin_Donation_Shoutouts_Form
                         <h3><?php echo esc_html($title_text); ?></h3>
                         <select id="coinsnap-bitcoin-donation-shoutout-swap" class="currency-swapper"><?php
                         foreach($coinsnapCurrencies as $coinsnapCurrency){
-                            echo '<option value="'.esc_html($coinsnapCurrency).'" date-min="" data-rate="';
+                            echo '<option value="'.esc_html($coinsnapCurrency).'" data-min="" data-rate="';
                             if(isset($rates['data'][strtolower($coinsnapCurrency)])){
                                 echo esc_attr(1/$rates['data'][strtolower($coinsnapCurrency)]['value']*100000000);
                             }
@@ -97,6 +106,7 @@ class Coinsnap_Bitcoin_Donation_Shoutouts_Form
                                 <label for="coinsnap-bitcoin-donation-shoutout-amount"><?php esc_html_e('Amount', 'coinsnap-bitcoin-donation');?></label>
                                 <div class="amount-wrapper">
                                     <input type="text" id="coinsnap-bitcoin-donation-shoutout-amount">
+                                    <span class="donation-amount-currency" id="coinsnap-bitcoin-donation-shoutout-currency-label"><?php echo esc_html($default_currency); ?></span>
                                     <div class="secondary-amount">
                                         <span id="coinsnap-bitcoin-donation-shoutout-satoshi"></span>
                                     </div>
@@ -105,10 +115,12 @@ class Coinsnap_Bitcoin_Donation_Shoutouts_Form
                         </div>
                         <div class="coinsnap-bitcoin-donation-shoutout-help">
                             <p id="coinsnap-bitcoin-donation-shoutout-help-info">
-                                <?php esc_html_e('Minimum shoutout amount is', 'coinsnap-bitcoin-donation');?>
-                                <span id="coinsnap-bitcoin-donation-shoutout-help-minimum-amount"><?php echo esc_html(round($min_amount*$rates['data'][strtolower($default_currency)]['value']/10000000,2).' '.$default_currency); ?></span>
+                                <?php
+                                $rate_value = isset($rates['data'][strtolower($default_currency)]['value']) ? $rates['data'][strtolower($default_currency)]['value'] : 0;
+                                esc_html_e('Minimum shoutout amount is', 'coinsnap-bitcoin-donation');?>
+                                <span id="coinsnap-bitcoin-donation-shoutout-help-minimum-amount"><?php if ($rate_value > 0) { echo esc_html(round($min_amount*$rate_value/10000000,2).' '.$default_currency); } ?></span>
                                 <?php esc_html_e('and Premium shoutout amount', 'coinsnap-bitcoin-donation');?>
-                                <span id="coinsnap-bitcoin-donation-shoutout-help-premium-amount"><?php echo esc_html(round($premium_amount*$rates['data'][strtolower($default_currency)]['value']/10000000,2).' '.$default_currency); ?></span>
+                                <span id="coinsnap-bitcoin-donation-shoutout-help-premium-amount"><?php if ($rate_value > 0) { echo esc_html(round($premium_amount*$rate_value/10000000,2).' '.$default_currency); } ?></span>
                             </p>
                             <p id="coinsnap-bitcoin-donation-shoutout-help-premium">
                                 <?php esc_html_e('Selected amount will grant a premium shoutout', 'coinsnap-bitcoin-donation');?></p>
