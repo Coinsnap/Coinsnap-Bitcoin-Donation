@@ -178,25 +178,72 @@ class coinsnap_bitcoin_donation_Webhooks {
     public function handle_coinsnap_webhook( WP_REST_Request $request ) {
         $core = coinsnap_bitcoin_donation_get_core();
         $data = $request->get_json_params();
-        error_log( 'COINSNAP_WEBHOOK [coinsnap] received: ' . wp_json_encode( $data ) );
 
-        if ( ! \CoinsnapCore\Rest\WebhookHelper::verify_coinsnap_signature( $core ) ) {
-            error_log( 'COINSNAP_WEBHOOK [coinsnap] signature FAILED' );
-            return new WP_REST_Response( array( 'success' => false, 'message' => 'Invalid signature.' ), 401 );
+        // Skip signature verification if disabled in settings (for debugging)
+        $settings = \CoinsnapCore\Admin\SettingsPage::get_settings_for( $core );
+        if ( empty( $settings['disable_webhook_verification'] ) ) {
+            // Verify using request body from WP_REST_Request (php://input may be empty)
+            $webhook_option = get_option( $core->webhook_key() );
+            $secret = '';
+            if ( is_array( $webhook_option ) && ! empty( $webhook_option['coinsnap']['secret'] ) ) {
+                $secret = (string) $webhook_option['coinsnap']['secret'];
+            }
+
+            $sig_headers = array(
+                $request->get_header( 'btcpay-signature' ) ?? '',
+                $request->get_header( 'x-coinsnap-signature' ) ?? '',
+                $request->get_header( 'x-signature' ) ?? '',
+                $request->get_header( 'x-coinsnap-sig' ) ?? '',
+            );
+
+            $body = $request->get_body();
+            $verified = false;
+
+            if ( $secret && $body ) {
+                $raw = hash_hmac( 'sha256', $body, $secret );
+                $with_prefix = 'sha256=' . $raw;
+                foreach ( $sig_headers as $sig ) {
+                    if ( $sig && ( hash_equals( $raw, $sig ) || hash_equals( $with_prefix, $sig ) ) ) {
+                        $verified = true;
+                        break;
+                    }
+                }
+            }
+
+            if ( ! $verified ) {
+                return new WP_REST_Response( array( 'success' => false, 'message' => 'Invalid signature.' ), 401 );
+            }
         }
 
-        error_log( 'COINSNAP_WEBHOOK [coinsnap] signature OK, processing' );
         return $this->process_webhook( $data, 'coinsnap' );
     }
 
     public function handle_btcpay_webhook( WP_REST_Request $request ) {
         $core = coinsnap_bitcoin_donation_get_core();
+        $data = $request->get_json_params();
 
-        if ( ! \CoinsnapCore\Rest\WebhookHelper::verify_btcpay_signature( $core ) ) {
-            return new WP_REST_Response( array( 'success' => false, 'message' => 'Invalid signature.' ), 401 );
+        $settings = \CoinsnapCore\Admin\SettingsPage::get_settings_for( $core );
+        if ( empty( $settings['disable_webhook_verification'] ) ) {
+            $webhook_option = get_option( $core->webhook_key() );
+            $secret = '';
+            if ( is_array( $webhook_option ) && ! empty( $webhook_option['btcpay']['secret'] ) ) {
+                $secret = (string) $webhook_option['btcpay']['secret'];
+            }
+
+            $sig = $request->get_header( 'btcpay-signature' ) ?? '';
+            $body = $request->get_body();
+            $verified = false;
+
+            if ( $secret && $body && $sig ) {
+                $computed = 'sha256=' . hash_hmac( 'sha256', $body, $secret );
+                $verified = hash_equals( $computed, $sig );
+            }
+
+            if ( ! $verified ) {
+                return new WP_REST_Response( array( 'success' => false, 'message' => 'Invalid signature.' ), 401 );
+            }
         }
 
-        $data = $request->get_json_params();
         return $this->process_webhook( $data, 'btcpay' );
     }
 
@@ -206,26 +253,16 @@ class coinsnap_bitcoin_donation_Webhooks {
     public function handle_legacy_webhook( WP_REST_Request $request ) {
         $core = coinsnap_bitcoin_donation_get_core();
         $data = $request->get_json_params();
-        error_log( 'COINSNAP_WEBHOOK [legacy] received: ' . wp_json_encode( $data ) );
 
-        // Try core signature verification (coinsnap first, then btcpay)
         $provider = 'coinsnap';
         if ( ! \CoinsnapCore\Rest\WebhookHelper::verify_coinsnap_signature( $core ) ) {
-            error_log( 'COINSNAP_WEBHOOK [legacy] coinsnap sig failed, trying btcpay' );
             if ( ! \CoinsnapCore\Rest\WebhookHelper::verify_btcpay_signature( $core ) ) {
-                error_log( 'COINSNAP_WEBHOOK [legacy] btcpay sig failed, trying legacy secret' );
-                // Try old webhook secret as fallback
                 if ( ! $this->verify_legacy_signature() ) {
-                    error_log( 'COINSNAP_WEBHOOK [legacy] ALL signature checks FAILED' );
                     return new WP_REST_Response( array( 'success' => false, 'message' => 'Invalid signature.' ), 401 );
                 }
-                error_log( 'COINSNAP_WEBHOOK [legacy] legacy secret OK' );
             } else {
                 $provider = 'btcpay';
-                error_log( 'COINSNAP_WEBHOOK [legacy] btcpay sig OK' );
             }
-        } else {
-            error_log( 'COINSNAP_WEBHOOK [legacy] coinsnap sig OK' );
         }
 
         return $this->process_webhook( $data, $provider );
@@ -267,10 +304,7 @@ class coinsnap_bitcoin_donation_Webhooks {
         $core   = coinsnap_bitcoin_donation_get_core();
         $parsed = \CoinsnapCore\Rest\WebhookHelper::parse_webhook( $provider, $data );
 
-        error_log( 'COINSNAP_WEBHOOK process: type=' . $parsed['type'] . ' paid=' . ($parsed['paid'] ? 'true' : 'false') . ' invoice_id=' . $parsed['invoice_id'] );
-
         if ( ! $parsed['paid'] ) {
-            error_log( 'COINSNAP_WEBHOOK skipped — not a paid event' );
             return new WP_REST_Response( array( 'success' => true ), 200 );
         }
 
@@ -279,13 +313,11 @@ class coinsnap_bitcoin_donation_Webhooks {
 
         global $wpdb;
         $table_name = \CoinsnapCore\Database\PaymentTable::table_name( $core, $wpdb );
-        error_log( 'COINSNAP_WEBHOOK updating table=' . $table_name . ' invoice_id=' . $invoice_id );
-        $updated = $wpdb->update(
+        $wpdb->update(
             $table_name,
             array( 'payment_status' => 'paid', 'updated_at' => current_time( 'mysql' ) ),
             array( 'payment_invoice_id' => $invoice_id )
         );
-        error_log( 'COINSNAP_WEBHOOK update result: rows=' . var_export( $updated, true ) . ' last_error=' . $wpdb->last_error );
 
         $old_table = $wpdb->prefix . 'donation_payments';
         $table_exists = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $old_table ) );

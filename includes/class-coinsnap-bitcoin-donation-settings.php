@@ -21,69 +21,28 @@ class Coinsnap_Bitcoin_Donation_Settings {
             \CoinsnapCore\Admin\SettingsPage::render_page_for( $core );
         };
 
+        $render_forms = array( $this->donation_forms, 'render_donation_forms_page' );
+
+        // Parent menu opens Donation Forms (plugin-specific content first)
         add_menu_page(
             __( 'Coinsnap Bitcoin Donation', 'coinsnap-bitcoin-donation' ),
             __( 'Coinsnap Bitcoin Donation', 'coinsnap-bitcoin-donation' ),
             'manage_options',
             'coinsnap-bitcoin-donation',
-            $render_settings,
+            $render_forms,
             plugin_dir_url( dirname( __FILE__ ) ) . 'assets/images/bitcoin.svg',
             100
         );
 
-        // Replace the auto-generated first submenu label with "Settings"
+        // --- Plugin-specific pages first ---
+
+        // First submenu replaces auto-generated parent label
         add_submenu_page(
             'coinsnap-bitcoin-donation',
-            __( 'Settings', 'coinsnap-bitcoin-donation' ),
-            __( 'Settings', 'coinsnap-bitcoin-donation' ),
+            __( 'Donation Forms', 'coinsnap-bitcoin-donation' ),
+            __( 'Donation Forms', 'coinsnap-bitcoin-donation' ),
             'manage_options',
             'coinsnap-bitcoin-donation'
-        );
-
-        // Hidden submenu for BTCPay callback redirect (slug matches what BTCPayAuthorizer expects)
-        add_submenu_page(
-            null,
-            __( 'Settings', 'coinsnap-bitcoin-donation' ),
-            '',
-            'manage_options',
-            'coinsnap-bitcoin-donation-settings',
-            $render_settings
-        );
-
-        add_submenu_page(
-            'coinsnap-bitcoin-donation',
-            __( 'Donation Forms', 'coinsnap-bitcoin-donation' ),
-            __( 'Donation Forms', 'coinsnap-bitcoin-donation' ),
-            'manage_options',
-            'coinsnap-bitcoin-donation-forms',
-            array( $this->donation_forms, 'render_donation_forms_page' )
-        );
-
-        add_submenu_page(
-            'coinsnap-bitcoin-donation',
-            __( 'Transactions', 'coinsnap-bitcoin-donation' ),
-            __( 'Transactions', 'coinsnap-bitcoin-donation' ),
-            'manage_options',
-            'coinsnap-bitcoin-donation-transactions',
-            function () use ( $core ) {
-                \CoinsnapCore\Admin\TransactionsPage::render_page_for( $core );
-            }
-        );
-
-        add_submenu_page(
-            'coinsnap-bitcoin-donation',
-            __( 'Logs', 'coinsnap-bitcoin-donation' ),
-            __( 'Logs', 'coinsnap-bitcoin-donation' ),
-            'manage_options',
-            'coinsnap-bitcoin-donation-logs',
-            function () use ( $core ) {
-                $logger = new \CoinsnapCore\Util\Logger(
-                    'donation-logs',
-                    'donation.log',
-                    \CoinsnapCore\Admin\SettingsPage::get_settings_for( $core )['log_level'] ?? 'error'
-                );
-                \CoinsnapCore\Admin\LogsPage::render_page_for( $core, $logger );
-            }
         );
 
         $options = get_option( 'coinsnap_bitcoin_donation_forms_options', array() );
@@ -105,6 +64,44 @@ class Coinsnap_Bitcoin_Donation_Settings {
             __( 'Donor Information', 'coinsnap-bitcoin-donation' ),
             'manage_options',
             'edit.php?post_type=bitcoin-pds'
+        );
+
+        // --- Core pages ---
+
+        add_submenu_page(
+            'coinsnap-bitcoin-donation',
+            __( 'Transactions', 'coinsnap-bitcoin-donation' ),
+            __( 'Transactions', 'coinsnap-bitcoin-donation' ),
+            'manage_options',
+            'coinsnap-bitcoin-donation-transactions',
+            function () use ( $core ) {
+                \CoinsnapCore\Admin\TransactionsPage::render_page_for( $core );
+            }
+        );
+
+        add_submenu_page(
+            'coinsnap-bitcoin-donation',
+            __( 'Settings', 'coinsnap-bitcoin-donation' ),
+            __( 'Settings', 'coinsnap-bitcoin-donation' ),
+            'manage_options',
+            'coinsnap-bitcoin-donation-settings',
+            $render_settings
+        );
+
+        add_submenu_page(
+            'coinsnap-bitcoin-donation',
+            __( 'Logs', 'coinsnap-bitcoin-donation' ),
+            __( 'Logs', 'coinsnap-bitcoin-donation' ),
+            'manage_options',
+            'coinsnap-bitcoin-donation-logs',
+            function () use ( $core ) {
+                $logger = new \CoinsnapCore\Util\Logger(
+                    'donation-logs',
+                    'donation.log',
+                    \CoinsnapCore\Admin\SettingsPage::get_settings_for( $core )['log_level'] ?? 'error'
+                );
+                \CoinsnapCore\Admin\LogsPage::render_page_for( $core, $logger );
+            }
         );
     }
 }

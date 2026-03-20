@@ -282,6 +282,11 @@ class SettingsPage {
 			$sanitized['theme'] = in_array( $input['theme'], array( 'light', 'dark' ), true ) ? $input['theme'] : 'light';
 		}
 
+		// Sanitize ngrok URL.
+		if ( isset( $input['ngrok_url'] ) ) {
+			$sanitized['ngrok_url'] = esc_url_raw( $input['ngrok_url'] );
+		}
+
 		// Sanitize boolean fields.
 		$sanitized['disable_webhook_verification'] = isset( $input['disable_webhook_verification'] ) && $input['disable_webhook_verification'];
 
@@ -484,6 +489,52 @@ class SettingsPage {
 						</div>
 					</div>
 				</div>
+
+				<?php if ( ( $s['log_level'] ?? 'error' ) === 'debug' ) : ?>
+				<!-- Debug Tools Card -->
+				<div class="csc-card csc-card--compact">
+					<div class="csc-card-header" style="border-left:3px solid #f59e0b;">
+						<h2><?php esc_html_e( 'Debug Tools', 'coinsnap-core' ); ?></h2>
+					</div>
+					<div class="csc-card-body">
+						<div class="csc-field-row">
+							<label><?php esc_html_e( 'Webhook', 'coinsnap-core' ); ?></label>
+							<div class="csc-field-input">
+								<button type="button" class="button" id="csc-reregister-webhook"><?php esc_html_e( 'Re-register Webhook', 'coinsnap-core' ); ?></button>
+								<span id="csc-webhook-status" style="margin-left:10px;"></span>
+								<p class="csc-field-description"><?php esc_html_e( 'Force re-registration of the webhook with the payment provider. Use if webhooks are not being received.', 'coinsnap-core' ); ?></p>
+							</div>
+						</div>
+						<div class="csc-field-row">
+							<label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+								<input type="checkbox"
+									id="csc-disable-webhook-verification"
+									name="<?php echo esc_attr( $option_key ); ?>[disable_webhook_verification]"
+									value="1"
+									<?php checked( ! empty( $s['disable_webhook_verification'] ) ); ?>
+								/>
+								<?php esc_html_e( 'Disable Webhook Verification', 'coinsnap-core' ); ?>
+							</label>
+							<p class="csc-field-description"><?php esc_html_e( 'Skip webhook signature verification. Use only for debugging — disable in production after testing.', 'coinsnap-core' ); ?></p>
+						</div>
+						<?php
+							$is_local = strpos( get_site_url(), 'localhost' ) !== false || strpos( get_site_url(), '.ddev.site' ) !== false || strpos( get_site_url(), '.local' ) !== false;
+							if ( $is_local ) :
+						?>
+						<div class="csc-field-row">
+							<label for="csc-ngrok-url"><?php esc_html_e( 'Ngrok URL', 'coinsnap-core' ); ?></label>
+							<input type="url"
+								id="csc-ngrok-url"
+								name="<?php echo esc_attr( $option_key ); ?>[ngrok_url]"
+								value="<?php echo esc_attr( $s['ngrok_url'] ?? '' ); ?>"
+								placeholder="https://your-tunnel.ngrok.io"
+							/>
+							<p class="csc-field-description"><?php esc_html_e( 'Enter your ngrok URL for webhook testing on localhost. Webhooks will be registered with this URL instead of your local domain.', 'coinsnap-core' ); ?></p>
+						</div>
+						<?php endif; ?>
+					</div>
+				</div>
+				<?php endif; ?>
 
 				<!-- Sticky Save Bar -->
 				<div class="csc-save-bar">

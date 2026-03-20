@@ -217,26 +217,34 @@ Plugin's page on Coinsnap website: [https://coinsnap.io/modules/bitcoin-donation
 * Major: Migrated to coinsnap-core shared library for payment providers, settings, and webhooks.
 * New: Server-side payment creation via WordPress REST API — API keys no longer exposed in frontend JavaScript.
 * New: Iframe checkout modal replaces custom QR code popup for consistent payment experience.
-* New: Dual webhook endpoints (Coinsnap and BTCPay) with core signature verification.
+* New: Dual webhook endpoints (Coinsnap and BTCPay) with proper signature verification using WP_REST_Request body.
+* New: Legacy webhook endpoint for backward compatibility with existing registrations.
 * New: Modern card-based admin settings page with connection badge and BTCPay wizard.
-* New: Donation Forms admin page redesigned with tabbed card layout.
+* New: Donation Forms admin page redesigned with tabbed card layout matching core design.
 * New: Transactions page for viewing payment history.
 * New: Logs page for debugging.
-* New: Toast notification on settings save.
-* New: Click-to-copy shortcodes in admin.
-* New: Theme setting (Light/Dark) moved to shared core settings.
-* Update: Frontend donation forms redesigned — modern styling, Bitcoin orange accents, clean inputs.
-* Update: Amount field no longer embeds currency in input value — currency shown as visual label.
+* New: Toast notification on settings save across all admin pages.
+* New: Click-to-copy shortcodes in admin with visual feedback.
+* New: Theme setting (Light/Dark) in shared core settings — supported on frontend forms.
+* New: Ngrok URL field in Advanced settings for local webhook testing.
+* New: Automatic webhook registration on admin page load.
+* Update: Frontend donation forms completely redesigned — modern styling, Bitcoin orange (#f7931a) accents, system font stack, clean input focus states.
+* Update: Amount field uses CSS-positioned currency label instead of embedded text — fixes cursor jumping issue.
+* Update: Plugin icon updated to dedicated SVG.
 * Update: Settings key migration (provider → payment_provider, btcpay_url → btcpay_host) for core compatibility.
+* Update: Webhook signature verification uses $request->get_body() instead of php://input for reliability.
 * Update: Webhook secrets managed by core with auto-registration.
 * Fixed: Inverted nonce check in donor meta save — donor edits now save correctly from admin.
 * Fixed: Missing null coalescing on form options — no more PHP warnings on fresh installs.
 * Fixed: PHP operator precedence bug in shoutout min/premium amounts.
-* Fixed: Hardcoded BTCPay URL replaced with dynamic setting.
+* Fixed: Hardcoded BTCPay URL replaced with dynamic setting from core.
 * Fixed: Webhook signature failure now returns 401 instead of 200.
 * Fixed: XSS vector in error message display.
 * Fixed: Missing wp_reset_postdata() after WP_Query in shoutouts list.
 * Fixed: Exchange rate null check prevents crashes when API is unavailable.
+* Fixed: JS null errors on pages with only one form type (guard checks for specific elements).
+* Fixed: Amount/currency mismatch when paying in fiat currencies.
+* Fixed: Duplicate settings page rendering removed.
 
 = 1.4.2 :: 2026-03-13 =
 * Update: Shortcode check on CSS and JS files enqueue conditions is temporary removed.

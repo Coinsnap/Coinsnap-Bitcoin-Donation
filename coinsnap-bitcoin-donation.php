@@ -131,6 +131,7 @@ class coinsnap_bitcoin_donation {
         if ( is_admin() ) {
             add_action( 'wp_ajax_coinsnap_bitcoin_donation_btcpay_apiurl_handler', array( $this, 'btcpayApiUrlHandler' ) );
             add_action( 'wp_ajax_coinsnap_bitcoin_donation_connection_handler', array( $this, 'coinsnapConnectionHandler' ) );
+            add_action( 'wp_ajax_coinsnap_bitcoin_donation_reregister_webhook', array( $this, 'reregisterWebhook' ) );
         }
 
         $core = coinsnap_bitcoin_donation_get_core();
@@ -149,6 +150,46 @@ class coinsnap_bitcoin_donation {
         \CoinsnapCore\Admin\AjaxHandlers::handle_connection_check( coinsnap_bitcoin_donation_get_core() );
     }
 
+    public function reregisterWebhook() {
+        $nonce = filter_input( INPUT_POST, 'apiNonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if ( ! wp_verify_nonce( $nonce, 'coinsnap-ajax-nonce' ) || ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( 'Unauthorized' );
+        }
+
+        $core = coinsnap_bitcoin_donation_get_core();
+        $settings = \CoinsnapCore\Admin\SettingsPage::get_settings_for( $core );
+        $provider_name = $settings['payment_provider'] ?? 'coinsnap';
+
+        // Clear stored webhook and transients
+        delete_option( $core->webhook_key() );
+        $webhook_transient = 'coinsnap_donation_wh_' . md5( $provider_name . ( $settings['coinsnap_store_id'] ?? '' ) );
+        delete_transient( $webhook_transient );
+
+        try {
+            $provider = \CoinsnapCore\Util\ProviderFactory::create( $core );
+            $result = $provider->register_webhook();
+
+            if ( ! isset( $result['error'] ) && isset( $result['result'] ) ) {
+                $stored = array();
+                $stored[ $provider_name ] = array(
+                    'id'     => $result['result']['id'],
+                    'secret' => $result['result']['secret'],
+                    'url'    => $result['result']['url'],
+                );
+                update_option( $core->webhook_key(), $stored );
+                wp_send_json_success( array(
+                    'message' => 'Webhook registered successfully',
+                    'url'     => $result['result']['url'],
+                    'id'      => $result['result']['id'],
+                ) );
+            } else {
+                wp_send_json_error( $result['message'] ?? 'Registration failed' );
+            }
+        } catch ( \Exception $e ) {
+            wp_send_json_error( $e->getMessage() );
+        }
+    }
+
     public function maybe_register_webhooks() {
         $core = coinsnap_bitcoin_donation_get_core();
         $settings = \CoinsnapCore\Admin\SettingsPage::get_settings_for( $core );
@@ -160,35 +201,33 @@ class coinsnap_bitcoin_donation {
             return;
         }
 
-        $transient_key = 'coinsnap_donation_conn_' . md5( $provider_name . $store_id );
-        if ( false !== get_transient( $transient_key ) ) {
-            return;
-        }
+        // Check webhook separately — use its own transient so it's not blocked by connection check
+        $webhook_transient = 'coinsnap_donation_wh_' . md5( $provider_name . $store_id );
+        if ( false === get_transient( $webhook_transient ) ) {
+            try {
+                $provider = \CoinsnapCore\Util\ProviderFactory::create( $core );
+                $store = $provider->get_store();
 
-        try {
-            $provider = \CoinsnapCore\Util\ProviderFactory::create( $core );
-            $store = $provider->get_store();
-
-            if ( isset( $store['code'] ) && $store['code'] === 200 ) {
-                set_transient( $transient_key, 'connected', HOUR_IN_SECONDS );
-
-                if ( ! $provider->check_webhook() ) {
-                    $result = $provider->register_webhook();
-                    if ( ! isset( $result['error'] ) && isset( $result['result'] ) ) {
-                        $stored = get_option( $core->webhook_key(), array() );
-                        $stored[ $provider_name ] = array(
-                            'id'     => $result['result']['id'],
-                            'secret' => $result['result']['secret'],
-                            'url'    => $result['result']['url'],
-                        );
-                        update_option( $core->webhook_key(), $stored );
+                if ( isset( $store['code'] ) && $store['code'] === 200 ) {
+                    if ( ! $provider->check_webhook() ) {
+                        $result = $provider->register_webhook();
+                        if ( ! isset( $result['error'] ) && isset( $result['result'] ) ) {
+                            $stored = get_option( $core->webhook_key(), array() );
+                            $stored[ $provider_name ] = array(
+                                'id'     => $result['result']['id'],
+                                'secret' => $result['result']['secret'],
+                                'url'    => $result['result']['url'],
+                            );
+                            update_option( $core->webhook_key(), $stored );
+                        }
                     }
+                    // Webhook checked/registered — don't check again for 1 hour
+                    set_transient( $webhook_transient, 'checked', HOUR_IN_SECONDS );
                 }
-            } else {
-                set_transient( $transient_key, 'error', 5 * MINUTE_IN_SECONDS );
+            } catch ( \Exception $e ) {
+                // Retry in 5 minutes on error
+                set_transient( $webhook_transient, 'error', 5 * MINUTE_IN_SECONDS );
             }
-        } catch ( \Exception $e ) {
-            set_transient( $transient_key, 'error', 5 * MINUTE_IN_SECONDS );
         }
     }
 
@@ -281,6 +320,7 @@ class coinsnap_bitcoin_donation {
             'nonce'             => wp_create_nonce( 'coinsnap-ajax-nonce' ),
             'connection_action' => 'coinsnap_bitcoin_donation_connection_handler',
             'btcpay_action'     => 'coinsnap_bitcoin_donation_btcpay_apiurl_handler',
+            'webhook_action'    => 'coinsnap_bitcoin_donation_reregister_webhook',
         ) );
 
         wp_enqueue_style( 'coinsnap-core-admin' );

@@ -200,7 +200,9 @@ class CoinsnapProvider implements PaymentProviderInterface {
 			return array( 'error' => true, 'message' => __( 'Connection credentials error', 'coinsnap-core' ) );
 		}
 
-		$webhook_url = rtrim( (string) get_home_url(), '/' ) . '/wp-json/' . $this->instance->rest_namespace() . '/webhook/coinsnap';
+		$ngrok_url = ! empty( $settings['ngrok_url'] ) ? rtrim( $settings['ngrok_url'], '/' ) : '';
+		$base_url  = $ngrok_url ? $ngrok_url : rtrim( (string) get_home_url(), '/' );
+		$webhook_url = $base_url . '/wp-json/' . $this->instance->rest_namespace() . '/webhook/coinsnap';
 
 		$data = array(
 			'url'              => $webhook_url,

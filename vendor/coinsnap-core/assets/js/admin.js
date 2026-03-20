@@ -47,6 +47,38 @@
             }
         }
 
+        // --- Re-register Webhook button ---
+        $('#csc-reregister-webhook').on('click', function() {
+            var $btn = $(this);
+            var $status = $('#csc-webhook-status');
+            var webhookAction = (typeof CoinsnapCoreAdmin !== 'undefined' && CoinsnapCoreAdmin.webhook_action)
+                ? CoinsnapCoreAdmin.webhook_action
+                : '';
+
+            if (!webhookAction) {
+                $status.css('color', '#d63638').text('Webhook action not configured');
+                return;
+            }
+
+            $btn.prop('disabled', true).text('Registering...');
+            $status.css('color', '#757575').text('');
+
+            $.post(CoinsnapCoreAdmin.ajax_url, {
+                action: webhookAction,
+                apiNonce: CoinsnapCoreAdmin.nonce
+            }, function(response) {
+                if (response.success) {
+                    $status.css('color', '#00a32a').text('✓ ' + response.data.message + ' (ID: ' + response.data.id + ')');
+                } else {
+                    $status.css('color', '#d63638').text('✗ ' + (response.data || 'Failed'));
+                }
+                $btn.prop('disabled', false).text('Re-register Webhook');
+            }).fail(function() {
+                $status.css('color', '#d63638').text('✗ Request failed');
+                $btn.prop('disabled', false).text('Re-register Webhook');
+            });
+        });
+
         // Read option key from localized data (set by consuming plugin).
         var optionKey = (typeof CoinsnapCoreAdmin !== 'undefined' && CoinsnapCoreAdmin.option_key)
             ? CoinsnapCoreAdmin.option_key
