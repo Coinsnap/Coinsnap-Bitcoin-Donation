@@ -199,6 +199,9 @@ Plugin's page on Coinsnap website: [https://coinsnap.io/modules/bitcoin-donation
 * Fixed: Class Coinsnap_Bitcoin_Donation_Client() call during payment amount check. 
 * Update: Donation widget theme application.
 
+#### 1.4.2 :: 2026-03-13
+* Update: Shortcode check on CSS and JS files enqueue conditions is temporary removed.
+
 #### 1.5.0 :: 2026-03-20
 * Major: Migrated to coinsnap-core shared library for payment providers, settings, and webhooks.
 * New: Server-side payment creation via WordPress REST API — API keys no longer exposed in frontend JavaScript.
@@ -231,6 +234,3 @@ Plugin's page on Coinsnap website: [https://coinsnap.io/modules/bitcoin-donation
 * Fixed: JS null errors on pages with only one form type (guard checks for specific elements).
 * Fixed: Amount/currency mismatch when paying in fiat currencies.
 * Fixed: Duplicate settings page rendering removed.
-
-#### 1.4.2 :: 2026-03-13
-* Update: Shortcode check on CSS and JS files enqueue conditions is temporary removed.
