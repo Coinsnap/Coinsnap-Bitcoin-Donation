@@ -3,14 +3,9 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-require_once plugin_dir_path( __FILE__ ) . 'class-coinsnap-bitcoin-donation-forms.php';
-
 class Coinsnap_Bitcoin_Donation_Settings {
 
-    private $donation_forms;
-
     public function __construct() {
-        $this->donation_forms = new Coinsnap_Bitcoin_Donation_Forms();
         add_action( 'admin_menu', array( $this, 'register_admin_menu' ) );
     }
 
@@ -21,15 +16,16 @@ class Coinsnap_Bitcoin_Donation_Settings {
             \CoinsnapCore\Admin\SettingsPage::render_page_for( $core );
         };
 
-        $render_forms = array( $this->donation_forms, 'render_donation_forms_page' );
-
-        // Parent menu opens Donation Forms (plugin-specific content first)
+        // Parent menu redirects to CPT list
         add_menu_page(
             __( 'Coinsnap Bitcoin Donation', 'coinsnap-bitcoin-donation' ),
             __( 'Coinsnap Bitcoin Donation', 'coinsnap-bitcoin-donation' ),
             'manage_options',
             'coinsnap-bitcoin-donation',
-            $render_forms,
+            function() {
+                wp_redirect( admin_url( 'edit.php?post_type=donation-form' ) );
+                exit;
+            },
             plugin_dir_url( dirname( __FILE__ ) ) . 'assets/images/bitcoin.svg',
             100
         );
@@ -42,7 +38,15 @@ class Coinsnap_Bitcoin_Donation_Settings {
             __( 'Donation Forms', 'coinsnap-bitcoin-donation' ),
             __( 'Donation Forms', 'coinsnap-bitcoin-donation' ),
             'manage_options',
-            'coinsnap-bitcoin-donation'
+            'edit.php?post_type=donation-form'
+        );
+
+        add_submenu_page(
+            'coinsnap-bitcoin-donation',
+            __( 'Add New Form', 'coinsnap-bitcoin-donation' ),
+            __( 'Add New Form', 'coinsnap-bitcoin-donation' ),
+            'manage_options',
+            'post-new.php?post_type=donation-form'
         );
 
         add_submenu_page(

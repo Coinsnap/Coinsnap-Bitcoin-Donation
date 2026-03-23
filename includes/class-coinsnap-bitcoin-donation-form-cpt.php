@@ -13,6 +13,10 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 		add_action( 'init', array( $this, 'register_meta_fields' ) );
 		add_action( 'add_meta_boxes', array( $this, 'add_metaboxes' ) );
 		add_action( 'save_post_' . self::POST_TYPE, array( $this, 'save_meta' ), 10, 2 );
+		add_filter( 'manage_' . self::POST_TYPE . '_posts_columns', array( $this, 'add_columns' ) );
+		add_action( 'manage_' . self::POST_TYPE . '_posts_custom_column', array( $this, 'render_column' ), 10, 2 );
+		add_filter( 'parent_file', array( $this, 'fix_parent_menu' ) );
+		add_filter( 'submenu_file', array( $this, 'fix_submenu_highlight' ) );
 	}
 
 	public function register_cpt() {
@@ -397,5 +401,65 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 		}
 		$public_donors = isset( $_POST[ self::META_PREFIX . 'public_donors' ] ) ? '1' : '';
 		update_post_meta( $post_id, self::META_PREFIX . 'public_donors', $public_donors );
+	}
+
+	public function add_columns( $columns ) {
+		return array(
+			'cb'        => $columns['cb'],
+			'title'     => $columns['title'],
+			'form_type' => __( 'Form Type', 'coinsnap-bitcoin-donation' ),
+			'layout'    => __( 'Layout', 'coinsnap-bitcoin-donation' ),
+			'shortcode' => __( 'Shortcode', 'coinsnap-bitcoin-donation' ),
+			'date'      => $columns['date'],
+		);
+	}
+
+	public function render_column( $column, $post_id ) {
+		switch ( $column ) {
+			case 'form_type':
+				$type = get_post_meta( $post_id, self::META_PREFIX . 'form_type', true );
+				$labels = array(
+					'simple_donation' => __( 'Simple Donation', 'coinsnap-bitcoin-donation' ),
+					'multi_amount'    => __( 'Multi Amount', 'coinsnap-bitcoin-donation' ),
+					'shoutout'        => __( 'Shoutout', 'coinsnap-bitcoin-donation' ),
+				);
+				echo esc_html( $labels[ $type ] ?? $type );
+				break;
+
+			case 'layout':
+				$type = get_post_meta( $post_id, self::META_PREFIX . 'form_type', true );
+				if ( $type === 'shoutout' ) {
+					echo '—';
+				} else {
+					$layout = get_post_meta( $post_id, self::META_PREFIX . 'layout', true );
+					echo esc_html( $layout ?: 'NARROW' );
+				}
+				break;
+
+			case 'shortcode':
+				$shortcode = '[coinsnap_bitcoin_donation_form id="' . $post_id . '"]';
+				echo '<span class="csc-shortcode-copy" data-shortcode="' . esc_attr( $shortcode ) . '">';
+				echo '<span class="csc-shortcode-code">' . esc_html( $shortcode ) . '</span>';
+				echo '<span class="csc-shortcode-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></span>';
+				echo '<span class="csc-shortcode-copied">' . esc_html__( 'Copied!', 'coinsnap-bitcoin-donation' ) . '</span>';
+				echo '</span>';
+				break;
+		}
+	}
+
+	public function fix_parent_menu( $parent_file ) {
+		$screen = get_current_screen();
+		if ( $screen && $screen->post_type === self::POST_TYPE ) {
+			return 'coinsnap-bitcoin-donation';
+		}
+		return $parent_file;
+	}
+
+	public function fix_submenu_highlight( $submenu_file ) {
+		$screen = get_current_screen();
+		if ( $screen && $screen->post_type === self::POST_TYPE ) {
+			return 'edit.php?post_type=donation-form';
+		}
+		return $submenu_file;
 	}
 }
