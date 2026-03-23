@@ -71,9 +71,106 @@
     display: block;
 }
 
+/* Checkbox field alignment */
+.donation-form-checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.donation-form-checkbox-row input[type="checkbox"] {
+    margin: 0;
+    width: 16px;
+    height: 16px;
+}
+
+.donation-form-checkbox-row label {
+    margin: 0;
+    cursor: pointer;
+}
+
 /* Shortcode section */
 .donation-form-shortcode-section {
     margin-top: 20px;
     padding-top: 16px;
     border-top: 1px solid #f0f0f1;
+}
+
+/* Shortcode copy styles (needed here since admin-style.css is not loaded on CPT screens) */
+.donation-form-shortcode-section .csc-shortcode-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.donation-form-shortcode-section .csc-shortcode-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.donation-form-shortcode-section .csc-shortcode-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #50575e;
+    min-width: 100px;
+    flex-shrink: 0;
+}
+
+.donation-form-shortcode-section .csc-shortcode-copy {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: #f6f7f7;
+    border: 1px solid #dcdcde;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+.donation-form-shortcode-section .csc-shortcode-copy:hover {
+    background: #f0f0f1;
+    border-color: #c3c4c7;
+}
+
+.donation-form-shortcode-section .csc-shortcode-code {
+    font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: #1d2327;
+    letter-spacing: 0.2px;
+}
+
+.donation-form-shortcode-section .csc-shortcode-icon {
+    display: inline-flex;
+    color: #a7aaad;
+    transition: color 0.15s ease;
+}
+
+.donation-form-shortcode-section .csc-shortcode-copy:hover .csc-shortcode-icon {
+    color: #50575e;
+}
+
+.donation-form-shortcode-section .csc-shortcode-copied {
+    display: none;
+    font-size: 12px;
+    font-weight: 500;
+    color: #00a32a;
+    white-space: nowrap;
+}
+
+.donation-form-shortcode-section .csc-shortcode-copy.is-copied .csc-shortcode-icon {
+    display: none;
+}
+
+.donation-form-shortcode-section .csc-shortcode-copy.is-copied .csc-shortcode-copied {
+    display: inline;
+}
+
+.donation-form-shortcode-section .csc-shortcode-copy.is-copied {
+    border-color: #00a32a;
+    background: #edfcf2;
 }

@@ -290,9 +290,9 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 			</div>
 			<div class="csc-card-body">
 				<div class="csc-field-row">
-					<label for="<?php echo esc_attr( self::META_PREFIX . 'public_donors' ); ?>"><?php esc_html_e( 'Collect donor information', 'coinsnap-bitcoin-donation' ); ?></label>
-					<div class="csc-field-input">
+					<div class="donation-form-checkbox-row">
 						<input type="checkbox" id="<?php echo esc_attr( self::META_PREFIX . 'public_donors' ); ?>" name="<?php echo esc_attr( self::META_PREFIX . 'public_donors' ); ?>" value="1" <?php checked( $meta['public_donors'], '1' ); ?>>
+						<label for="<?php echo esc_attr( self::META_PREFIX . 'public_donors' ); ?>"><?php esc_html_e( 'Collect donor information', 'coinsnap-bitcoin-donation' ); ?></label>
 					</div>
 				</div>
 				<div class="donation-form-donor-fields <?php echo $meta['public_donors'] === '1' ? 'visible' : ''; ?>">
