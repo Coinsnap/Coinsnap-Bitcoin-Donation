@@ -223,6 +223,11 @@ const addDonationPopupListener = (prefix, suffix, type, redirect) => {
             name = nameField?.value || "Anonymous";
         }
 
+        // Find the form container to get the donation form ID
+        var payButton = document.getElementById(prefix + 'pay' + suffix);
+        var formContainer = payButton ? payButton.closest('.coinsnap-donation-form-instance') : null;
+        var donationFormId = formContainer ? formContainer.dataset.formId : '';
+
         const metadata = {
             donorName: `${firstNameField?.value ?? ''} ${lastNameField?.value ?? ''}`.trim(),
             donorEmail: emailField?.value || '',
@@ -236,6 +241,7 @@ const addDonationPopupListener = (prefix, suffix, type, redirect) => {
             amountFiat: `${amountFiat} ${currencyFiat}`,
             publicDonor: publicDonor || '0',
             satsAmount: (currency === 'SATS') ? `${amount}` : '',
+            donationFormId: donationFormId,
         };
 
         submitDonationPayment(amount, currency, message, type, redirect || window.location.href, metadata);

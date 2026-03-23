@@ -376,6 +376,9 @@ class coinsnap_bitcoin_donation_Webhooks {
                 update_post_meta( $post_id, '_coinsnap_bitcoin_donation_address', $address );
                 update_post_meta( $post_id, '_coinsnap_bitcoin_donation_payment_id', $invoice_id );
                 update_post_meta( $post_id, '_coinsnap_bitcoin_donation_custom_field', $custom );
+                if ( ! empty( $metadata['donationFormId'] ) ) {
+                    update_post_meta( $post_id, '_coinsnap_donation_form_id', absint( $metadata['donationFormId'] ) );
+                }
             }
         }
 
@@ -398,6 +401,9 @@ class coinsnap_bitcoin_donation_Webhooks {
                 update_post_meta( $post_id, '_coinsnap_bitcoin_donation_shoutouts_invoice_id', $invoice_id );
                 update_post_meta( $post_id, '_coinsnap_bitcoin_donation_shoutouts_message', $message );
                 update_post_meta( $post_id, '_coinsnap_bitcoin_donation_shoutouts_provider', $provider );
+                if ( ! empty( $metadata['donationFormId'] ) ) {
+                    update_post_meta( $post_id, '_coinsnap_donation_form_id', absint( $metadata['donationFormId'] ) );
+                }
             }
         }
 
