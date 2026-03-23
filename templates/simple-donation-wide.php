@@ -49,7 +49,7 @@
 
         <?php
         $prefix = 'coinsnap-bitcoin-donation-';
-        $sufix = '-' . $form_id;
+        $sufix = '-wide-' . $form_id;
         include COINSNAP_BITCOIN_DONATION_PLUGIN_PATH . 'templates/coinsnap-bitcoin-donation-modal.php';
         ?>
 

@@ -54,9 +54,8 @@ jQuery(document).ready(function ($) {
         updateSecondaryDonationCurrency(primaryFieldName, secondaryFieldName, config.defaultAmount);
 
         // ---- popup listener ----
-        // Modal template uses prefix "coinsnap-bitcoin-donation-" and suffix "-{formId}".
-        // For narrow forms the pay button matches; for wide forms Task 9 will reconcile.
-        addDonationPopupListener('coinsnap-bitcoin-donation-', '-' + formId, 'Bitcoin Donation', config.redirectUrl);
+        // idSuffix includes -wide- for wide layout, matching both form elements and modal template
+        addDonationPopupListener('coinsnap-bitcoin-donation-', idSuffix, 'Bitcoin Donation', config.redirectUrl);
 
         // ---- amount input handler ----
 

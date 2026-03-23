@@ -70,8 +70,8 @@ jQuery(document).ready(function ($) {
         }
 
         // ---- popup listener ----
-        // Modal template uses suffix "-{formId}".
-        addDonationPopupListener('coinsnap-bitcoin-donation-', '-' + formId, 'Multi Amount Donation', config.redirectUrl);
+        // idSuffix includes -multi- (and -wide- for wide layout), matching form elements and modal template
+        addDonationPopupListener('coinsnap-bitcoin-donation-', idSuffix, 'Multi Amount Donation', config.redirectUrl);
 
         // ---- amount input handler ----
 
