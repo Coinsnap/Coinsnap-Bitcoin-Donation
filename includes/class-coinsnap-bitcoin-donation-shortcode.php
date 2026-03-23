@@ -45,23 +45,7 @@ class Coinsnap_Bitcoin_Donation_Shortcode {
         $public_donors = $options['simple_donation_public_donors'] ?? '';
         $custom = $options['simple_donation_custom_field_visibility'] ?? 'hidden';
         $custom_name = $options['simple_donation_custom_field_name'] ?? '';
-        $active = $options['simple_donation_active'] ?? '1';
         $default_currency = $options['currency'] ?? 'EUR';
-        
-        if (!$active){
-            ob_start();
-?>
-            <div class="coinsnap-bitcoin-donation-form <?php echo esc_attr($theme_class); ?> narrow-form">
-                <div class="coinsnap-bitcoin-donation-title-wrapper"
-                    style="display: flex;justify-content: center; flex-direction: column; align-items: center; margin: 0">
-                    <h3><?php echo esc_html($title_text); ?></h3>
-                </div>
-                <h4 style="text-align: center;"><?php esc_html_e('This form is not active', 'coinsnap-bitcoin-donation');?></h4>
-
-            </div>
-        <?php
-            return ob_get_clean();
-        }
 
         ob_start();
         $coinsnapCurrencies = defined('COINSNAP_CURRENCIES') ? COINSNAP_CURRENCIES : array("EUR","USD","SATS","BTC","CAD","JPY","GBP","CHF","RUB");

@@ -43,7 +43,6 @@ class Coinsnap_Bitcoin_Donation_Shoutouts_Form
         $title_text = $options['shoutout_title_text'] ?? __('Bitcoin Shoutouts', 'coinsnap-bitcoin-donation');
         $min_amount = (float)($options['shoutout_minimum_amount'] ?? 20);
         $premium_amount = (float)($options['shoutout_premium_amount'] ?? 2000);
-        $active = $options['shoutout_donation_active'] ?? '1';
         $first_name = $options['shoutout_first_name'] ?? 'hidden';
         $last_name = $options['shoutout_last_name'] ?? 'hidden';
         $email = $options['shoutout_email'] ?? 'hidden';
@@ -52,20 +51,6 @@ class Coinsnap_Bitcoin_Donation_Shoutouts_Form
         $custom_name = $options['shoutout_custom_field_name'] ?? '';
         $public_donors = $options['shoutout_public_donors'] ?? '';
         $default_currency = $options['shoutout_currency'] ?? 'EUR';
-        if (!$active) {
-            ob_start();
-?>
-            <div class="coinsnap-bitcoin-donation-form <?php echo esc_attr($theme_class); ?>">
-                <div class="shoutout-form-wrapper"
-                    style="display: flex;justify-content: center; flex-direction: column; align-items: center; margin: 0">
-                    <h3><?php echo esc_html($title_text); ?></h3>
-                    <h4 style="text-align: center;"><?php esc_html_e('This form is not active', 'coinsnap-bitcoin-donation');?></h4>
-                </div>
-
-            </div>
-        <?php
-            return ob_get_clean();
-        }
 
         ob_start();
         $coinsnapCurrencies = defined('COINSNAP_CURRENCIES') ? COINSNAP_CURRENCIES : array("EUR","USD","SATS","BTC","CAD","JPY","GBP","CHF","RUB");

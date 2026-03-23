@@ -27,18 +27,6 @@ class Coinsnap_Bitcoin_Donation_Forms {
 		);
 
 		add_settings_field(
-			'simple_donation_active',
-			__('Active','coinsnap-bitcoin-donation'),
-			[$this, 'render_field'],
-			'bitcoin_donation',
-			'bitcoin_donation_simple_donation_section',
-			[
-				'label_for' => 'simple_donation_active',
-				'type'      => 'checkbox'
-			]
-		);
-
-		add_settings_field(
 			'currency',
 			__('Currency','coinsnap-bitcoin-donation'),
 			[$this, 'render_field'],
@@ -251,18 +239,6 @@ class Coinsnap_Bitcoin_Donation_Forms {
 			__('Shoutout Donation Settings','coinsnap-bitcoin-donation'),
 			[$this, 'shoutout_donation_section_callback'],
 			'bitcoin_donation'
-		);
-
-		add_settings_field(
-			'shoutout_donation_active',
-			__('Enable Shoutouts','coinsnap-bitcoin-donation'),
-			[$this, 'render_field'],
-			'bitcoin_donation',
-			'bitcoin_donation_shoutout_donation_section',
-			[
-				'label_for' => 'shoutout_donation_active',
-				'type'      => 'checkbox'
-			]
 		);
 
 		add_settings_field(
@@ -490,18 +466,6 @@ class Coinsnap_Bitcoin_Donation_Forms {
 			'bitcoin_donation'
 		);
 
-		add_settings_field(
-			'multi_amount_donation_active',
-			__('Enable Multi Amount Form','coinsnap-bitcoin-donation'),
-			[$this, 'render_field'],
-			'bitcoin_donation',
-			'bitcoin_donation_multi_amount_section',
-			[
-				'label_for' => 'multi_amount_donation_active',
-				'type'      => 'checkbox'
-			]
-		);
-                
                 add_settings_field(
 			'multi_amount_currency',
 			__('Currency','coinsnap-bitcoin-donation'),
@@ -788,11 +752,8 @@ class Coinsnap_Bitcoin_Donation_Forms {
 		}
 
 		$sanitized['simple_donation_public_donors'] = isset($options['simple_donation_public_donors']) ? true : false;
-		$sanitized['simple_donation_active'] = isset($options['simple_donation_active']) ? true : false;
 		$sanitized['shoutout_public_donors'] = isset($options['shoutout_public_donors']) ? true : false;
-		$sanitized['shoutout_donation_active'] = isset($options['shoutout_donation_active']) ? true : false;
 		$sanitized['multi_amount_public_donors'] = isset($options['multi_amount_public_donors']) ? true : false;
-		$sanitized['multi_amount_donation_active'] = isset($options['multi_amount_donation_active']) ? true : false;
 
 		return $sanitized;
 	}
@@ -893,9 +854,6 @@ class Coinsnap_Bitcoin_Donation_Forms {
 			'multi_amount_default_snap1'      => '1000',
 			'multi_amount_default_snap2'      => '5000',
 			'multi_amount_default_snap3'      => '10000',
-			'simple_donation_active' => true,
-			'shoutout_donation_active' => false,
-			'multi_amount_donation_active' => false,
 			'simple_donation_public_donors' => false,
 			'shoutout_public_donors' => false,
 			'multi_amount_public_donors' => false,

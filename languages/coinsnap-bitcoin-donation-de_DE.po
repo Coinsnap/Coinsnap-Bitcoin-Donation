@@ -1,0 +1,501 @@
+# Coinsnap Bitcoin Donation - German Translation
+# Copyright (C) 2026 Coinsnap
+# This file is distributed under the same license as the Coinsnap Bitcoin Donation package.
+# Coinsnap <support@coinsnap.io>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Coinsnap Bitcoin Donation 1.5.0\n"
+"Report-Msgid-Bugs-To: support@coinsnap.io\n"
+"POT-Creation-Date: 2026-03-23 10:08+0100\n"
+"PO-Revision-Date: 2026-03-23 10:30+0100\n"
+"Last-Translator: Coinsnap <support@coinsnap.io>\n"
+"Language-Team: German <support@coinsnap.io>\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: includes/class-coinsnap-bitcoin-donation-shoutout-posts.php:25
+#: includes/class-coinsnap-bitcoin-donation-shoutout-posts.php:27
+#: includes/class-coinsnap-bitcoin-donation-forms.php:971
+#: includes/class-coinsnap-bitcoin-donation-settings.php:50
+#: includes/class-coinsnap-bitcoin-donation-settings.php:51
+msgid "Shoutouts"
+msgstr "Shoutouts"
+
+#: includes/class-coinsnap-bitcoin-donation-shoutout-posts.php:26
+#: includes/class-coinsnap-bitcoin-donation-shoutouts-form.php:42
+msgid "Shoutout"
+msgstr "Shoutout"
+
+#: includes/class-coinsnap-bitcoin-donation-shoutout-posts.php:28
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:25
+msgid "Add New"
+msgstr "Neu hinzufügen"
+
+#: includes/class-coinsnap-bitcoin-donation-shoutout-posts.php:29
+msgid "Add New Shoutout"
+msgstr "Neuen Shoutout hinzufügen"
+
+#: includes/class-coinsnap-bitcoin-donation-shoutout-posts.php:30
+msgid "Edit Shoutout"
+msgstr "Shoutout bearbeiten"
+
+#: includes/class-coinsnap-bitcoin-donation-shoutout-posts.php:31
+msgid "New Shoutout"
+msgstr "Neuer Shoutout"
+
+#: includes/class-coinsnap-bitcoin-donation-shoutout-posts.php:32
+msgid "View Shoutout"
+msgstr "Shoutout ansehen"
+
+#: includes/class-coinsnap-bitcoin-donation-shoutout-posts.php:33
+msgid "Search Shoutouts"
+msgstr "Shoutouts suchen"
+
+#: includes/class-coinsnap-bitcoin-donation-shoutout-posts.php:34
+msgid "No shoutouts found"
+msgstr "Keine Shoutouts gefunden"
+
+#: includes/class-coinsnap-bitcoin-donation-shoutout-posts.php:35
+msgid "No shoutouts found in Trash"
+msgstr "Keine Shoutouts im Papierkorb gefunden"
+
+#: includes/class-coinsnap-bitcoin-donation-shoutout-posts.php:124
+#: includes/class-coinsnap-bitcoin-donation-shoutout-posts.php:287
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:135
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:237
+#: includes/class-coinsnap-bitcoin-donation-shoutouts-form.php:84
+msgid "Name"
+msgstr "Name"
+
+#: includes/class-coinsnap-bitcoin-donation-shoutout-posts.php:137
+#: includes/class-coinsnap-bitcoin-donation-shoutout-posts.php:288
+#: includes/class-coinsnap-bitcoin-donation-shortcode-multi-amount-wide.php:87
+#: includes/class-coinsnap-bitcoin-donation-shortcode.php:75
+#: includes/class-coinsnap-bitcoin-donation-shortcode-multi-amount.php:85
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:143
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:239
+#: includes/class-coinsnap-bitcoin-donation-shoutouts-form.php:91
+#: includes/class-coinsnap-bitcoin-donation-shortcode-wide.php:80
+msgid "Amount"
+msgstr "Betrag"
+
+#: includes/class-coinsnap-bitcoin-donation-shoutout-posts.php:150
+#: includes/class-coinsnap-bitcoin-donation-shoutout-posts.php:289
+msgid "Sats Amount"
+msgstr "Betrag in Sats"
+
+#: includes/class-coinsnap-bitcoin-donation-shoutout-posts.php:163
+msgid "Invoice Id"
+msgstr "Rechnungs-ID"
+
+#: includes/class-coinsnap-bitcoin-donation-shoutout-posts.php:176
+#: includes/class-coinsnap-bitcoin-donation-shoutout-posts.php:291
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:151
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:240
+msgid "Message"
+msgstr "Nachricht"
+
+#: includes/class-coinsnap-bitcoin-donation-shoutout-posts.php:190
+msgid "Provider"
+msgstr "Anbieter"
+
+#: includes/class-coinsnap-bitcoin-donation-shoutout-posts.php:290
+msgid "Invoice id"
+msgstr "Rechnungs-ID"
+
+#: includes/class-coinsnap-bitcoin-donation-shoutout-posts.php:301
+msgid "Anonymous"
+msgstr "Anonym"
+
+#: includes/class-coinsnap-bitcoin-donation-shortcode-multi-amount-wide.php:42
+#: includes/class-coinsnap-bitcoin-donation-shortcode.php:39
+#: includes/class-coinsnap-bitcoin-donation-shortcode-multi-amount.php:42
+#: includes/class-coinsnap-bitcoin-donation-shortcode-wide.php:42
+msgid "Donate"
+msgstr "Spenden"
+
+#: includes/class-coinsnap-bitcoin-donation-shortcode-multi-amount-wide.php:43
+#: includes/class-coinsnap-bitcoin-donation-shortcode.php:40
+#: includes/class-coinsnap-bitcoin-donation-shortcode-multi-amount.php:43
+#: includes/class-coinsnap-bitcoin-donation-shortcode-wide.php:43
+msgid "Donate with Bitcoin"
+msgstr "Mit Bitcoin spenden"
+
+#: includes/class-coinsnap-bitcoin-donation-shortcode-multi-amount-wide.php:98
+#: includes/class-coinsnap-bitcoin-donation-shortcode.php:84
+#: includes/class-coinsnap-bitcoin-donation-shortcode-multi-amount.php:118
+#: includes/class-coinsnap-bitcoin-donation-shortcode-wide.php:93
+msgid "Message:"
+msgstr "Nachricht:"
+
+#: includes/class-coinsnap-bitcoin-donation-shortcode-multi-amount-wide.php:105
+#: includes/class-coinsnap-bitcoin-donation-shortcode-multi-amount.php:94
+msgid "Snap Donations"
+msgstr "Schnellspenden"
+
+#: includes/class-coinsnap-bitcoin-donation-shoutouts-list.php:78
+msgid "No Shoutouts Available"
+msgstr "Keine Shoutouts vorhanden"
+
+#: includes/class-coinsnap-bitcoin-donation-shoutouts-list.php:79
+msgid ""
+"There are no shoutouts yet. This is just an example of how they will be "
+"displayed once there are some available."
+msgstr ""
+"Es gibt noch keine Shoutouts. Dies ist nur ein Beispiel, wie sie "
+"angezeigt werden, sobald welche vorhanden sind."
+
+#: includes/class-coinsnap-bitcoin-donation-shoutouts-list.php:80
+msgid "0 sats"
+msgstr "0 Sats"
+
+#: includes/class-coinsnap-bitcoin-donation-shoutouts-list.php:81
+msgid "Today"
+msgstr "Heute"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:24
+msgid "Simple Donation Settings"
+msgstr "Einfache Spende – Einstellungen"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:31
+#: includes/class-coinsnap-bitcoin-donation-forms.php:246
+#: includes/class-coinsnap-bitcoin-donation-forms.php:471
+msgid "Currency"
+msgstr "Währung"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:44
+#: includes/class-coinsnap-bitcoin-donation-forms.php:259
+#: includes/class-coinsnap-bitcoin-donation-forms.php:484
+msgid "Button Text"
+msgstr "Button-Text"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:57
+#: includes/class-coinsnap-bitcoin-donation-forms.php:272
+#: includes/class-coinsnap-bitcoin-donation-forms.php:497
+msgid "Title Text"
+msgstr "Titeltext"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:70
+#: includes/class-coinsnap-bitcoin-donation-forms.php:285
+#: includes/class-coinsnap-bitcoin-donation-forms.php:510
+msgid "Default Amount"
+msgstr "Standardbetrag"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:83
+#: includes/class-coinsnap-bitcoin-donation-forms.php:298
+#: includes/class-coinsnap-bitcoin-donation-forms.php:523
+msgid "Default Message"
+msgstr "Standardnachricht"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:95
+#: includes/class-coinsnap-bitcoin-donation-forms.php:535
+msgid "Redirect Url (Thank You Page)"
+msgstr "Weiterleitungs-URL (Dankesseite)"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:107
+#: includes/class-coinsnap-bitcoin-donation-forms.php:586
+#: includes/class-coinsnap-bitcoin-donation-forms.php:964
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:159
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:243
+msgid "Form Type"
+msgstr "Formulartyp"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:123
+#: includes/class-coinsnap-bitcoin-donation-forms.php:602
+msgid "Collect donor information"
+msgstr "Spenderinformationen erfassen"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:135
+#: includes/class-coinsnap-bitcoin-donation-forms.php:360
+#: includes/class-coinsnap-bitcoin-donation-forms.php:614
+#: templates/coinsnap-bitcoin-donation-modal.php:14
+msgid "First Name"
+msgstr "Vorname"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:153
+#: includes/class-coinsnap-bitcoin-donation-forms.php:378
+#: includes/class-coinsnap-bitcoin-donation-forms.php:631
+#: templates/coinsnap-bitcoin-donation-modal.php:21
+msgid "Last Name"
+msgstr "Nachname"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:171
+#: includes/class-coinsnap-bitcoin-donation-forms.php:396
+#: includes/class-coinsnap-bitcoin-donation-forms.php:648
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:167
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:238
+#: templates/coinsnap-bitcoin-donation-modal.php:28
+msgid "Email"
+msgstr "E-Mail"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:189
+#: includes/class-coinsnap-bitcoin-donation-forms.php:414
+#: includes/class-coinsnap-bitcoin-donation-forms.php:665
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:175
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:241
+#: templates/coinsnap-bitcoin-donation-modal.php:35
+msgid "Address"
+msgstr "Adresse"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:207
+#: includes/class-coinsnap-bitcoin-donation-forms.php:432
+#: includes/class-coinsnap-bitcoin-donation-forms.php:683
+msgid "Custom Field Name"
+msgstr "Name des benutzerdefinierten Feldes"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:220
+#: includes/class-coinsnap-bitcoin-donation-forms.php:445
+#: includes/class-coinsnap-bitcoin-donation-forms.php:696
+msgid "Custom Field Visibility"
+msgstr "Sichtbarkeit des benutzerdefinierten Feldes"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:239
+msgid "Shoutout Donation Settings"
+msgstr "Shoutout-Spende – Einstellungen"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:310
+msgid "Minimum Shoutout Amount, SATS"
+msgstr "Mindestbetrag für Shoutout, SATS"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:323
+msgid "Premium Shoutout Amount, SATS"
+msgstr "Premium-Shoutout-Betrag, SATS"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:336
+msgid "Shoutout List Page Url"
+msgstr "Shoutout-Listen-Seiten-URL"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:348
+#: includes/class-coinsnap-bitcoin-donation-settings.php:58
+#: includes/class-coinsnap-bitcoin-donation-settings.php:59
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:22
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:23
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:24
+#: templates/coinsnap-bitcoin-donation-modal.php:8
+msgid "Donor Information"
+msgstr "Spenderinformationen"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:464
+msgid "Multi Amount Donation Settings"
+msgstr "Mehrfachbetrag-Spende – Einstellungen"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:547
+msgid "Default Amount Field 1"
+msgstr "Standardbetrag Feld 1"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:560
+msgid "Default Amount Field 2"
+msgstr "Standardbetrag Feld 2"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:573
+msgid "Default Amount Field 3"
+msgstr "Standardbetrag Feld 3"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:766
+msgid "Click to copy"
+msgstr "Zum Kopieren klicken"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:771
+msgid "Copied!"
+msgstr "Kopiert!"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:822
+msgid "Configure simple donation form."
+msgstr "Einfaches Spendenformular konfigurieren."
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:826
+msgid "Configure shoutout donation form."
+msgstr "Shoutout-Spendenformular konfigurieren."
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:830
+msgid "Configure multi amount donation form."
+msgstr "Mehrfachbetrag-Spendenformular konfigurieren."
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:940
+msgid "Settings saved successfully"
+msgstr "Einstellungen erfolgreich gespeichert"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:952
+#: includes/class-coinsnap-bitcoin-donation-settings.php:42
+#: includes/class-coinsnap-bitcoin-donation-settings.php:43
+msgid "Donation Forms"
+msgstr "Spendenformulare"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:954
+msgid "Configure the donation form types displayed on your site."
+msgstr "Konfigurieren Sie die auf Ihrer Website angezeigten Spendenformulare."
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:965
+msgid "Select a form type to configure its settings."
+msgstr "Wählen Sie einen Formulartyp, um dessen Einstellungen zu konfigurieren."
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:969
+msgid "Donation Button"
+msgstr "Spenden-Button"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:970
+msgid "Multi Amount"
+msgstr "Mehrfachbetrag"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:995
+msgid "Save your form settings"
+msgstr "Formulareinstellungen speichern"
+
+#: includes/class-coinsnap-bitcoin-donation-forms.php:997
+msgid "Save Settings"
+msgstr "Einstellungen speichern"
+
+#: includes/class-coinsnap-bitcoin-donation-webhooks.php:66
+#: includes/class-coinsnap-bitcoin-donation-webhooks.php:70
+msgid ""
+"Payment gateway is not configured. Please contact the site administrator."
+msgstr ""
+"Das Zahlungsgateway ist nicht konfiguriert. Bitte kontaktieren Sie den Website-Administrator."
+
+#: includes/class-coinsnap-bitcoin-donation-webhooks.php:84
+msgid "Invalid amount."
+msgstr "Ungültiger Betrag."
+
+#: includes/class-coinsnap-bitcoin-donation-webhooks.php:94
+#, php-format
+msgid "Currency %s is not supported."
+msgstr "Die Währung %s wird nicht unterstützt."
+
+#: includes/class-coinsnap-bitcoin-donation-webhooks.php:96
+#, php-format
+msgid "Amount cannot be less than %s %s."
+msgstr "Der Betrag darf nicht weniger als %s %s betragen."
+
+#: includes/class-coinsnap-bitcoin-donation-webhooks.php:125
+msgid "Invoice creation failed. Please try again."
+msgstr "Rechnungserstellung fehlgeschlagen. Bitte versuchen Sie es erneut."
+
+#: includes/class-coinsnap-bitcoin-donation-settings.php:28
+#: includes/class-coinsnap-bitcoin-donation-settings.php:29
+msgid "Coinsnap Bitcoin Donation"
+msgstr "Coinsnap Bitcoin-Spende"
+
+#: includes/class-coinsnap-bitcoin-donation-settings.php:68
+#: includes/class-coinsnap-bitcoin-donation-settings.php:69
+msgid "Transactions"
+msgstr "Transaktionen"
+
+#: includes/class-coinsnap-bitcoin-donation-settings.php:79
+#: includes/class-coinsnap-bitcoin-donation-settings.php:80
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: includes/class-coinsnap-bitcoin-donation-settings.php:88
+#: includes/class-coinsnap-bitcoin-donation-settings.php:89
+msgid "Logs"
+msgstr "Protokolle"
+
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:26
+msgid "Add New Donor"
+msgstr "Neuen Spender hinzufügen"
+
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:27
+msgid "Edit Donor"
+msgstr "Spender bearbeiten"
+
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:28
+msgid "New Donor"
+msgstr "Neuer Spender"
+
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:29
+msgid "View Donor"
+msgstr "Spender ansehen"
+
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:30
+msgid "Search Donors"
+msgstr "Spender suchen"
+
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:31
+msgid "No donors found"
+msgstr "Keine Spender gefunden"
+
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:32
+msgid "No donors found in Trash"
+msgstr "Keine Spender im Papierkorb gefunden"
+
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:111
+msgid "Donor Details"
+msgstr "Spenderdetails"
+
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:183
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:242
+msgid "Payment ID"
+msgstr "Zahlungs-ID"
+
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:191
+#: includes/class-coinsnap-bitcoin-donation-public-donors.php:244
+msgid "Custom Field"
+msgstr "Benutzerdefiniertes Feld"
+
+#: includes/class-coinsnap-bitcoin-donation-shoutouts-form.php:43
+msgid "Bitcoin Shoutouts"
+msgstr "Bitcoin-Shoutouts"
+
+#: includes/class-coinsnap-bitcoin-donation-shoutouts-form.php:105
+msgid "Minimum shoutout amount is"
+msgstr "Der Mindestbetrag für einen Shoutout beträgt"
+
+#: includes/class-coinsnap-bitcoin-donation-shoutouts-form.php:107
+msgid "and Premium shoutout amount"
+msgstr "und der Premium-Shoutout-Betrag"
+
+#: includes/class-coinsnap-bitcoin-donation-shoutouts-form.php:111
+msgid "Selected amount will grant a premium shoutout"
+msgstr "Der gewählte Betrag ergibt einen Premium-Shoutout"
+
+#: includes/class-coinsnap-bitcoin-donation-shoutouts-form.php:113
+msgid "Selected amount is less than minimum allowed for a shoutout"
+msgstr "Der gewählte Betrag liegt unter dem Mindestbetrag für einen Shoutout"
+
+#: includes/class-coinsnap-bitcoin-donation-shoutouts-form.php:117
+msgid "Shoutout Text:"
+msgstr "Shoutout-Text:"
+
+#: templates/coinsnap-bitcoin-donation-modal.php:41
+msgid "Street"
+msgstr "Straße"
+
+#: templates/coinsnap-bitcoin-donation-modal.php:46
+msgid "No."
+msgstr "Nr."
+
+#: templates/coinsnap-bitcoin-donation-modal.php:51
+msgid "ZIP"
+msgstr "PLZ"
+
+#: templates/coinsnap-bitcoin-donation-modal.php:58
+msgid "Town"
+msgstr "Ort"
+
+#: templates/coinsnap-bitcoin-donation-modal.php:63
+msgid "Country"
+msgstr "Land"
+
+#: templates/coinsnap-bitcoin-donation-modal.php:75
+msgid "Pay with Bitcoin"
+msgstr "Mit Bitcoin bezahlen"
+
+#: templates/coinsnap-bitcoin-donation-modal.php:83
+msgid "Your payment was successful."
+msgstr "Ihre Zahlung war erfolgreich."
+
+#: coinsnap-bitcoin-donation.php:246
+msgid "Thank you for your support!"
+msgstr "Vielen Dank für Ihre Unterstützung!"
+
+#: coinsnap-bitcoin-donation.php:253
+msgid "Multi-currency donation"
+msgstr "Mehrwährungsspende"
+
+#: coinsnap-bitcoin-donation.php:259
+msgid "Great work!"
+msgstr "Großartige Arbeit!"

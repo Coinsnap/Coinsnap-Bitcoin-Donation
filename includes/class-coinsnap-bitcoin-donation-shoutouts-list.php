@@ -22,8 +22,6 @@ class Coinsnap_Bitcoin_Donation_Shoutouts_List
             'post_type'      => 'bitcoin-shoutouts',
             'post_status'    => 'publish',
         );
-        $active = $options['shoutout_donation_active'] ?? '1';
-
         $query = new WP_Query($args);
 
         $shoutouts = array();
@@ -56,24 +54,12 @@ class Coinsnap_Bitcoin_Donation_Shoutouts_List
             <div id="coinsnap-bitcoin-donation-shoutouts-wrapper">
 
                 <?php
-                if ($active) {
-                    if (empty($shoutouts)) {
-                        $this->render_empty_donation_row($theme_class);
-                    } else {
-                        foreach ($shoutouts as $shoutout) {
-                            $this->render_donation_row($shoutout, $theme_class);
-                        }
-                    }
+                if (empty($shoutouts)) {
+                    $this->render_empty_donation_row($theme_class);
                 } else {
-                ?>
-                    <div class="coinsnap-bitcoin-donation-form <?php echo esc_attr($theme_class); ?>">
-                        <div class="shoutout-form-wrapper"
-                            style="display: flex;justify-content: center; flex-direction: column; align-items: center; margin: 0">
-                            <h3>Shoutouts List</h3>
-                            <h4 style="text-align: center;"><?php esc_html_e('This form is not active', 'coinsnap-bitcoin-donation');?></h4>
-                        </div>
-                    </div>
-                <?php
+                    foreach ($shoutouts as $shoutout) {
+                        $this->render_donation_row($shoutout, $theme_class);
+                    }
                 }
                 ?>
 

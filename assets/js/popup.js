@@ -15,6 +15,13 @@ const checkDonationRequiredFieds = (fields) => {
 };
 
 function createDonationModal() {
+    // Remove any existing modal first
+    var existing = document.querySelector('.coinsnap-donation-modal-backdrop');
+    if (existing) {
+        existing.pollingActive = false;
+        existing.remove();
+    }
+
     var backdrop = document.createElement('div');
     backdrop.className = 'coinsnap-donation-modal-backdrop';
 
@@ -32,7 +39,11 @@ function createDonationModal() {
     backdrop.addEventListener('click', function (e) {
         if (e.target === backdrop) {
             backdrop.pollingActive = false;
-            backdrop.style.display = 'none';
+            backdrop.remove();
+            // Re-enable all donate buttons
+            document.querySelectorAll('[id$="pay"]').forEach(function (btn) {
+                if (btn.tagName === 'BUTTON') btn.disabled = false;
+            });
         }
     });
 

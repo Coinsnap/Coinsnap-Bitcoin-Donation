@@ -41,7 +41,6 @@ class Coinsnap_Bitcoin_Donation_Shortcode_Wide
         $modal_theme = $theme === 'dark' ? 'dark-theme' : 'light-theme';
         $button_text = $options['button_text'] ?? __('Donate', 'coinsnap-bitcoin-donation');
         $title_text = $options['title_text'] ?? __('Donate with Bitcoin', 'coinsnap-bitcoin-donation');
-        $active = $options['simple_donation_active'] ?? '1';
         $first_name = $options['simple_donation_first_name'] ?? 'hidden';
         $last_name = $options['simple_donation_last_name'] ?? 'hidden';
         $email = $options['simple_donation_email'] ?? 'hidden';
@@ -50,20 +49,6 @@ class Coinsnap_Bitcoin_Donation_Shortcode_Wide
         $custom_name = $options['simple_donation_custom_field_name'] ?? '';
         $public_donors = $options['simple_donation_public_donors'] ?? '';
         $default_currency = $options['currency'] ?? 'EUR';
-        if (!$active) {
-            ob_start();
-?>
-            <div style="padding: 30px;" class="coinsnap-bitcoin-donation-form <?php echo esc_attr($theme_class); ?> wide-form">
-                <div class="coinsnap-bitcoin-donation-title-wrapper"
-                    style="display: flex;justify-content: center; flex-direction: column; align-items: center; margin: 0">
-                    <h3><?php echo esc_html($title_text); ?></h3>
-                </div>
-                <h4 style="text-align: center;"><?php esc_html_e('This form is not active', 'coinsnap-bitcoin-donation');?></h4>
-
-            </div>
-        <?php
-            return ob_get_clean();
-        }
 
         ob_start();
         $coinsnapCurrencies = defined('COINSNAP_CURRENCIES') ? COINSNAP_CURRENCIES : array("EUR","USD","SATS","BTC","CAD","JPY","GBP","CHF","RUB");

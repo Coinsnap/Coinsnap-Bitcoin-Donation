@@ -13,21 +13,6 @@
             $('.public-donor-field.' + section.replace(/_/g, '-')).closest('tr').toggle(isChecked);
         }
 
-        function toggleShoutoutFields(section) {
-            var isChecked = $('#' + section + '_donation_active').is(':checked');
-            section = section.replace(/_/g, '-');
-            if (section === 'shoutout') {
-                $('#' + section + '-donation table tr').not(':first').toggle(isChecked);
-            } else {
-                $('#' + section + '-donation table tbody tr').not(':first').toggle(isChecked);
-            }
-            if (!isChecked) {
-                togglePublicDonorFields(section, false);
-            } else {
-                togglePublicDonorFields(section);
-            }
-        }
-
         function toggleShortcode(value, section) {
             const regular = document.getElementById(`shortcode_${section}`);
             const wide = document.getElementById(`shortcode_${section}_wide`);
@@ -52,14 +37,10 @@
         togglePublicDonorFields('simple_donation');
         togglePublicDonorFields('shoutout');
         togglePublicDonorFields('multi_amount');
-        toggleShoutoutFields('shoutout');
-        toggleShoutoutFields('multi_amount');
 
         $('#simple_donation_public_donors').change(function () { togglePublicDonorFields('simple_donation'); });
         $('#shoutout_public_donors').change(function () { togglePublicDonorFields('shoutout'); });
         $('#multi_amount_public_donors').change(function () { togglePublicDonorFields('multi_amount'); });
-        $('#shoutout_donation_active').change(function () { toggleShoutoutFields('shoutout'); });
-        $('#multi_amount_donation_active').change(function () { toggleShoutoutFields('multi_amount'); });
         $('#form_type').change(function () { toggleShortcode($(this).val(), 'coinsnap_bitcoin_donation'); });
         $('#multi_amount_form_type').change(function () { toggleShortcode($(this).val(), 'multi_amount_donation'); });
 

@@ -45,18 +45,13 @@ class Coinsnap_Bitcoin_Donation_Settings {
             'coinsnap-bitcoin-donation'
         );
 
-        $options = get_option( 'coinsnap_bitcoin_donation_forms_options', array() );
-        $shoutout_active = isset( $options['shoutout_donation_active'] ) ? $options['shoutout_donation_active'] : false;
-
-        if ( $shoutout_active ) {
-            add_submenu_page(
-                'coinsnap-bitcoin-donation',
-                __( 'Shoutouts', 'coinsnap-bitcoin-donation' ),
-                __( 'Shoutouts', 'coinsnap-bitcoin-donation' ),
-                'manage_options',
-                'edit.php?post_type=bitcoin-shoutouts'
-            );
-        }
+        add_submenu_page(
+            'coinsnap-bitcoin-donation',
+            __( 'Shoutouts', 'coinsnap-bitcoin-donation' ),
+            __( 'Shoutouts', 'coinsnap-bitcoin-donation' ),
+            'manage_options',
+            'edit.php?post_type=bitcoin-shoutouts'
+        );
 
         add_submenu_page(
             'coinsnap-bitcoin-donation',

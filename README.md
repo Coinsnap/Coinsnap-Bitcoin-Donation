@@ -235,3 +235,15 @@ Plugin's page on Coinsnap website: [https://coinsnap.io/modules/bitcoin-donation
 * Fixed: JS null errors on pages with only one form type (guard checks for specific elements).
 * Fixed: Amount/currency mismatch when paying in fiat currencies.
 * Fixed: Duplicate settings page rendering removed.
+* New: Re-register Webhook button in Debug Tools (visible when Log Level is Debug).
+* New: Disable Webhook Verification toggle for debugging.
+* New: Admin notice when payment gateway credentials are not configured.
+* New: Payment endpoint returns clear error when gateway is not configured.
+* New: Debug Tools section separated from Advanced settings, only visible in Debug mode.
+* New: German translation (de_DE) with POT template for additional languages.
+* New: load_plugin_textdomain support for translations.
+* Update: Submenu reordered — plugin-specific pages first (Donation Forms, Shoutouts, Donor Info), core pages after (Transactions, Settings, Logs).
+* Update: Removed Active/Enabled checkbox from all form types — forms are always active.
+* Update: Shoutouts submenu always visible (no longer conditional on active checkbox).
+* Fixed: Iframe modal not cleaned up on close — donate button stayed disabled after closing modal.
+* Fixed: Exchange rate API failure (CoinGecko rate limiting) no longer blocks payment creation.

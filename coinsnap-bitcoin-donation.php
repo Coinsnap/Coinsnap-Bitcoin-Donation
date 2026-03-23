@@ -125,6 +125,7 @@ function coinsnap_bitcoin_donation_run_upgrade() {
 class coinsnap_bitcoin_donation {
 
     public function __construct() {
+        add_action( 'init', array( $this, 'load_textdomain' ) );
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_scripts' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
 
@@ -143,6 +144,10 @@ class coinsnap_bitcoin_donation {
         add_action( 'admin_notices', function () use ( $core ) {
             \CoinsnapCore\Admin\SettingsPage::maybe_show_setup_notice( $core );
         } );
+    }
+
+    public function load_textdomain() {
+        load_plugin_textdomain( 'coinsnap-bitcoin-donation', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
     }
 
     public function btcpayApiUrlHandler() {

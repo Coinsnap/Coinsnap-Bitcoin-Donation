@@ -44,7 +44,6 @@ class Coinsnap_Bitcoin_Donation_Shortcode_Multi_Amount_Wide
         $snap1 = $options['multi_amount_default_snap1'] ?? '1';
         $snap2 = $options['multi_amount_default_snap2'] ?? '1';
         $snap3 = $options['multi_amount_default_snap3'] ?? '1';
-        $active = $options['multi_amount_donation_active'] ?? '1';
         $first_name = $options['multi_amount_first_name'] ?? 'hidden';
         $last_name = $options['multi_amount_last_name'] ?? 'hidden';
         $email = $options['multi_amount_email'] ?? 'hidden';
@@ -53,21 +52,6 @@ class Coinsnap_Bitcoin_Donation_Shortcode_Multi_Amount_Wide
         $custom_name = $options['multi_amount_custom_field_name'] ?? '';
         $public_donors = $options['multi_amount_public_donors'] ?? '';
         $default_currency = $options['multi_amount_currency'] ?? 'EUR';
-        
-        if (!$active) {
-            ob_start();
-?>
-            <div style="padding: 30px;" class="coinsnap-bitcoin-donation-form <?php echo esc_attr($theme_class); ?> wide-form">
-                <div class="coinsnap-bitcoin-donation-title-wrapper"
-                    style="display: flex;justify-content: center; flex-direction: column; align-items: center; margin: 0">
-                    <h3><?php echo esc_html($title_text); ?></h3>
-                </div>
-                <h4 style="text-align: center;"><?php esc_html_e('This form is not active', 'coinsnap-bitcoin-donation');?></h4>
-
-            </div>
-        <?php
-            return ob_get_clean();
-        }
 
         ob_start();
         $coinsnapCurrencies = defined('COINSNAP_CURRENCIES') ? COINSNAP_CURRENCIES : array("EUR","USD","SATS","BTC","CAD","JPY","GBP","CHF","RUB");
