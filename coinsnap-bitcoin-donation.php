@@ -38,6 +38,7 @@ require_once COINSNAP_BITCOIN_DONATION_PLUGIN_PATH . 'includes/class-coinsnap-bi
 require_once COINSNAP_BITCOIN_DONATION_PLUGIN_PATH . 'includes/class-coinsnap-bitcoin-donation-shoutouts-form.php';
 require_once COINSNAP_BITCOIN_DONATION_PLUGIN_PATH . 'includes/class-coinsnap-bitcoin-donation-webhooks.php';
 require_once COINSNAP_BITCOIN_DONATION_PLUGIN_PATH . 'includes/class-coinsnap-bitcoin-donation-form-cpt.php';
+require_once COINSNAP_BITCOIN_DONATION_PLUGIN_PATH . 'includes/class-coinsnap-bitcoin-donation-form-renderer.php';
 
 register_activation_hook( __FILE__, 'coinsnap_bitcoin_donation_activate' );
 register_deactivation_hook( __FILE__, 'coinsnap_bitcoin_donation_deactivate' );
@@ -354,6 +355,7 @@ class coinsnap_bitcoin_donation {
 
 new coinsnap_bitcoin_donation();
 new Coinsnap_Bitcoin_Donation_Form_CPT();
+new Coinsnap_Bitcoin_Donation_Form_Renderer();
 
 add_action( 'plugins_loaded', function () {
     $core = coinsnap_bitcoin_donation_get_core();
