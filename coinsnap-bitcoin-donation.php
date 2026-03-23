@@ -39,6 +39,7 @@ require_once COINSNAP_BITCOIN_DONATION_PLUGIN_PATH . 'includes/class-coinsnap-bi
 require_once COINSNAP_BITCOIN_DONATION_PLUGIN_PATH . 'includes/class-coinsnap-bitcoin-donation-webhooks.php';
 require_once COINSNAP_BITCOIN_DONATION_PLUGIN_PATH . 'includes/class-coinsnap-bitcoin-donation-form-cpt.php';
 require_once COINSNAP_BITCOIN_DONATION_PLUGIN_PATH . 'includes/class-coinsnap-bitcoin-donation-form-renderer.php';
+require_once COINSNAP_BITCOIN_DONATION_PLUGIN_PATH . 'includes/class-coinsnap-bitcoin-donation-migration.php';
 
 register_activation_hook( __FILE__, 'coinsnap_bitcoin_donation_activate' );
 register_deactivation_hook( __FILE__, 'coinsnap_bitcoin_donation_deactivate' );
@@ -48,6 +49,7 @@ function coinsnap_bitcoin_donation_activate() {
     \CoinsnapCore\Database\PaymentTable::activate( $core );
     coinsnap_bitcoin_donation_run_upgrade();
     flush_rewrite_rules();
+    Coinsnap_Bitcoin_Donation_Migration::maybe_migrate();
 }
 
 function coinsnap_bitcoin_donation_deactivate() {
@@ -364,4 +366,8 @@ add_action( 'plugins_loaded', function () {
 
 add_action( 'admin_init', function () {
     coinsnap_bitcoin_donation_run_upgrade();
+} );
+
+add_action( 'admin_init', function () {
+    Coinsnap_Bitcoin_Donation_Migration::maybe_migrate();
 } );
