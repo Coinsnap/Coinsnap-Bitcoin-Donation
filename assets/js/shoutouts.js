@@ -1,150 +1,161 @@
-// js/shoutouts.js
+// js/shoutouts.js — Per-form instance initialization via data-* attributes
 jQuery(document).ready(function ($) {
-    
-    const shoutoutAmount = document.getElementById('coinsnap-bitcoin-donation-shoutout-amount');
-    
-    if (shoutoutAmount) {
-        
-        const minAmount = coinsnapDonationShoutoutsData.minimumShoutoutAmount;
-        const premiumAmount = coinsnapDonationShoutoutsData.premiumShoutoutAmount;
-        var selectedCurrency = coinsnapDonationShoutoutsData.currency;
-        var secondaryCurrency = (selectedCurrency === 'SATS')? 'EUR' : 'SATS';
 
-        const setDonationShoutoutDefaults = () => {
-            
-            const currencyFieldName = `coinsnap-bitcoin-donation-shoutout-swap`;
-            const primaryFieldName = `coinsnap-bitcoin-donation-shoutout-amount`;
-            const secondaryFieldName = `coinsnap-bitcoin-donation-shoutout-satoshi`;
-            
-            const messageField = document.getElementById(`coinsnap-bitcoin-donation-shoutout-message`);
-            messageField.value = coinsnapDonationShoutoutsData.defaultShoutoutMessage;
+    document.querySelectorAll('.coinsnap-donation-form-instance[data-form-type="shoutout"]').forEach(function (container) {
+        var formId = container.dataset.formId;
+        var config = {
+            currency:       container.dataset.currency,
+            defaultAmount:  container.dataset.defaultAmount,
+            defaultMessage: container.dataset.defaultMessage,
+            redirectUrl:    container.dataset.redirectUrl,
+            minimumAmount:  parseFloat(container.dataset.minimumAmount),
+            premiumAmount:  parseFloat(container.dataset.premiumAmount)
+        };
 
-            document.getElementById(currencyFieldName).value = selectedCurrency;
-            document.getElementById(primaryFieldName).value = coinsnapDonationShoutoutsData.defaultShoutoutAmount;
+        // All shoutout element IDs follow: coinsnap-bitcoin-donation-shoutout-{element}-{formId}
+        var idSuffix = '-' + formId;
+        var minAmount     = config.minimumAmount;
+        var premiumAmount = config.premiumAmount;
 
-            updateSecondaryShoutoutCurrency(primaryFieldName,secondaryFieldName,coinsnapDonationShoutoutsData.defaultShoutoutAmount);
-        }
-        
-        const updateSecondaryShoutoutCurrency = (primaryId, secondaryId, originalAmount) => {
-            const currencyFieldName = `coinsnap-bitcoin-donation-shoutout-swap`;
-            const currency = document.getElementById(currencyFieldName).value;
-            
-            const currencyRate = (currency === 'SATS')
-                ? 1/$(`#` + currencyFieldName + ` option[value="EUR"]`).attr('data-rate') 
-                : $(`#` + currencyFieldName + ` option:selected`).attr('data-rate');
-            
-            const converted = (currency === 'SATS')? (originalAmount * currencyRate).toFixed(2) : (originalAmount * currencyRate).toFixed(0);
-            const secondaryCurrency = (currency === 'SATS')? 'EUR' : 'SATS';
-            
-            const withSeparators = addNumSeparators(converted);
-            document.getElementById(secondaryId).textContent = `≈ ${withSeparators} ${secondaryCurrency}`;
-            $('#'+secondaryId).attr('data-value',converted);
-        }
-        
-        setDonationShoutoutDefaults();
-        addDonationPopupListener('coinsnap-bitcoin-donation-shoutout-', '', 'Bitcoin Shoutout', coinsnapDonationShoutoutsData.redirectUrl);
-        
-        const handleShoutoutsAmountInput = () => {
-            
-            const currencyFieldName = `coinsnap-bitcoin-donation-shoutout-swap`;
-            const primaryFieldName = `coinsnap-bitcoin-donation-shoutout-amount`;
-            const secondaryFieldName = `coinsnap-bitcoin-donation-shoutout-satoshi`;
-            const selectedCurrency = coinsnapDonationShoutoutsData.currency;
-            const secondaryCurrency = (selectedCurrency === 'SATS')? 'EUR' : 'SATS';
-            
-            let amountValue = document.getElementById(primaryFieldName).value.replace(/[^\d.,]/g, '');
-            const decimalSeparator = getThousandSeparator() === "." ? "," : ".";
-            
+        // ---- helpers ----
+
+        var updateSecondaryShoutoutCurrency = function (primaryId, secondaryId, originalAmount) {
+            var currencyFieldName = 'coinsnap-bitcoin-donation-shoutout-swap' + idSuffix;
+            var currency = document.getElementById(currencyFieldName).value;
+
+            var currencyRate = (currency === 'SATS')
+                ? 1 / $('#' + currencyFieldName + ' option[value="EUR"]').attr('data-rate')
+                : $('#' + currencyFieldName + ' option:selected').attr('data-rate');
+
+            var converted = (currency === 'SATS')
+                ? (originalAmount * currencyRate).toFixed(2)
+                : (originalAmount * currencyRate).toFixed(0);
+            var secCur = (currency === 'SATS') ? 'EUR' : 'SATS';
+
+            var withSeparators = addNumSeparators(converted);
+            document.getElementById(secondaryId).textContent = '\u2248 ' + withSeparators + ' ' + secCur;
+            $('#' + secondaryId).attr('data-value', converted);
+        };
+
+        var updateShoutoutInfo = function () {
+            var fieldName = 'coinsnap-bitcoin-donation-shoutout-amount' + idSuffix;
+            var field = document.getElementById(fieldName);
+            var value = cleanDonationAmount(field.value);
+
+            var currencyFieldName = 'coinsnap-bitcoin-donation-shoutout-swap' + idSuffix;
+            var selectedCurrency = document.getElementById(currencyFieldName).value;
+            var currencySatsRate = (selectedCurrency === 'SATS') ? 1 : jQuery('#' + currencyFieldName + ' option:selected').attr('data-rate');
+            var amount = (selectedCurrency === 'SATS') ? value : value * currencySatsRate;
+
+            var shoutButton = document.getElementById('coinsnap-bitcoin-donation-shoutout-pay' + idSuffix);
+            var helpMinimum = document.getElementById('coinsnap-bitcoin-donation-shoutout-help-minimum' + idSuffix);
+            var helpPremium = document.getElementById('coinsnap-bitcoin-donation-shoutout-help-premium' + idSuffix);
+            var helpInfo    = document.getElementById('coinsnap-bitcoin-donation-shoutout-help-info' + idSuffix);
+
+            if (amount < minAmount) {
+                field.style.color = '#e55e65';
+                if (shoutButton) shoutButton.disabled = true;
+                if (helpMinimum) helpMinimum.style.display = 'block';
+                if (helpPremium) helpPremium.style.display = 'none';
+                if (helpInfo)    helpInfo.style.display = 'none';
+            } else if (amount >= premiumAmount) {
+                field.style.color = '#f7931a';
+                if (shoutButton) shoutButton.disabled = false;
+                if (helpMinimum) helpMinimum.style.display = 'none';
+                if (helpPremium) helpPremium.style.display = 'block';
+                if (helpInfo)    helpInfo.style.display = 'none';
+            } else {
+                field.style.color = '';
+                if (shoutButton) shoutButton.disabled = false;
+                if (helpMinimum) helpMinimum.style.display = 'none';
+                if (helpPremium) helpPremium.style.display = 'none';
+                if (helpInfo)    helpInfo.style.display = 'block';
+            }
+        };
+
+        // ---- set defaults ----
+
+        var currencyFieldName   = 'coinsnap-bitcoin-donation-shoutout-swap' + idSuffix;
+        var primaryFieldName    = 'coinsnap-bitcoin-donation-shoutout-amount' + idSuffix;
+        var secondaryFieldName  = 'coinsnap-bitcoin-donation-shoutout-satoshi' + idSuffix;
+
+        var messageField = document.getElementById('coinsnap-bitcoin-donation-shoutout-message' + idSuffix);
+        if (messageField) messageField.value = config.defaultMessage;
+
+        var swapEl = document.getElementById(currencyFieldName);
+        if (swapEl) swapEl.value = config.currency;
+
+        var amountEl = document.getElementById(primaryFieldName);
+        if (amountEl) amountEl.value = config.defaultAmount;
+
+        updateSecondaryShoutoutCurrency(primaryFieldName, secondaryFieldName, config.defaultAmount);
+
+        // ---- popup listener ----
+
+        addDonationPopupListener('coinsnap-bitcoin-donation-shoutout-', idSuffix, 'Bitcoin Shoutout', config.redirectUrl);
+
+        // ---- amount input handler ----
+
+        var handleShoutoutsAmountInput = function () {
+            var pField = 'coinsnap-bitcoin-donation-shoutout-amount' + idSuffix;
+            var sField = 'coinsnap-bitcoin-donation-shoutout-satoshi' + idSuffix;
+            var cField = 'coinsnap-bitcoin-donation-shoutout-swap' + idSuffix;
+            var selCur = document.getElementById(cField).value;
+            var secCur = (selCur === 'SATS') ? 'EUR' : 'SATS';
+
+            var amountValue = document.getElementById(pField).value.replace(/[^\d.,]/g, '');
+            var decimalSeparator = getThousandSeparator() === '.' ? ',' : '.';
+
             if (amountValue[0] === '0' && amountValue[1] !== decimalSeparator && amountValue.length > 1) {
                 amountValue = amountValue.substring(1);
             }
             if (amountValue.trim() !== '') {
-                document.getElementById(primaryFieldName).value = amountValue;
-                updateSecondaryShoutoutCurrency(primaryFieldName, secondaryFieldName, amountValue);
-            }
-            else {
-                document.getElementById(primaryFieldName).value = '';
-                document.getElementById(secondaryFieldName).textContent = 0 + " " + secondaryCurrency;
-            }
-            
-            updateShoutoutInfo('coinsnap-bitcoin-donation-shoutout-amount');
-
-        }
-        
-        const handleShoutoutCurrencyChange = () => {
-            
-            const primaryFieldName = `coinsnap-bitcoin-donation-shoutout-amount`;
-            const secondaryFieldName = `coinsnap-bitcoin-donation-shoutout-satoshi`;
-            const currencyFieldName = `coinsnap-bitcoin-donation-shoutout-swap`;
-            const selectedCurrency = document.getElementById(currencyFieldName).value;
-            
-            
-            const amountField = $(`#` + primaryFieldName);
-            const amountValue = cleanDonationAmount(amountField.val()) || 0;
-            amountField.val(amountValue);
-            var label = document.getElementById('coinsnap-bitcoin-donation-shoutout-currency-label');
-            if (label) label.textContent = selectedCurrency;
-
-            const currencySatsRate = (selectedCurrency === 'SATS')? 1 : $(`#` + currencyFieldName + ` option:selected`).attr('data-rate');
-            
-            const displayMinAmount = (selectedCurrency === 'SATS' || selectedCurrency === 'RUB' || selectedCurrency === 'JPY')? 
-                (minAmount/currencySatsRate).toFixed(0) : ((selectedCurrency === 'BTC')? (minAmount/currencySatsRate).toFixed(8) : (minAmount/currencySatsRate).toFixed(2));
-            
-            const displayPremiumAmount = (selectedCurrency === 'SATS' || selectedCurrency === 'RUB' || selectedCurrency === 'JPY')? 
-                (premiumAmount/currencySatsRate).toFixed(0) : ((selectedCurrency === 'BTC')? (premiumAmount/currencySatsRate).toFixed(7) : (premiumAmount/currencySatsRate).toFixed(2));
-            
-            
-            $('#coinsnap-bitcoin-donation-shoutout-help-minimum-amount').text(displayMinAmount + ' ' + selectedCurrency);
-            $('#coinsnap-bitcoin-donation-shoutout-help-premium-amount').text(displayPremiumAmount + ' ' + selectedCurrency);
-            
-            updateSecondaryShoutoutCurrency(primaryFieldName, secondaryFieldName, amountValue);
-        }
-
-        
-
-        const updateShoutoutInfo = (fieldName) => {
-            const field = document.getElementById(fieldName);
-            const value = cleanDonationAmount(field.value);
-
-            const currencyFieldName = 'coinsnap-bitcoin-donation-shoutout-swap';
-            const selectedCurrency = document.getElementById(currencyFieldName).value;
-            const currencySatsRate = (selectedCurrency === 'SATS') ? 1 : jQuery('#' + currencyFieldName + ' option:selected').attr('data-rate');
-            const amount = (selectedCurrency === 'SATS') ? value : value * currencySatsRate;
-
-            const shoutButton = document.getElementById('coinsnap-bitcoin-donation-shoutout-pay');
-            const helpMinimum = document.getElementById('coinsnap-bitcoin-donation-shoutout-help-minimum');
-            const helpPremium = document.getElementById('coinsnap-bitcoin-donation-shoutout-help-premium');
-            const helpInfo = document.getElementById('coinsnap-bitcoin-donation-shoutout-help-info');
-
-            if (amount < minAmount) {
-                field.style.color = '#e55e65';
-                shoutButton.disabled = true;
-                helpMinimum.style.display = 'block';
-                helpPremium.style.display = 'none';
-                helpInfo.style.display = 'none';
-            } else if (amount >= premiumAmount) {
-                field.style.color = '#f7931a';
-                shoutButton.disabled = false;
-                helpMinimum.style.display = 'none';
-                helpPremium.style.display = 'block';
-                helpInfo.style.display = 'none';
+                document.getElementById(pField).value = amountValue;
+                updateSecondaryShoutoutCurrency(pField, sField, amountValue);
             } else {
-                field.style.color = '';
-                shoutButton.disabled = false;
-                helpMinimum.style.display = 'none';
-                helpPremium.style.display = 'none';
-                helpInfo.style.display = 'block';
+                document.getElementById(pField).value = '';
+                document.getElementById(sField).textContent = 0 + ' ' + secCur;
             }
+
+            updateShoutoutInfo();
         };
 
-        
+        // ---- currency change handler ----
 
-        
+        var handleShoutoutCurrencyChange = function () {
+            var pField = 'coinsnap-bitcoin-donation-shoutout-amount' + idSuffix;
+            var sField = 'coinsnap-bitcoin-donation-shoutout-satoshi' + idSuffix;
+            var cField = 'coinsnap-bitcoin-donation-shoutout-swap' + idSuffix;
+            var selCur = document.getElementById(cField).value;
 
-        $('#coinsnap-bitcoin-donation-shoutout-amount').on('input', () => handleShoutoutsAmountInput(false));
-        $('#coinsnap-bitcoin-donation-shoutout-swap').on('change', () => { handleShoutoutCurrencyChange(false); });
-        NumericInput('coinsnap-bitcoin-donation-shoutout-amount');
+            var amountField = $('#' + pField);
+            var amountValue = cleanDonationAmount(amountField.val()) || 0;
+            amountField.val(amountValue);
 
-    }
+            var label = document.getElementById('coinsnap-bitcoin-donation-shoutout-currency-label' + idSuffix);
+            if (label) label.textContent = selCur;
+
+            var currencySatsRate = (selCur === 'SATS') ? 1 : $('#' + cField + ' option:selected').attr('data-rate');
+
+            var displayMinAmount = (selCur === 'SATS' || selCur === 'RUB' || selCur === 'JPY')
+                ? (minAmount / currencySatsRate).toFixed(0)
+                : ((selCur === 'BTC') ? (minAmount / currencySatsRate).toFixed(8) : (minAmount / currencySatsRate).toFixed(2));
+
+            var displayPremiumAmount = (selCur === 'SATS' || selCur === 'RUB' || selCur === 'JPY')
+                ? (premiumAmount / currencySatsRate).toFixed(0)
+                : ((selCur === 'BTC') ? (premiumAmount / currencySatsRate).toFixed(7) : (premiumAmount / currencySatsRate).toFixed(2));
+
+            $('#coinsnap-bitcoin-donation-shoutout-help-minimum-amount' + idSuffix).text(displayMinAmount + ' ' + selCur);
+            $('#coinsnap-bitcoin-donation-shoutout-help-premium-amount' + idSuffix).text(displayPremiumAmount + ' ' + selCur);
+
+            updateSecondaryShoutoutCurrency(pField, sField, amountValue);
+        };
+
+        // ---- bind events ----
+
+        $('#' + primaryFieldName).on('input', handleShoutoutsAmountInput);
+        $('#' + currencyFieldName).on('change', handleShoutoutCurrencyChange);
+        NumericInput(primaryFieldName);
+    });
 
 });

@@ -244,27 +244,6 @@ class coinsnap_bitcoin_donation {
     }
 
     public function enqueue_frontend_scripts() {
-        $forms_defaults = array(
-            'currency' => 'EUR',
-            'default_amount' => 5,
-            'default_message' => __( 'Thank you for your support!', 'coinsnap-bitcoin-donation' ),
-            'redirect_url' => home_url(),
-            'multi_amount_currency' => 'EUR',
-            'multi_amount_default_snap1' => 5,
-            'multi_amount_default_snap2' => 10,
-            'multi_amount_default_snap3' => 25,
-            'multi_amount_default_amount' => 10,
-            'multi_amount_default_message' => __( 'Multi-currency donation', 'coinsnap-bitcoin-donation' ),
-            'multi_amount_redirect_url' => home_url(),
-            'shoutout_currency' => 'EUR',
-            'shoutout_default_amount' => 20,
-            'shoutout_minimum_amount' => 5,
-            'shoutout_premium_amount' => 50,
-            'shoutout_default_message' => __( 'Great work!', 'coinsnap-bitcoin-donation' ),
-            'shoutout_redirect_url' => home_url(),
-        );
-        $forms_options = array_merge( $forms_defaults, (array) get_option( 'coinsnap_bitcoin_donation_forms_options', array() ) );
-
         $core = coinsnap_bitcoin_donation_get_core();
         $core_settings = \CoinsnapCore\Admin\SettingsPage::get_settings_for( $core );
 
@@ -283,34 +262,10 @@ class coinsnap_bitcoin_donation {
 
         wp_enqueue_script( 'coinsnap-bitcoin-donation-popup-script', plugin_dir_url( __FILE__ ) . 'assets/js/popup.js', array( 'jquery', 'coinsnap-bitcoin-donation-shared-script' ), COINSNAP_BITCOIN_DONATION_VERSION, true );
 
+        // Form-specific config is now provided via data-* attributes on each form container.
         wp_enqueue_script( 'coinsnap-bitcoin-donation-form-script', plugin_dir_url( __FILE__ ) . 'assets/js/donations.js', array( 'jquery', 'coinsnap-bitcoin-donation-popup-script' ), COINSNAP_BITCOIN_DONATION_VERSION, true );
-        wp_localize_script( 'coinsnap-bitcoin-donation-form-script', 'coinsnapDonationFormData', array(
-            'currency'       => $forms_options['currency'],
-            'defaultAmount'  => $forms_options['default_amount'],
-            'defaultMessage' => $forms_options['default_message'],
-            'redirectUrl'    => $forms_options['redirect_url'],
-        ) );
-
         wp_enqueue_script( 'coinsnap-bitcoin-donation-multi-script', plugin_dir_url( __FILE__ ) . 'assets/js/multi.js', array( 'jquery', 'coinsnap-bitcoin-donation-popup-script' ), COINSNAP_BITCOIN_DONATION_VERSION, true );
-        wp_localize_script( 'coinsnap-bitcoin-donation-multi-script', 'coinsnapDonationMultiData', array(
-            'snap1Amount'        => $forms_options['multi_amount_default_snap1'],
-            'snap2Amount'        => $forms_options['multi_amount_default_snap2'],
-            'snap3Amount'        => $forms_options['multi_amount_default_snap3'],
-            'multiCurrency'      => $forms_options['multi_amount_currency'],
-            'defaultMultiAmount' => $forms_options['multi_amount_default_amount'],
-            'defaultMultiMessage' => $forms_options['multi_amount_default_message'],
-            'redirectUrl'        => $forms_options['multi_amount_redirect_url'],
-        ) );
-
         wp_enqueue_script( 'coinsnap-bitcoin-donation-shoutout-script', plugin_dir_url( __FILE__ ) . 'assets/js/shoutouts.js', array( 'jquery', 'coinsnap-bitcoin-donation-popup-script' ), COINSNAP_BITCOIN_DONATION_VERSION, true );
-        wp_localize_script( 'coinsnap-bitcoin-donation-shoutout-script', 'coinsnapDonationShoutoutsData', array(
-            'currency'              => $forms_options['shoutout_currency'],
-            'defaultShoutoutAmount' => $forms_options['shoutout_default_amount'],
-            'minimumShoutoutAmount' => $forms_options['shoutout_minimum_amount'],
-            'premiumShoutoutAmount' => $forms_options['shoutout_premium_amount'],
-            'defaultShoutoutMessage' => $forms_options['shoutout_default_message'],
-            'redirectUrl'           => $forms_options['shoutout_redirect_url'],
-        ) );
     }
 
     public function enqueue_admin_scripts( $hook ) {

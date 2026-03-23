@@ -1,170 +1,164 @@
-// js/script.js
+// js/multi.js — Per-form instance initialization via data-* attributes
 jQuery(document).ready(function ($) {
-    
-    const multiDonation = document.getElementById('coinsnap-bitcoin-donation-amount-multi');
-    const wideMultiDonation = document.getElementById('coinsnap-bitcoin-donation-amount-multi-wide');
-    
-    if (multiDonation || wideMultiDonation) {
 
-        var selectedMultiCurrency = coinsnapDonationMultiData.multiCurrency;
-        var secondaryMultiCurrency = (selectedMultiCurrency === 'SATS')? 'EUR' : 'SATS';
+    document.querySelectorAll('.coinsnap-donation-form-instance[data-form-type="multi_amount"]').forEach(function (container) {
+        var formId = container.dataset.formId;
+        var isWide = container.dataset.layout === 'WIDE';
+        var config = {
+            currency:       container.dataset.currency,
+            defaultAmount:  container.dataset.defaultAmount,
+            defaultMessage: container.dataset.defaultMessage,
+            redirectUrl:    container.dataset.redirectUrl,
+            snap1Amount:    container.dataset.snap1,
+            snap2Amount:    container.dataset.snap2,
+            snap3Amount:    container.dataset.snap3
+        };
 
-        if (multiDonation || wideMultiDonation) {
+        // Narrow: IDs like coinsnap-bitcoin-donation-amount-multi-{formId}
+        // Wide:   IDs like coinsnap-bitcoin-donation-amount-multi-wide-{formId}
+        var widePart = isWide ? '-wide' : '';
+        var idSuffix = '-multi' + widePart + '-' + formId;
 
-            const updateSecondaryMultiCurrency = (wide, primaryId, secondaryId, originalAmount) => {
-                const widePart = wide ? '-wide' : '';
-                const currencyFieldName = `coinsnap-bitcoin-donation-swap-multi${widePart}`;
-                const currency = document.getElementById(currencyFieldName).value;
+        // ---- helpers ----
 
-                const currencyRate = (currency === 'SATS')
-                    ? 1/$(`#` + currencyFieldName + ` option[value="EUR"]`).attr('data-rate') 
-                    : $(`#` + currencyFieldName + ` option:selected`).attr('data-rate');
+        var updateSecondaryMultiCurrency = function (primaryId, secondaryId, originalAmount) {
+            var currencyFieldName = 'coinsnap-bitcoin-donation-swap' + idSuffix;
+            var currency = document.getElementById(currencyFieldName).value;
 
-                const converted = (currency === 'SATS')? (originalAmount * currencyRate).toFixed(2) : (originalAmount * currencyRate).toFixed(0);
-                const secondaryCurrency = (currency === 'SATS')? 'EUR' : 'SATS';
+            var currencyRate = (currency === 'SATS')
+                ? 1 / $('#' + currencyFieldName + ' option[value="EUR"]').attr('data-rate')
+                : $('#' + currencyFieldName + ' option:selected').attr('data-rate');
 
-                const withSeparators = addNumSeparators(converted);
+            var converted = (currency === 'SATS')
+                ? (originalAmount * currencyRate).toFixed(2)
+                : (originalAmount * currencyRate).toFixed(0);
+            var secCur = (currency === 'SATS') ? 'EUR' : 'SATS';
 
-                document.getElementById(secondaryId).textContent = `≈ ${withSeparators} ${secondaryCurrency}`;
-                $('#'+secondaryId).attr('data-value',converted);
-            };
+            var withSeparators = addNumSeparators(converted);
+            document.getElementById(secondaryId).textContent = '\u2248 ' + withSeparators + ' ' + secCur;
+            $('#' + secondaryId).attr('data-value', converted);
+        };
 
-            const setMultiDefaults = (wide) => {
-                const widePart = wide ? '-wide' : '';
-                const currencyFieldName = `coinsnap-bitcoin-donation-swap-multi${widePart}`;
-                const primaryFieldName = `coinsnap-bitcoin-donation-amount-multi${widePart}`;
-                const secondaryFieldName = `coinsnap-bitcoin-donation-satoshi-multi${widePart}`;
+        // ---- set defaults ----
 
-                const messageField = document.getElementById(`coinsnap-bitcoin-donation-message-multi${widePart}`);
-                messageField.value = coinsnapDonationMultiData.defaultMultiMessage;
+        var currencyFieldName   = 'coinsnap-bitcoin-donation-swap' + idSuffix;
+        var primaryFieldName    = 'coinsnap-bitcoin-donation-amount' + idSuffix;
+        var secondaryFieldName  = 'coinsnap-bitcoin-donation-satoshi' + idSuffix;
 
-                document.getElementById(currencyFieldName).value = selectedMultiCurrency;
-                document.getElementById(primaryFieldName).value = coinsnapDonationMultiData.defaultMultiAmount;
+        var messageField = document.getElementById('coinsnap-bitcoin-donation-message' + idSuffix);
+        if (messageField) messageField.value = config.defaultMessage;
 
-                updateSecondaryMultiCurrency(wide,primaryFieldName,secondaryFieldName,coinsnapDonationMultiData.defaultMultiAmount);
+        var swapEl = document.getElementById(currencyFieldName);
+        if (swapEl) swapEl.value = config.currency;
 
-                for (let i = 1; i <= 3; i++) {
-                    updateSecondaryMultiCurrency(
-                        wide,
-                        `coinsnap-bitcoin-donation-pay-multi-snap${i}-primary${widePart}`,
-                        `coinsnap-bitcoin-donation-pay-multi-snap${i}-secondary${widePart}`,
-                        coinsnapDonationMultiData[`snap${i}Amount`]
-                    );
-                }
-                unformatNumericInput(document.getElementById(primaryFieldName));
-                formatNumericInput(document.getElementById(primaryFieldName));
-            };
+        var amountEl = document.getElementById(primaryFieldName);
+        if (amountEl) amountEl.value = config.defaultAmount;
 
-            if (multiDonation) {
-                    setMultiDefaults(false);
-                    addDonationPopupListener('coinsnap-bitcoin-donation-', '-multi', 'Multi Amount Donation', coinsnapDonationMultiData.redirectUrl);
-                }
-                if (wideMultiDonation) {
-                    setMultiDefaults(true);
-                    addDonationPopupListener('coinsnap-bitcoin-donation-', '-multi-wide', 'Multi Amount Donation', coinsnapDonationMultiData.redirectUrl);
-                }
+        updateSecondaryMultiCurrency(primaryFieldName, secondaryFieldName, config.defaultAmount);
 
-            const handleMultiAmountInput = (wide) => {
-                const widePart = wide ? '-wide' : '';
-                const primaryFieldName = `coinsnap-bitcoin-donation-amount-multi${widePart}`;
-                const secondaryFieldName = `coinsnap-bitcoin-donation-satoshi-multi${widePart}`;
-                const currencyFieldName = `coinsnap-bitcoin-donation-swap-multi${widePart}`;
-                const selectedCurrency = document.getElementById(currencyFieldName).value;
-                const secondaryCurrency = (selectedCurrency === 'SATS')? 'EUR' : 'SATS';
+        // Update snap button secondary amounts
+        for (var i = 1; i <= 3; i++) {
+            var snapPrimaryId   = 'coinsnap-bitcoin-donation-pay-multi-snap' + i + '-primary' + widePart + '-' + formId;
+            var snapSecondaryId = 'coinsnap-bitcoin-donation-pay-multi-snap' + i + '-secondary' + widePart + '-' + formId;
+            updateSecondaryMultiCurrency(snapPrimaryId, snapSecondaryId, config['snap' + i + 'Amount']);
+        }
 
-                let amountValue = document.getElementById(primaryFieldName).value.replace(/[^\d.,]/g, '');
-                const decimalSeparator = getThousandSeparator() === "." ? "," : ".";
+        var amountInput = document.getElementById(primaryFieldName);
+        if (amountInput) {
+            unformatNumericInput(amountInput);
+            formatNumericInput(amountInput);
+        }
 
-                if (amountValue[0] === '0' && amountValue[1] !== decimalSeparator && amountValue.length > 1) {
-                    amountValue = amountValue.substring(1);
-                }
-                if (amountValue.trim() !== '') {
-                    document.getElementById(primaryFieldName).value = amountValue;
-                    updateSecondaryMultiCurrency(wide, primaryFieldName, secondaryFieldName, amountValue);
-                }
-                else {
-                    document.getElementById(primaryFieldName).value = '';
-                    document.getElementById(secondaryFieldName).textContent = 0 + " " + secondaryCurrency;
-                }
+        // ---- popup listener ----
+        // Modal template uses suffix "-{formId}".
+        addDonationPopupListener('coinsnap-bitcoin-donation-', '-' + formId, 'Multi Amount Donation', config.redirectUrl);
+
+        // ---- amount input handler ----
+
+        var handleMultiAmountInput = function () {
+            var pField = 'coinsnap-bitcoin-donation-amount' + idSuffix;
+            var sField = 'coinsnap-bitcoin-donation-satoshi' + idSuffix;
+            var cField = 'coinsnap-bitcoin-donation-swap' + idSuffix;
+            var selCur = document.getElementById(cField).value;
+            var secCur = (selCur === 'SATS') ? 'EUR' : 'SATS';
+
+            var amountValue = document.getElementById(pField).value.replace(/[^\d.,]/g, '');
+            var decimalSeparator = getThousandSeparator() === '.' ? ',' : '.';
+
+            if (amountValue[0] === '0' && amountValue[1] !== decimalSeparator && amountValue.length > 1) {
+                amountValue = amountValue.substring(1);
             }
-
-            // Update secondary values
-            $('#coinsnap-bitcoin-donation-amount-multi').on('input', () => handleMultiAmountInput(false));
-            $('#coinsnap-bitcoin-donation-amount-multi-wide').on('input', () => handleMultiAmountInput(true));
-
-            // Handle thousands separators
-            if(multiDonation){
-                NumericInput('coinsnap-bitcoin-donation-amount-multi');
+            if (amountValue.trim() !== '') {
+                document.getElementById(pField).value = amountValue;
+                updateSecondaryMultiCurrency(pField, sField, amountValue);
+            } else {
+                document.getElementById(pField).value = '';
+                document.getElementById(sField).textContent = 0 + ' ' + secCur;
             }
-            if(wideMultiDonation){
-                NumericInput('coinsnap-bitcoin-donation-amount-multi-wide');
-            }
+        };
+
+        // ---- bind amount input ----
+
+        $('#' + primaryFieldName).on('input', handleMultiAmountInput);
+        NumericInput(primaryFieldName);
+
+        // ---- snap button click handlers ----
+
+        var snapIds = ['snap1', 'snap2', 'snap3'];
+        snapIds.forEach(function (snapId) {
+            var payButtonId = 'coinsnap-bitcoin-donation-pay-multi-' + snapId + widePart + '-' + formId;
+            var primaryId   = 'coinsnap-bitcoin-donation-pay-multi-' + snapId + '-primary' + widePart + '-' + formId;
+
+            $('#' + payButtonId).on('click', function () {
+                var amountField = $('#' + primaryFieldName);
+                var amount = cleanDonationAmount(document.getElementById(primaryId).textContent);
+                amountField.val(amount);
+                amountField.trigger('input');
+            });
+        });
+
+        // ---- currency change handler ----
+
+        var handleMultiCurrencyChange = function () {
+            var pField = 'coinsnap-bitcoin-donation-amount' + idSuffix;
+            var sField = 'coinsnap-bitcoin-donation-satoshi' + idSuffix;
+            var cField = 'coinsnap-bitcoin-donation-swap' + idSuffix;
+            var selCur = document.getElementById(cField).value;
+
+            var selectedCurrencyRate = (selCur === 'SATS')
+                ? 1 / $('#' + cField + ' option[value="EUR"]').attr('data-rate')
+                : $('#' + cField + ' option:selected').attr('data-rate');
+
+            var amountField = $('#' + pField);
+            var primaryAmount = (selCur === 'SATS')
+                ? (parseFloat(amountField.val()) / selectedCurrencyRate).toFixed(0)
+                : parseFloat(amountField.val());
+
+            var amountValue = primaryAmount || 0;
+            amountField.val(amountValue);
+
+            var labelId = 'coinsnap-bitcoin-donation-currency-label' + idSuffix;
+            var label   = document.getElementById(labelId);
+            if (label) label.textContent = selCur;
+
+            updateSecondaryMultiCurrency(pField, sField, amountValue);
 
             // Update snap buttons
-            const snapIds = ['snap1', 'snap2', 'snap3'];
-
-            const widePart = (wideMultiDonation)? '-wide' : '';
-
-            snapIds.forEach(snapId => {
-
-                    const suffix = `${snapId}${widePart}`;
-                    const payButtonId = `coinsnap-bitcoin-donation-pay-multi-${suffix}`;
-                    const primaryId = `coinsnap-bitcoin-donation-pay-multi-${snapId}-primary${widePart}`;
-
-                    $(`#${payButtonId}`).on('click', () => {
-                        const amountField = $(`#coinsnap-bitcoin-donation-amount-multi${widePart}`);
-                        const amount = cleanDonationAmount(document.getElementById(primaryId).textContent);
-                        amountField.val(amount);
-                        amountField.trigger('input');
-                    });
-
+            var snaps = ['snap1', 'snap2', 'snap3'];
+            snaps.forEach(function (snap) {
+                var snapPrimaryId   = 'coinsnap-bitcoin-donation-pay-multi-' + snap + '-primary' + widePart + '-' + formId;
+                var snapSecondaryId = 'coinsnap-bitcoin-donation-pay-multi-' + snap + '-secondary' + widePart + '-' + formId;
+                var snapPrimaryAmount = (selCur === 'SATS')
+                    ? (config[snap + 'Amount'] / selectedCurrencyRate).toFixed(0)
+                    : config[snap + 'Amount'];
+                document.getElementById(snapPrimaryId).textContent = snapPrimaryAmount + ' ' + selCur;
+                updateSecondaryMultiCurrency(snapPrimaryId, snapSecondaryId, snapPrimaryAmount);
             });
+        };
 
-            const handleMultiCurrencyChange = (wide) => {
-                const widePart = wide ? '-wide' : '';
-                const primaryFieldName = `coinsnap-bitcoin-donation-amount-multi${widePart}`;
-                const secondaryFieldName = `coinsnap-bitcoin-donation-satoshi-multi${widePart}`;
-                const currencyFieldName = `coinsnap-bitcoin-donation-swap-multi${widePart}`;
-                const selectedCurrency = document.getElementById(currencyFieldName).value;
-                
-                const selectedCurrencyRate = (selectedCurrency === 'SATS')
-                    ? 1/$(`#` + currencyFieldName + ` option[value="EUR"]`).attr('data-rate') 
-                    : $(`#` + currencyFieldName + ` option:selected`).attr('data-rate');
-                    
-                    
+        // ---- bind currency change ----
 
-                const amountField = $(`#` + primaryFieldName);
-                
-                const primaryAmount = (selectedCurrency === 'SATS')
-                        ? (parseFloat(amountField.val()) / selectedCurrencyRate).toFixed(0)
-                        : parseFloat(amountField.val());
-                
-                const amountValue = primaryAmount || 0;
-                amountField.val(amountValue);
-                var labelId = `coinsnap-bitcoin-donation-currency-label-multi${widePart}`;
-                var label = document.getElementById(labelId);
-                if (label) label.textContent = selectedCurrency;
+        $('#' + currencyFieldName).on('change', handleMultiCurrencyChange);
+    });
 
-                updateSecondaryMultiCurrency(wide,primaryFieldName,secondaryFieldName,amountValue);
-
-                const snaps = ['snap1', 'snap2', 'snap3'];
-
-                snaps.forEach(snap => {
-                    const primaryId = `coinsnap-bitcoin-donation-pay-multi-${snap}-primary${widePart}`;
-                    const secondaryId = `coinsnap-bitcoin-donation-pay-multi-${snap}-secondary${widePart}`;
-                    const primaryAmount = (selectedCurrency === 'SATS')
-                        ? (coinsnapDonationMultiData[`${snap}Amount`] / selectedCurrencyRate).toFixed(0)
-                        : coinsnapDonationMultiData[`${snap}Amount`];
-                    document.getElementById(primaryId).textContent = primaryAmount + ' ' + selectedCurrency;
-                    updateSecondaryMultiCurrency(wide,primaryId, secondaryId, primaryAmount);
-                });
-
-            };
-
-            // Handle currency change
-            $('#coinsnap-bitcoin-donation-swap-multi').on('change', () => { handleMultiCurrencyChange(false); });
-            $('#coinsnap-bitcoin-donation-swap-multi-wide').on('change', () => { handleMultiCurrencyChange(true); });
-
-        }
-    }
 });
