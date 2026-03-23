@@ -55,14 +55,14 @@ Coinsnap Bitcoin Donation works with Coinsnap or your own BTCPay Server.
 * No programming knowledge required
 * Immediate credit to your Bitcoin wallet
 * GDPR-friendly: no unnecessary data storage
-* Continuous further development 
+* Continuous further development
 * Strong support through our support team, accessible in your Coinsnap account
 
 
 = More information =
 
 * Live demo: [https://donation.coinsnap.org/](https://donation.coinsnap.org/)
-* Product page: [https://coinsnap.io/modules/bitcoin-donation/](https://coinsnap.io/modules/bitcoin-donation/) 
+* Product page: [https://coinsnap.io/modules/bitcoin-donation/](https://coinsnap.io/modules/bitcoin-donation/)
 * Installation Guide: [https://coinsnap.io/modules/bitcoin-donation/bitcoin-donation-plugin-installation-guide/](https://coinsnap.io/modules/bitcoin-donation/bitcoin-donation-plugin-installation-guide/)
 * Github plugin page: [https://github.com/Coinsnap/Coinsnap-bitcoin-donation/](https://github.com/Coinsnap/Coinsnap-bitcoin-donation/)
 
@@ -70,7 +70,7 @@ Coinsnap Bitcoin Donation works with Coinsnap or your own BTCPay Server.
 = Documentation: =
 
 * [Coinsnap API (1.0) documentation](https://docs.coinsnap.io/)
-* [Frequently Asked Questions](https://coinsnap.io/help/coinsnap-faq/) 
+* [Frequently Asked Questions](https://coinsnap.io/help/coinsnap-faq/)
 * [Terms and Conditions](https://coinsnap.io/info/general-terms-and-conditions/)
 * [Privacy Policy](https://coinsnap.io/info/privacy-policy/)
 
@@ -185,7 +185,7 @@ Plugin's page on Coinsnap website: [https://coinsnap.io/modules/bitcoin-donation
 * Update: BTCPay setup wizard is added in BTCPay server settings.
 
 = 1.3.0 :: 2025-12-09 =
-* Update: Added payment gateway client class. 
+* Update: Added payment gateway client class.
 * Update: Added support for all the Coinsnap currencies.
 * Update: Minimum order amount is added to connection status notice.
 * Update: Plugin name is changed in Wordpress backend.
@@ -210,7 +210,7 @@ Plugin's page on Coinsnap website: [https://coinsnap.io/modules/bitcoin-donation
 
 = 1.4.1 :: 2026-03-12 =
 * Fixed: CSS and JS files enqueue conditions.
-* Fixed: Class Coinsnap_Bitcoin_Donation_Client() call during payment amount check. 
+* Fixed: Class Coinsnap_Bitcoin_Donation_Client() call during payment amount check.
 * Update: Donation widget theme application.
 
 = 1.4.2 :: 2026-03-13 =
@@ -237,6 +237,7 @@ Plugin's page on Coinsnap website: [https://coinsnap.io/modules/bitcoin-donation
 * Update: Settings key migration (provider → payment_provider, btcpay_url → btcpay_host) for core compatibility.
 * Update: Webhook signature verification uses $request->get_body() instead of php://input for reliability.
 * Update: Webhook secrets managed by core with auto-registration.
+* Update: Replaced Coingecko API with Kraken API for fiat conversion.
 * Fixed: Inverted nonce check in donor meta save — donor edits now save correctly from admin.
 * Fixed: Missing null coalescing on form options — no more PHP warnings on fresh installs.
 * Fixed: PHP operator precedence bug in shoutout min/premium amounts.

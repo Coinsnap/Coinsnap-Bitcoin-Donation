@@ -223,6 +223,7 @@ Plugin's page on Coinsnap website: [https://coinsnap.io/modules/bitcoin-donation
 * Update: Settings key migration (provider → payment_provider, btcpay_url → btcpay_host) for core compatibility.
 * Update: Webhook signature verification uses $request->get_body() instead of php://input for reliability.
 * Update: Webhook secrets managed by core with auto-registration.
+* Update: Replaced Coingecko API with Kraken API for fiat conversion.
 * Fixed: Inverted nonce check in donor meta save — donor edits now save correctly from admin.
 * Fixed: Missing null coalescing on form options — no more PHP warnings on fresh installs.
 * Fixed: PHP operator precedence bug in shoutout min/premium amounts.
