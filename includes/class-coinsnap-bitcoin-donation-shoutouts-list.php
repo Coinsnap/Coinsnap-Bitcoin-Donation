@@ -1,64 +1,69 @@
 <?php
-if (! defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class Coinsnap_Bitcoin_Donation_Shoutouts_List
-{
-    public function __construct()
-    {
-        add_shortcode('shoutout_list', [$this, 'coinsnap_bitcoin_donation_render_shortcode']);
+class Coinsnap_Bitcoin_Donation_Shoutouts_List {
+
+    public function __construct() {
+        add_shortcode( 'shoutout_list', array( $this, 'render' ) );
     }
 
-    function coinsnap_bitcoin_donation_render_shortcode()
-    {
-        $options = get_option('coinsnap_bitcoin_donation_forms_options');
+    public function render( $atts ) {
+        $post_id = Coinsnap_Bitcoin_Donation_Form_Renderer::resolve_legacy_shortcode( 'shoutout_list' );
+        if ( $post_id ) {
+            return Coinsnap_Bitcoin_Donation_Form_Renderer::render_list( array( 'id' => $post_id ) );
+        }
+        return $this->render_legacy();
+    }
+
+    private function render_legacy() {
+        $options = get_option( 'coinsnap_bitcoin_donation_forms_options' );
 
         $core = coinsnap_bitcoin_donation_get_core();
         $core_settings = \CoinsnapCore\Admin\SettingsPage::get_settings_for( $core );
         $theme = $core_settings['theme'] ?? 'light';
         $theme_class = $theme === 'dark' ? 'coinsnap-bitcoin-donation-dark-theme' : 'coinsnap-bitcoin-donation-light-theme';
         $args = array(
-            'post_type'      => 'bitcoin-shoutouts',
-            'post_status'    => 'publish',
+            'post_type'   => 'bitcoin-shoutouts',
+            'post_status' => 'publish',
         );
-        $query = new WP_Query($args);
+        $query = new WP_Query( $args );
 
         $shoutouts = array();
 
-        if ($query->have_posts()) {
+        if ( $query->have_posts() ) {
             $posts = $query->posts;
 
-            foreach ($posts as $post) {
+            foreach ( $posts as $post ) {
                 $post_id = $post->ID;
-                // error_log(print_r(get_post_meta($post_id), true));
-                $shoutout_name = get_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_name', true);
-                $shoutout_amount = get_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_amount', true);
-                $shoutout_sats_amount = get_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_sats_amount', true);
-                $shoutout_message = get_post_meta($post_id, '_coinsnap_bitcoin_donation_shoutouts_message', true);
+                $shoutout_name = get_post_meta( $post_id, '_coinsnap_bitcoin_donation_shoutouts_name', true );
+                $shoutout_amount = get_post_meta( $post_id, '_coinsnap_bitcoin_donation_shoutouts_amount', true );
+                $shoutout_sats_amount = get_post_meta( $post_id, '_coinsnap_bitcoin_donation_shoutouts_sats_amount', true );
+                $shoutout_message = get_post_meta( $post_id, '_coinsnap_bitcoin_donation_shoutouts_message', true );
 
                 $shoutouts[] = array(
-                    'date'   => $post->post_date,
-                    'name'   => $shoutout_name,
-                    'amount' => $shoutout_amount,
+                    'date'        => $post->post_date,
+                    'name'        => $shoutout_name,
+                    'amount'      => $shoutout_amount,
                     'sats_amount' => $shoutout_sats_amount,
-                    'message' => $shoutout_message
+                    'message'     => $shoutout_message,
                 );
             }
         }
         wp_reset_postdata();
 
         ob_start();
-?>
+        ?>
         <div class="shoutouts-list-container">
             <div id="coinsnap-bitcoin-donation-shoutouts-wrapper">
 
                 <?php
-                if (empty($shoutouts)) {
-                    $this->render_empty_donation_row($theme_class);
+                if ( empty( $shoutouts ) ) {
+                    $this->render_empty_donation_row( $theme_class );
                 } else {
-                    foreach ($shoutouts as $shoutout) {
-                        $this->render_donation_row($shoutout, $theme_class);
+                    foreach ( $shoutouts as $shoutout ) {
+                        $this->render_donation_row( $shoutout, $theme_class );
                     }
                 }
                 ?>
@@ -71,69 +76,64 @@ class Coinsnap_Bitcoin_Donation_Shoutouts_List
         return ob_get_clean();
     }
 
-    private function render_empty_donation_row($theme)
-    {
-
+    private function render_empty_donation_row( $theme ) {
         $highlight = false;
-        $name = __("No Shoutouts Available", 'coinsnap-bitcoin-donation');
-        $message = __("There are no shoutouts yet. This is just an example of how they will be displayed once there are some available.", 'coinsnap-bitcoin-donation');
-        $amount = __("0 sats", 'coinsnap-bitcoin-donation');
-        $daysAgo = __("Today", 'coinsnap-bitcoin-donation');
-    ?>
-        <div class="coinsnap-bitcoin-donation-shoutout <?php echo esc_attr($theme); ?> <?php echo $highlight ? 'highlight-shoutout' : ''; ?>">
+        $name      = __( "No Shoutouts Available", 'coinsnap-bitcoin-donation' );
+        $message   = __( "There are no shoutouts yet. This is just an example of how they will be displayed once there are some available.", 'coinsnap-bitcoin-donation' );
+        $amount    = __( "0 sats", 'coinsnap-bitcoin-donation' );
+        $daysAgo   = __( "Today", 'coinsnap-bitcoin-donation' );
+        ?>
+        <div class="coinsnap-bitcoin-donation-shoutout <?php echo esc_attr( $theme ); ?> <?php echo $highlight ? 'highlight-shoutout' : ''; ?>">
             <div class="coinsnap-bitcoin-donation-shoutout-top">
-                <?php echo esc_html($name); ?>
+                <?php echo esc_html( $name ); ?>
                 <div class="coinsnap-bitcoin-donation-shoutout-top-right">
-                    <div class="coinsnap-bitcoin-donation-shoutout-top-right-amount <?php echo $highlight ? 'highlight' : ''; ?>"> <?php echo esc_html($amount); ?></div>
-                    <div class="coinsnap-bitcoin-donation-shoutout-top-right-days"> <?php echo esc_html($daysAgo); ?></div>
+                    <div class="coinsnap-bitcoin-donation-shoutout-top-right-amount <?php echo $highlight ? 'highlight' : ''; ?>"> <?php echo esc_html( $amount ); ?></div>
+                    <div class="coinsnap-bitcoin-donation-shoutout-top-right-days"> <?php echo esc_html( $daysAgo ); ?></div>
 
                 </div>
             </div>
             <div class="coinsnap-bitcoin-donation-shoutout-bottom">
-                <?php echo esc_html($message); ?>
+                <?php echo esc_html( $message ); ?>
             </div>
 
         </div>
-    <?php
+        <?php
     }
 
-    private function render_donation_row($donation, $theme)
-    {
-        $options = get_option('coinsnap_bitcoin_donation_forms_options');
-        $name = $donation['name'];
-        $amount = $donation['amount'];
-        $sats_amount = !empty($donation['sats_amount']) ? $donation['sats_amount'] . ' sats' : '';
-        $message = $donation['message'];
+    private function render_donation_row( $donation, $theme ) {
+        $options      = get_option( 'coinsnap_bitcoin_donation_forms_options' );
+        $name         = $donation['name'];
+        $amount       = $donation['amount'];
+        $sats_amount  = ! empty( $donation['sats_amount'] ) ? $donation['sats_amount'] . ' sats' : '';
+        $message      = $donation['message'];
         $highlightAmount = $options['shoutout_premium_amount'] ?? '21000';
-        $highlight = (int)$amount >= (int)$highlightAmount || (int)$sats_amount >= (int)$highlightAmount;
-        $date =  $donation['date'];
-        $donationDate = new DateTime($date);
-        $now = new DateTime();
-        $interval = $donationDate->diff($now);
-        if ($interval->days === 0) {
+        $highlight    = (int) $amount >= (int) $highlightAmount || (int) $sats_amount >= (int) $highlightAmount;
+        $date         = $donation['date'];
+        $donationDate = new DateTime( $date );
+        $now          = new DateTime();
+        $interval     = $donationDate->diff( $now );
+        if ( $interval->days === 0 ) {
             $daysAgo = 'Today';
-        } elseif ($interval->days === 1) {
+        } elseif ( $interval->days === 1 ) {
             $daysAgo = '1 day ago';
         } else {
             $daysAgo = $interval->days . ' days ago';
         }
-
-    ?>
-        <div class="coinsnap-bitcoin-donation-shoutout <?php echo esc_attr($theme); ?> <?php echo $highlight ? 'highlight-shoutout' : ''; ?>">
+        ?>
+        <div class="coinsnap-bitcoin-donation-shoutout <?php echo esc_attr( $theme ); ?> <?php echo $highlight ? 'highlight-shoutout' : ''; ?>">
             <div class="coinsnap-bitcoin-donation-shoutout-top">
-                <?php echo esc_html($name); ?>
+                <?php echo esc_html( $name ); ?>
                 <div class="coinsnap-bitcoin-donation-shoutout-top-right">
-                    <div class="coinsnap-bitcoin-donation-shoutout-top-right-amount <?php echo $highlight ? 'highlight' : ''; ?>"> <?php echo esc_html($amount); ?></div>
-                    <div class="coinsnap-bitcoin-donation-shoutout-top-right-days"> <?php echo esc_html($daysAgo); ?></div>
+                    <div class="coinsnap-bitcoin-donation-shoutout-top-right-amount <?php echo $highlight ? 'highlight' : ''; ?>"> <?php echo esc_html( $amount ); ?></div>
+                    <div class="coinsnap-bitcoin-donation-shoutout-top-right-days"> <?php echo esc_html( $daysAgo ); ?></div>
 
                 </div>
             </div>
             <div class="coinsnap-bitcoin-donation-shoutout-bottom">
-                <?php echo esc_html($message); ?>
+                <?php echo esc_html( $message ); ?>
             </div>
         </div>
-<?php
-
+        <?php
     }
 }
 
