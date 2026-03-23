@@ -58,6 +58,19 @@ class coinsnap_bitcoin_donation_Webhooks {
 
         $core     = coinsnap_bitcoin_donation_get_core();
         $settings = \CoinsnapCore\Admin\SettingsPage::get_settings_for( $core );
+
+        // Check provider credentials before processing
+        $provider_name = $settings['payment_provider'] ?? 'coinsnap';
+        if ( 'btcpay' === $provider_name ) {
+            if ( empty( $settings['btcpay_api_key'] ) || empty( $settings['btcpay_store_id'] ) || empty( $settings['btcpay_host'] ) ) {
+                return new WP_REST_Response( array( 'success' => false, 'message' => __( 'Payment gateway is not configured. Please contact the site administrator.', 'coinsnap-bitcoin-donation' ) ), 503 );
+            }
+        } else {
+            if ( empty( $settings['coinsnap_api_key'] ) || empty( $settings['coinsnap_store_id'] ) ) {
+                return new WP_REST_Response( array( 'success' => false, 'message' => __( 'Payment gateway is not configured. Please contact the site administrator.', 'coinsnap-bitcoin-donation' ) ), 503 );
+            }
+        }
+
         $params   = $request->get_json_params();
 
         $amount      = isset( $params['amount'] ) ? floatval( $params['amount'] ) : 0;
@@ -71,18 +84,18 @@ class coinsnap_bitcoin_donation_Webhooks {
             return new WP_REST_Response( array( 'success' => false, 'message' => __( 'Invalid amount.', 'coinsnap-bitcoin-donation' ) ), 400 );
         }
 
-        $exchange_rates = new \CoinsnapCore\Util\ExchangeRates();
         $provider_name = $settings['payment_provider'] ?? 'coinsnap';
         $mode = ( 'btcpay' === $provider_name ) ? 'lightning' : 'coinsnap';
+        $exchange_rates = new \CoinsnapCore\Util\ExchangeRates();
         $check = $exchange_rates->check_payment_data( $amount, $currency, $mode );
         if ( isset( $check['result'] ) && $check['result'] === false ) {
-            $error_msg = '';
+            // Only block on currency/amount errors — skip if exchange rates couldn't be loaded
             if ( $check['error'] === 'currencyError' ) {
-                $error_msg = sprintf( __( 'Currency %s is not supported.', 'coinsnap-bitcoin-donation' ), $currency );
+                return new WP_REST_Response( array( 'success' => false, 'message' => sprintf( __( 'Currency %s is not supported.', 'coinsnap-bitcoin-donation' ), $currency ) ), 400 );
             } elseif ( $check['error'] === 'amountError' ) {
-                $error_msg = sprintf( __( 'Amount cannot be less than %s %s.', 'coinsnap-bitcoin-donation' ), $check['min_value'], $currency );
+                return new WP_REST_Response( array( 'success' => false, 'message' => sprintf( __( 'Amount cannot be less than %s %s.', 'coinsnap-bitcoin-donation' ), $check['min_value'] ?? '0', $currency ) ), 400 );
             }
-            return new WP_REST_Response( array( 'success' => false, 'message' => $error_msg ), 400 );
+            // For ratesLoadingError/ratesListError — skip validation, let the provider handle it
         }
 
         $amount_cents = intval( round( $amount * 100 ) );
@@ -109,7 +122,8 @@ class coinsnap_bitcoin_donation_Webhooks {
             $result   = $provider->create_invoice( 0, $amount_cents, $currency, $invoice_data );
 
             if ( isset( $result['error'] ) || empty( $result['invoice_id'] ) ) {
-                return new WP_REST_Response( array( 'success' => false, 'message' => $result['error'] ?? 'Invoice creation failed.' ), 500 );
+                $error_msg = $result['error'] ?? $result['message'] ?? __( 'Invoice creation failed. Please try again.', 'coinsnap-bitcoin-donation' );
+                return new WP_REST_Response( array( 'success' => false, 'message' => $error_msg ), 500 );
             }
 
             global $wpdb;

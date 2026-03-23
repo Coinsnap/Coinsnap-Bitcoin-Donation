@@ -140,6 +140,9 @@ class coinsnap_bitcoin_donation {
         } );
 
         add_action( 'admin_notices', array( $this, 'maybe_register_webhooks' ) );
+        add_action( 'admin_notices', function () use ( $core ) {
+            \CoinsnapCore\Admin\SettingsPage::maybe_show_setup_notice( $core );
+        } );
     }
 
     public function btcpayApiUrlHandler() {

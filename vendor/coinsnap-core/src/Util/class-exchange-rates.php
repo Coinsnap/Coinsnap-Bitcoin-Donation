@@ -15,12 +15,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Exchange rate fetching and payment validation utilities.
- * Uses CoinGecko free API for real-time rates.
+ * Uses Kraken public API for real-time BTC rates (no auth required).
  */
 class ExchangeRates {
 
-	/** CoinGecko exchange rates API endpoint. */
-	private const COINGECKO_URL = 'https://api.coingecko.com/api/v3/exchange_rates';
+	/** Kraken public ticker API. */
+	private const KRAKEN_URL = 'https://api.kraken.com/0/public/Ticker';
+
+	/** Map of our currency codes to Kraken pair names. */
+	private const KRAKEN_PAIRS = array(
+		'EUR' => 'XXBTZEUR',
+		'USD' => 'XXBTZUSD',
+		'GBP' => 'XXBTZGBP',
+		'CAD' => 'XXBTZCAD',
+		'JPY' => 'XXBTZJPY',
+		'CHF' => 'XBTCHF',
+	);
 
 	/**
 	 * Get supported currencies list.
@@ -35,23 +45,59 @@ class ExchangeRates {
 	}
 
 	/**
-	 * Load exchange rates from CoinGecko.
+	 * Load exchange rates from Kraken.
+	 *
+	 * Returns data in the same format as the old CoinGecko response for backward compatibility:
+	 * { result: true, data: { eur: { value: 12345.67 }, usd: { value: 67890.12 }, ... } }
+	 * Where 'value' = how many units of that currency per 1 BTC.
 	 *
 	 * @return array { result: bool, data?: array, error?: string }
 	 */
 	public static function load_rates(): array {
-		$response = HttpClient::request( 'GET', self::COINGECKO_URL );
+		$pairs = implode( ',', array_values( self::KRAKEN_PAIRS ) );
+		$url   = self::KRAKEN_URL . '?pair=' . $pairs;
+
+		$response = HttpClient::request( 'GET', $url );
 
 		if ( isset( $response['error'] ) || ! isset( $response['status'] ) || 200 !== $response['status'] ) {
 			return array( 'result' => false, 'error' => 'ratesLoadingError' );
 		}
 
 		$body = $response['body'];
-		if ( ! is_array( $body ) || empty( $body['rates'] ) ) {
+		if ( ! is_array( $body ) || ! empty( $body['error'] ) || empty( $body['result'] ) ) {
 			return array( 'result' => false, 'error' => 'ratesListError' );
 		}
 
-		return array( 'result' => true, 'data' => $body['rates'] );
+		$kraken_data = $body['result'];
+		$rates       = array();
+
+		// Convert Kraken format to our standard format
+		foreach ( self::KRAKEN_PAIRS as $currency => $pair ) {
+			if ( isset( $kraken_data[ $pair ] ) && isset( $kraken_data[ $pair ]['c'][0] ) ) {
+				$price = (float) $kraken_data[ $pair ]['c'][0];
+				if ( $price > 0 ) {
+					$rates[ strtolower( $currency ) ] = array( 'value' => $price );
+				}
+			}
+		}
+
+		// Add BTC (1 BTC = 1 BTC)
+		$rates['btc'] = array( 'value' => 1.0 );
+
+		// Add SATS (1 BTC = 100,000,000 SATS)
+		$rates['sats'] = array( 'value' => 100000000.0 );
+
+		// Add RUB estimate via USD if available (Kraken doesn't have BTC/RUB)
+		if ( isset( $rates['usd'] ) ) {
+			// Approximate RUB/USD rate — this is a rough estimate
+			$rates['rub'] = array( 'value' => $rates['usd']['value'] * 90 );
+		}
+
+		if ( empty( $rates ) ) {
+			return array( 'result' => false, 'error' => 'ratesListError' );
+		}
+
+		return array( 'result' => true, 'data' => $rates );
 	}
 
 	/**

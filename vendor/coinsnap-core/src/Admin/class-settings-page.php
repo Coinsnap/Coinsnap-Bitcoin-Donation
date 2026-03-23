@@ -52,6 +52,48 @@ class SettingsPage {
 	}
 
 	/**
+	 * Check if payment provider credentials are configured.
+	 *
+	 * @param PluginInstance $inst Plugin instance.
+	 * @return bool True if credentials are set.
+	 */
+	public static function is_configured( PluginInstance $inst ): bool {
+		$s = self::get_settings_for( $inst );
+		$provider = $s['payment_provider'] ?? 'coinsnap';
+
+		if ( 'btcpay' === $provider ) {
+			return ! empty( $s['btcpay_api_key'] ) && ! empty( $s['btcpay_store_id'] ) && ! empty( $s['btcpay_host'] );
+		}
+
+		return ! empty( $s['coinsnap_api_key'] ) && ! empty( $s['coinsnap_store_id'] );
+	}
+
+	/**
+	 * Render an admin notice if credentials are missing.
+	 * Call this from your plugin's admin_notices hook.
+	 *
+	 * @param PluginInstance $inst Plugin instance.
+	 */
+	public static function maybe_show_setup_notice( PluginInstance $inst ): void {
+		if ( self::is_configured( $inst ) ) {
+			return;
+		}
+
+		$plugin_name = $inst->get( 'plugin_name' );
+		$settings_url = admin_url( 'admin.php?page=' . $inst->get( 'menu_slug' ) . '-settings' );
+
+		echo '<div class="notice notice-warning is-dismissible"><p>';
+		printf(
+			/* translators: 1: plugin name, 2: opening link tag, 3: closing link tag */
+			esc_html__( '%1$s: Payment gateway is not configured. Please %2$sconfigure your settings%3$s to start accepting Bitcoin payments.', 'coinsnap-core' ),
+			'<strong>' . esc_html( $plugin_name ) . '</strong>',
+			'<a href="' . esc_url( $settings_url ) . '">',
+			'</a>'
+		);
+		echo '</p></div>';
+	}
+
+	/**
 	 * Update settings for a plugin instance.
 	 *
 	 * @param PluginInstance $inst Plugin instance.
