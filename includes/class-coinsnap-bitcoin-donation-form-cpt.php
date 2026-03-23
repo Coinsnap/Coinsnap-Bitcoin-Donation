@@ -11,6 +11,8 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 	public function __construct() {
 		add_action( 'init', array( $this, 'register_cpt' ) );
 		add_action( 'init', array( $this, 'register_meta_fields' ) );
+		add_action( 'add_meta_boxes', array( $this, 'add_metaboxes' ) );
+		add_action( 'save_post_' . self::POST_TYPE, array( $this, 'save_meta' ), 10, 2 );
 	}
 
 	public function register_cpt() {
@@ -92,5 +94,308 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 				'default'      => '',
 			)
 		);
+	}
+
+	public function add_metaboxes() {
+		add_meta_box(
+			'coinsnap_donation_form_settings',
+			__( 'Form Settings', 'coinsnap-bitcoin-donation' ),
+			array( $this, 'render_metabox' ),
+			self::POST_TYPE,
+			'normal',
+			'high'
+		);
+	}
+
+	public function render_metabox( $post ) {
+		wp_nonce_field( 'coinsnap_donation_form_nonce', 'coinsnap_donation_form_nonce' );
+
+		$currencies = defined( 'COINSNAP_CURRENCIES' ) ? COINSNAP_CURRENCIES : array( 'EUR', 'USD', 'SATS', 'BTC', 'CAD', 'JPY', 'GBP', 'CHF', 'RUB' );
+
+		// Retrieve all meta values with defaults.
+		$meta = array(
+			'form_type'               => get_post_meta( $post->ID, self::META_PREFIX . 'form_type', true ),
+			'layout'                  => get_post_meta( $post->ID, self::META_PREFIX . 'layout', true ),
+			'currency'                => get_post_meta( $post->ID, self::META_PREFIX . 'currency', true ),
+			'button_text'             => get_post_meta( $post->ID, self::META_PREFIX . 'button_text', true ),
+			'title_text'              => get_post_meta( $post->ID, self::META_PREFIX . 'title_text', true ),
+			'default_amount'          => get_post_meta( $post->ID, self::META_PREFIX . 'default_amount', true ),
+			'default_message'         => get_post_meta( $post->ID, self::META_PREFIX . 'default_message', true ),
+			'redirect_url'            => get_post_meta( $post->ID, self::META_PREFIX . 'redirect_url', true ),
+			'snap1'                   => get_post_meta( $post->ID, self::META_PREFIX . 'snap1', true ),
+			'snap2'                   => get_post_meta( $post->ID, self::META_PREFIX . 'snap2', true ),
+			'snap3'                   => get_post_meta( $post->ID, self::META_PREFIX . 'snap3', true ),
+			'minimum_amount'          => get_post_meta( $post->ID, self::META_PREFIX . 'minimum_amount', true ),
+			'premium_amount'          => get_post_meta( $post->ID, self::META_PREFIX . 'premium_amount', true ),
+			'public_donors'           => get_post_meta( $post->ID, self::META_PREFIX . 'public_donors', true ),
+			'first_name'              => get_post_meta( $post->ID, self::META_PREFIX . 'first_name', true ),
+			'last_name'               => get_post_meta( $post->ID, self::META_PREFIX . 'last_name', true ),
+			'email'                   => get_post_meta( $post->ID, self::META_PREFIX . 'email', true ),
+			'address'                 => get_post_meta( $post->ID, self::META_PREFIX . 'address', true ),
+			'custom_field_name'       => get_post_meta( $post->ID, self::META_PREFIX . 'custom_field_name', true ),
+			'custom_field_visibility' => get_post_meta( $post->ID, self::META_PREFIX . 'custom_field_visibility', true ),
+		);
+
+		$form_type = ! empty( $meta['form_type'] ) ? $meta['form_type'] : 'simple_donation';
+		$layout    = ! empty( $meta['layout'] ) ? $meta['layout'] : 'NARROW';
+		$currency  = ! empty( $meta['currency'] ) ? $meta['currency'] : 'USD';
+
+		$visibility_options = array(
+			'optional'  => __( 'Optional', 'coinsnap-bitcoin-donation' ),
+			'mandatory' => __( 'Mandatory', 'coinsnap-bitcoin-donation' ),
+			'hidden'    => __( 'Hidden', 'coinsnap-bitcoin-donation' ),
+		);
+		?>
+
+		<!-- Form Type Card Picker -->
+		<div class="donation-form-type-cards">
+			<div class="donation-form-type-card <?php echo $form_type === 'simple_donation' ? 'active' : ''; ?>" data-type="simple_donation">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+				<h4><?php esc_html_e( 'Simple Donation', 'coinsnap-bitcoin-donation' ); ?></h4>
+				<p><?php esc_html_e( 'A simple donation button with a fixed default amount', 'coinsnap-bitcoin-donation' ); ?></p>
+			</div>
+			<div class="donation-form-type-card <?php echo $form_type === 'multi_amount' ? 'active' : ''; ?>" data-type="multi_amount">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg>
+				<h4><?php esc_html_e( 'Multi Amount', 'coinsnap-bitcoin-donation' ); ?></h4>
+				<p><?php esc_html_e( 'Preset amount buttons for quick selection', 'coinsnap-bitcoin-donation' ); ?></p>
+			</div>
+			<div class="donation-form-type-card <?php echo $form_type === 'shoutout' ? 'active' : ''; ?>" data-type="shoutout">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18.5L3 22V7l9-4 9 4v15l-9-3.5z"></path><path d="M12 2v16.5"></path><path d="M18 7.5L6 12.5"></path></svg>
+				<h4><?php esc_html_e( 'Shoutout', 'coinsnap-bitcoin-donation' ); ?></h4>
+				<p><?php esc_html_e( 'Donors leave public messages with their donation', 'coinsnap-bitcoin-donation' ); ?></p>
+			</div>
+		</div>
+		<input type="hidden" name="<?php echo esc_attr( self::META_PREFIX . 'form_type' ); ?>" id="<?php echo esc_attr( self::META_PREFIX . 'form_type' ); ?>" value="<?php echo esc_attr( $form_type ); ?>">
+
+		<!-- Shared Fields -->
+		<div class="csc-card">
+			<div class="csc-card-header">
+				<h2><?php esc_html_e( 'General Settings', 'coinsnap-bitcoin-donation' ); ?></h2>
+			</div>
+			<div class="csc-card-body">
+				<div class="csc-field-row">
+					<label for="<?php echo esc_attr( self::META_PREFIX . 'currency' ); ?>"><?php esc_html_e( 'Currency', 'coinsnap-bitcoin-donation' ); ?></label>
+					<div class="csc-field-input">
+						<select id="<?php echo esc_attr( self::META_PREFIX . 'currency' ); ?>" name="<?php echo esc_attr( self::META_PREFIX . 'currency' ); ?>" class="regular-text">
+							<?php foreach ( $currencies as $c ) : ?>
+								<option value="<?php echo esc_attr( $c ); ?>" <?php selected( $currency, $c ); ?>><?php echo esc_html( $c ); ?></option>
+							<?php endforeach; ?>
+						</select>
+					</div>
+				</div>
+				<div class="csc-field-row">
+					<label for="<?php echo esc_attr( self::META_PREFIX . 'button_text' ); ?>"><?php esc_html_e( 'Button Text', 'coinsnap-bitcoin-donation' ); ?></label>
+					<div class="csc-field-input">
+						<input type="text" id="<?php echo esc_attr( self::META_PREFIX . 'button_text' ); ?>" name="<?php echo esc_attr( self::META_PREFIX . 'button_text' ); ?>" value="<?php echo esc_attr( $meta['button_text'] ); ?>" class="regular-text">
+					</div>
+				</div>
+				<div class="csc-field-row">
+					<label for="<?php echo esc_attr( self::META_PREFIX . 'title_text' ); ?>"><?php esc_html_e( 'Title Text', 'coinsnap-bitcoin-donation' ); ?></label>
+					<div class="csc-field-input">
+						<input type="text" id="<?php echo esc_attr( self::META_PREFIX . 'title_text' ); ?>" name="<?php echo esc_attr( self::META_PREFIX . 'title_text' ); ?>" value="<?php echo esc_attr( $meta['title_text'] ); ?>" class="regular-text">
+					</div>
+				</div>
+				<div class="csc-field-row">
+					<label for="<?php echo esc_attr( self::META_PREFIX . 'default_amount' ); ?>"><?php esc_html_e( 'Default Amount', 'coinsnap-bitcoin-donation' ); ?></label>
+					<div class="csc-field-input">
+						<input type="text" id="<?php echo esc_attr( self::META_PREFIX . 'default_amount' ); ?>" name="<?php echo esc_attr( self::META_PREFIX . 'default_amount' ); ?>" value="<?php echo esc_attr( $meta['default_amount'] ); ?>" class="regular-text">
+					</div>
+				</div>
+				<div class="csc-field-row">
+					<label for="<?php echo esc_attr( self::META_PREFIX . 'default_message' ); ?>"><?php esc_html_e( 'Default Message', 'coinsnap-bitcoin-donation' ); ?></label>
+					<div class="csc-field-input">
+						<input type="text" id="<?php echo esc_attr( self::META_PREFIX . 'default_message' ); ?>" name="<?php echo esc_attr( self::META_PREFIX . 'default_message' ); ?>" value="<?php echo esc_attr( $meta['default_message'] ); ?>" class="regular-text">
+					</div>
+				</div>
+				<div class="csc-field-row">
+					<label for="<?php echo esc_attr( self::META_PREFIX . 'redirect_url' ); ?>"><?php esc_html_e( 'Redirect URL (Thank You Page)', 'coinsnap-bitcoin-donation' ); ?></label>
+					<div class="csc-field-input">
+						<input type="text" id="<?php echo esc_attr( self::META_PREFIX . 'redirect_url' ); ?>" name="<?php echo esc_attr( self::META_PREFIX . 'redirect_url' ); ?>" value="<?php echo esc_attr( $meta['redirect_url'] ); ?>" class="regular-text">
+					</div>
+				</div>
+				<div class="donation-form-conditional" data-show-for="simple_donation multi_amount">
+					<div class="csc-field-row">
+						<label for="<?php echo esc_attr( self::META_PREFIX . 'layout' ); ?>"><?php esc_html_e( 'Layout', 'coinsnap-bitcoin-donation' ); ?></label>
+						<div class="csc-field-input">
+							<select id="<?php echo esc_attr( self::META_PREFIX . 'layout' ); ?>" name="<?php echo esc_attr( self::META_PREFIX . 'layout' ); ?>" class="regular-text">
+								<option value="NARROW" <?php selected( $layout, 'NARROW' ); ?>><?php esc_html_e( 'Narrow', 'coinsnap-bitcoin-donation' ); ?></option>
+								<option value="WIDE" <?php selected( $layout, 'WIDE' ); ?>><?php esc_html_e( 'Wide', 'coinsnap-bitcoin-donation' ); ?></option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Multi Amount Fields -->
+		<div class="donation-form-conditional" data-show-for="multi_amount">
+			<div class="csc-card">
+				<div class="csc-card-header">
+					<h2><?php esc_html_e( 'Preset Amounts', 'coinsnap-bitcoin-donation' ); ?></h2>
+				</div>
+				<div class="csc-card-body">
+					<div class="csc-field-row">
+						<label for="<?php echo esc_attr( self::META_PREFIX . 'snap1' ); ?>"><?php esc_html_e( 'Snap Amount 1', 'coinsnap-bitcoin-donation' ); ?></label>
+						<div class="csc-field-input">
+							<input type="text" id="<?php echo esc_attr( self::META_PREFIX . 'snap1' ); ?>" name="<?php echo esc_attr( self::META_PREFIX . 'snap1' ); ?>" value="<?php echo esc_attr( $meta['snap1'] ); ?>" class="regular-text">
+						</div>
+					</div>
+					<div class="csc-field-row">
+						<label for="<?php echo esc_attr( self::META_PREFIX . 'snap2' ); ?>"><?php esc_html_e( 'Snap Amount 2', 'coinsnap-bitcoin-donation' ); ?></label>
+						<div class="csc-field-input">
+							<input type="text" id="<?php echo esc_attr( self::META_PREFIX . 'snap2' ); ?>" name="<?php echo esc_attr( self::META_PREFIX . 'snap2' ); ?>" value="<?php echo esc_attr( $meta['snap2'] ); ?>" class="regular-text">
+						</div>
+					</div>
+					<div class="csc-field-row">
+						<label for="<?php echo esc_attr( self::META_PREFIX . 'snap3' ); ?>"><?php esc_html_e( 'Snap Amount 3', 'coinsnap-bitcoin-donation' ); ?></label>
+						<div class="csc-field-input">
+							<input type="text" id="<?php echo esc_attr( self::META_PREFIX . 'snap3' ); ?>" name="<?php echo esc_attr( self::META_PREFIX . 'snap3' ); ?>" value="<?php echo esc_attr( $meta['snap3'] ); ?>" class="regular-text">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Shoutout Fields -->
+		<div class="donation-form-conditional" data-show-for="shoutout">
+			<div class="csc-card">
+				<div class="csc-card-header">
+					<h2><?php esc_html_e( 'Shoutout Settings', 'coinsnap-bitcoin-donation' ); ?></h2>
+				</div>
+				<div class="csc-card-body">
+					<div class="csc-field-row">
+						<label for="<?php echo esc_attr( self::META_PREFIX . 'minimum_amount' ); ?>"><?php esc_html_e( 'Minimum Amount (SATS)', 'coinsnap-bitcoin-donation' ); ?></label>
+						<div class="csc-field-input">
+							<input type="text" id="<?php echo esc_attr( self::META_PREFIX . 'minimum_amount' ); ?>" name="<?php echo esc_attr( self::META_PREFIX . 'minimum_amount' ); ?>" value="<?php echo esc_attr( $meta['minimum_amount'] ); ?>" class="regular-text">
+						</div>
+					</div>
+					<div class="csc-field-row">
+						<label for="<?php echo esc_attr( self::META_PREFIX . 'premium_amount' ); ?>"><?php esc_html_e( 'Premium Amount (SATS)', 'coinsnap-bitcoin-donation' ); ?></label>
+						<div class="csc-field-input">
+							<input type="text" id="<?php echo esc_attr( self::META_PREFIX . 'premium_amount' ); ?>" name="<?php echo esc_attr( self::META_PREFIX . 'premium_amount' ); ?>" value="<?php echo esc_attr( $meta['premium_amount'] ); ?>" class="regular-text">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Donor Information -->
+		<div class="csc-card">
+			<div class="csc-card-header">
+				<h2><?php esc_html_e( 'Donor Information', 'coinsnap-bitcoin-donation' ); ?></h2>
+			</div>
+			<div class="csc-card-body">
+				<div class="csc-field-row">
+					<label for="<?php echo esc_attr( self::META_PREFIX . 'public_donors' ); ?>"><?php esc_html_e( 'Collect donor information', 'coinsnap-bitcoin-donation' ); ?></label>
+					<div class="csc-field-input">
+						<input type="checkbox" id="<?php echo esc_attr( self::META_PREFIX . 'public_donors' ); ?>" name="<?php echo esc_attr( self::META_PREFIX . 'public_donors' ); ?>" value="1" <?php checked( $meta['public_donors'], '1' ); ?>>
+					</div>
+				</div>
+				<div class="donation-form-donor-fields <?php echo $meta['public_donors'] === '1' ? 'visible' : ''; ?>">
+					<?php
+					$donor_fields = array(
+						'first_name'              => __( 'First Name', 'coinsnap-bitcoin-donation' ),
+						'last_name'               => __( 'Last Name', 'coinsnap-bitcoin-donation' ),
+						'email'                   => __( 'Email', 'coinsnap-bitcoin-donation' ),
+						'address'                 => __( 'Address', 'coinsnap-bitcoin-donation' ),
+					);
+					foreach ( $donor_fields as $field_key => $field_label ) :
+						$field_val = ! empty( $meta[ $field_key ] ) ? $meta[ $field_key ] : 'optional';
+						?>
+						<div class="csc-field-row">
+							<label for="<?php echo esc_attr( self::META_PREFIX . $field_key ); ?>"><?php echo esc_html( $field_label ); ?></label>
+							<div class="csc-field-input">
+								<select id="<?php echo esc_attr( self::META_PREFIX . $field_key ); ?>" name="<?php echo esc_attr( self::META_PREFIX . $field_key ); ?>" class="regular-text">
+									<?php foreach ( $visibility_options as $opt_val => $opt_label ) : ?>
+										<option value="<?php echo esc_attr( $opt_val ); ?>" <?php selected( $field_val, $opt_val ); ?>><?php echo esc_html( $opt_label ); ?></option>
+									<?php endforeach; ?>
+								</select>
+							</div>
+						</div>
+					<?php endforeach; ?>
+					<div class="csc-field-row">
+						<label for="<?php echo esc_attr( self::META_PREFIX . 'custom_field_name' ); ?>"><?php esc_html_e( 'Custom Field Name', 'coinsnap-bitcoin-donation' ); ?></label>
+						<div class="csc-field-input">
+							<input type="text" id="<?php echo esc_attr( self::META_PREFIX . 'custom_field_name' ); ?>" name="<?php echo esc_attr( self::META_PREFIX . 'custom_field_name' ); ?>" value="<?php echo esc_attr( $meta['custom_field_name'] ); ?>" class="regular-text">
+						</div>
+					</div>
+					<div class="csc-field-row">
+						<label for="<?php echo esc_attr( self::META_PREFIX . 'custom_field_visibility' ); ?>"><?php esc_html_e( 'Custom Field Visibility', 'coinsnap-bitcoin-donation' ); ?></label>
+						<div class="csc-field-input">
+							<select id="<?php echo esc_attr( self::META_PREFIX . 'custom_field_visibility' ); ?>" name="<?php echo esc_attr( self::META_PREFIX . 'custom_field_visibility' ); ?>" class="regular-text">
+								<?php
+								$cf_vis = ! empty( $meta['custom_field_visibility'] ) ? $meta['custom_field_visibility'] : 'hidden';
+								foreach ( $visibility_options as $opt_val => $opt_label ) :
+									?>
+									<option value="<?php echo esc_attr( $opt_val ); ?>" <?php selected( $cf_vis, $opt_val ); ?>><?php echo esc_html( $opt_label ); ?></option>
+								<?php endforeach; ?>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<?php
+		// Shortcode display — only for saved posts.
+		if ( $post->ID && get_post_status( $post->ID ) !== 'auto-draft' ) :
+			$sc_form = '[coinsnap_bitcoin_donation_form id="' . $post->ID . '"]';
+			$sc_list = '[coinsnap_donation_list id="' . $post->ID . '"]';
+			?>
+			<div class="donation-form-shortcode-section">
+				<div class="csc-shortcode-group">
+					<div class="csc-shortcode-row">
+						<span class="csc-shortcode-label"><?php esc_html_e( 'Form', 'coinsnap-bitcoin-donation' ); ?></span>
+						<button type="button" class="csc-shortcode-copy" data-shortcode="<?php echo esc_attr( $sc_form ); ?>" title="<?php esc_attr_e( 'Click to copy', 'coinsnap-bitcoin-donation' ); ?>">
+							<code class="csc-shortcode-code"><?php echo esc_html( $sc_form ); ?></code>
+							<span class="csc-shortcode-icon">
+								<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+							</span>
+							<span class="csc-shortcode-copied"><?php esc_html_e( 'Copied!', 'coinsnap-bitcoin-donation' ); ?></span>
+						</button>
+					</div>
+					<div class="csc-shortcode-row donation-form-shortcode-shoutout-list" style="<?php echo $form_type !== 'shoutout' ? 'display:none;' : ''; ?>">
+						<span class="csc-shortcode-label"><?php esc_html_e( 'Shoutout List', 'coinsnap-bitcoin-donation' ); ?></span>
+						<button type="button" class="csc-shortcode-copy" data-shortcode="<?php echo esc_attr( $sc_list ); ?>" title="<?php esc_attr_e( 'Click to copy', 'coinsnap-bitcoin-donation' ); ?>">
+							<code class="csc-shortcode-code"><?php echo esc_html( $sc_list ); ?></code>
+							<span class="csc-shortcode-icon">
+								<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+							</span>
+							<span class="csc-shortcode-copied"><?php esc_html_e( 'Copied!', 'coinsnap-bitcoin-donation' ); ?></span>
+						</button>
+					</div>
+				</div>
+			</div>
+		<?php endif; ?>
+		<?php
+	}
+
+	public function save_meta( $post_id, $post ) {
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			return;
+		}
+		$nonce = filter_input( INPUT_POST, 'coinsnap_donation_form_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'coinsnap_donation_form_nonce' ) ) {
+			return;
+		}
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			return;
+		}
+
+		$text_fields = array(
+			'form_type', 'layout', 'currency', 'button_text', 'title_text',
+			'default_amount', 'default_message', 'redirect_url',
+			'first_name', 'last_name', 'email', 'address',
+			'custom_field_name', 'custom_field_visibility',
+			'snap1', 'snap2', 'snap3', 'minimum_amount', 'premium_amount',
+		);
+		foreach ( $text_fields as $field ) {
+			$key = self::META_PREFIX . $field;
+			if ( isset( $_POST[ $key ] ) ) {
+				update_post_meta( $post_id, $key, sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) );
+			}
+		}
+		$public_donors = isset( $_POST[ self::META_PREFIX . 'public_donors' ] ) ? '1' : '';
+		update_post_meta( $post_id, self::META_PREFIX . 'public_donors', $public_donors );
 	}
 }

@@ -1,0 +1,79 @@
+/* Coinsnap Bitcoin Donation - Form CPT Admin Styles */
+
+/* Form Type Card Picker */
+.donation-form-type-cards {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.donation-form-type-card {
+    flex: 1;
+    padding: 20px;
+    border: 2px solid #dcdcde;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s ease;
+    background: #fff;
+}
+
+.donation-form-type-card:hover {
+    border-color: #c3c4c7;
+    background: #f6f7f7;
+}
+
+.donation-form-type-card.active {
+    border-color: #f7931a;
+    background: #fef8f0;
+}
+
+.donation-form-type-card svg {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 12px;
+    color: #50575e;
+}
+
+.donation-form-type-card.active svg {
+    color: #f7931a;
+}
+
+.donation-form-type-card h4 {
+    margin: 0 0 4px;
+    font-size: 14px;
+}
+
+.donation-form-type-card p {
+    margin: 0;
+    font-size: 12px;
+    color: #787c82;
+}
+
+/* Conditional field sections */
+.donation-form-conditional {
+    display: none;
+}
+
+.donation-form-conditional.visible {
+    display: block;
+}
+
+/* Donor info collapsible */
+.donation-form-donor-fields {
+    display: none;
+    margin-top: 12px;
+    padding-left: 16px;
+    border-left: 3px solid #f0f0f1;
+}
+
+.donation-form-donor-fields.visible {
+    display: block;
+}
+
+/* Shortcode section */
+.donation-form-shortcode-section {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #f0f0f1;
+}

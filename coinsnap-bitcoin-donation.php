@@ -311,6 +311,18 @@ class coinsnap_bitcoin_donation {
     }
 
     public function enqueue_admin_scripts( $hook ) {
+        // Load assets on donation-form CPT edit screens.
+        $is_cpt_screen = in_array( $hook, array( 'post.php', 'post-new.php' ), true )
+            && get_post_type() === 'donation-form';
+
+        if ( $is_cpt_screen ) {
+            wp_register_style( 'coinsnap-core-admin', plugin_dir_url( __FILE__ ) . 'vendor/coinsnap-core/assets/css/admin.css', array(), COINSNAP_CORE_VERSION );
+            wp_enqueue_style( 'coinsnap-core-admin' );
+            wp_enqueue_style( 'coinsnap-donation-form-admin', plugin_dir_url( __FILE__ ) . 'assets/css/donation-form-admin.css', array( 'coinsnap-core-admin' ), COINSNAP_BITCOIN_DONATION_VERSION );
+            wp_enqueue_script( 'coinsnap-donation-form-admin', plugin_dir_url( __FILE__ ) . 'assets/js/donation-form-admin.js', array( 'jquery' ), COINSNAP_BITCOIN_DONATION_VERSION, true );
+            return; // Don't load the other admin scripts on CPT screens.
+        }
+
         $page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         $page = is_string( $page ) ? $page : '';
 
