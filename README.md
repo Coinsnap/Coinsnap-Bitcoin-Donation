@@ -7,7 +7,7 @@
 * Requires at least: 5.2
 * Tested up to: 6.9
 * Requires PHP: 8.0
-* Stable tag: 1.5.0
+* Stable tag: 1.6.0
 * License: GPL2
 * License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -247,3 +247,24 @@ Plugin's page on Coinsnap website: [https://coinsnap.io/modules/bitcoin-donation
 * Update: Shoutouts submenu always visible (no longer conditional on active checkbox).
 * Fixed: Iframe modal not cleaned up on close — donate button stayed disabled after closing modal.
 * Fixed: Exchange rate API failure (CoinGecko rate limiting) no longer blocks payment creation.
+
+#### 1.6.0 :: 2026-03-24
+* Major: Donation Forms now use a Custom Post Type — create unlimited forms instead of the previous 3-tab limit.
+* New: Visual form type selector with SVG icon cards (Simple Donation, Multi Amount, Shoutout).
+* New: Unified shortcode `[coinsnap_bitcoin_donation_form id="123"]` renders any form type based on its settings.
+* New: Shoutout list shortcode `[coinsnap_donation_list id="123"]` scoped per form.
+* New: Multiple forms of the same type on one page — each with independent settings.
+* New: Donor Notice text field — display informational text in the donor popup (e.g. tax deduction info).
+* New: Custom Checkbox field — configurable checkbox in the donor popup (e.g. "I need a donation receipt").
+* New: Translatable default values for form fields (Button Text, Title, Message) — pre-filled based on site language.
+* New: Placeholder text on all admin form fields showing expected values.
+* New: Admin list table with Form Type, Layout, and copyable Shortcode columns.
+* New: "Add New Form" submenu item for quick form creation.
+* New: Automatic migration from old settings to CPT posts on plugin update — existing forms and shortcodes continue to work.
+* Update: Legacy shortcodes (`[coinsnap_bitcoin_donation]`, `[multi_amount_donation]`, `[shoutout_form]`, `[shoutout_list]`, and wide variants) remain fully functional via migration mapping.
+* Update: Frontend JavaScript refactored to use per-form `data-*` attributes instead of global variables — enables multi-form pages.
+* Update: Default snap amounts changed to 50 / 100 / 200.
+* Update: Default shoutout minimum 500 SATS, premium 10,000 SATS.
+* Update: Webhook handler stores donation form ID on shoutout and donor posts for per-form scoping.
+* Update: Uninstall cleanup includes CPT posts and migration options.
+* Fixed: Wide layout shortcodes force correct layout regardless of stored meta value.
