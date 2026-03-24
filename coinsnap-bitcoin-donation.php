@@ -48,8 +48,13 @@ function coinsnap_bitcoin_donation_activate() {
     $core = coinsnap_bitcoin_donation_get_core();
     \CoinsnapCore\Database\PaymentTable::activate( $core );
     coinsnap_bitcoin_donation_run_upgrade();
-    flush_rewrite_rules();
+
+    // Register CPT before migration — init has already fired during activation
+    $cpt = new Coinsnap_Bitcoin_Donation_Form_CPT();
+    $cpt->register_cpt();
+
     Coinsnap_Bitcoin_Donation_Migration::maybe_migrate();
+    flush_rewrite_rules();
 }
 
 function coinsnap_bitcoin_donation_deactivate() {

@@ -13,15 +13,24 @@ class Coinsnap_Bitcoin_Donation_Migration {
         if ( get_option( self::FLAG_KEY ) ) {
             return;
         }
-        self::run_migration();
-    }
 
-    private static function run_migration() {
-        $options = get_option( 'coinsnap_bitcoin_donation_forms_options', array() );
-        if ( ! is_array( $options ) ) {
-            $options = array();
+        // Only migrate if old form options exist (not a fresh install)
+        $options = get_option( 'coinsnap_bitcoin_donation_forms_options', false );
+        if ( $options === false || ! is_array( $options ) || empty( $options ) ) {
+            // Fresh install — no old data to migrate, set flag so we don't check again
+            update_option( self::FLAG_KEY, '1' );
+            return;
         }
 
+        // Ensure CPT is registered before creating posts
+        if ( ! post_type_exists( 'donation-form' ) ) {
+            return; // Don't set flag — retry on next admin_init when CPT is registered
+        }
+
+        self::run_migration( $options );
+    }
+
+    private static function run_migration( $options ) {
         $mapping = array();
 
         // Migrate Simple Donation
@@ -97,6 +106,12 @@ class Coinsnap_Bitcoin_Donation_Migration {
         ) );
         foreach ( $shoutout_posts as $sp_id ) {
             update_post_meta( $sp_id, '_coinsnap_donation_form_id', $shoutout_id );
+        }
+
+        // Only set flag if at least one post was created successfully
+        $created = array_filter( $mapping );
+        if ( empty( $created ) ) {
+            return; // Retry on next load
         }
 
         update_option( self::MAP_KEY, $mapping );
