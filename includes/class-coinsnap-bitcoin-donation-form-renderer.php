@@ -126,11 +126,11 @@ class Coinsnap_Bitcoin_Donation_Form_Renderer {
         $default_amount  = $meta['default_amount'] ?: '5';
         $default_message = $meta['default_message'] ?: __( 'Thank you for your support!', 'coinsnap-bitcoin-donation' );
         $redirect_url    = $meta['redirect_url'] ?: home_url();
-        $snap1           = $meta['snap1'] ?: '1000';
-        $snap2           = $meta['snap2'] ?: '5000';
-        $snap3           = $meta['snap3'] ?: '10000';
-        $min_amount      = (float) ( $meta['minimum_amount'] ?: 5 );
-        $premium_amount  = (float) ( $meta['premium_amount'] ?: 50 );
+        $snap1           = $meta['snap1'] ?: '50';
+        $snap2           = $meta['snap2'] ?: '100';
+        $snap3           = $meta['snap3'] ?: '200';
+        $min_amount      = (float) ( $meta['minimum_amount'] ?: 500 );
+        $premium_amount  = (float) ( $meta['premium_amount'] ?: 10000 );
 
         $template_path = COINSNAP_BITCOIN_DONATION_PLUGIN_PATH . 'templates/' . $template_name . '.php';
 
