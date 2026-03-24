@@ -134,8 +134,8 @@ msgstr "Nachricht:"
 
 #: includes/class-coinsnap-bitcoin-donation-shortcode-multi-amount-wide.php:105
 #: includes/class-coinsnap-bitcoin-donation-shortcode-multi-amount.php:94
-msgid "Snap Donations"
-msgstr "Schnellspenden"
+msgid "Choose an amount"
+msgstr "Wähle einen Betrag aus"
 
 #: includes/class-coinsnap-bitcoin-donation-shoutouts-list.php:78
 msgid "No Shoutouts Available"

@@ -40,7 +40,7 @@
             </div>
         </div>
         <div class="snap-title-container">
-            <h4><?php echo esc_html__('Snap Donations', 'coinsnap-bitcoin-donation');?></h4>
+            <h4><?php echo esc_html__('Choose an amount', 'coinsnap-bitcoin-donation');?></h4>
 
         </div>
         <div class="snap-container">

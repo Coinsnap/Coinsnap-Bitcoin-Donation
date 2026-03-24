@@ -134,7 +134,7 @@ msgstr ""
 
 #: includes/class-coinsnap-bitcoin-donation-shortcode-multi-amount-wide.php:105
 #: includes/class-coinsnap-bitcoin-donation-shortcode-multi-amount.php:94
-msgid "Snap Donations"
+msgid "Choose an amount"
 msgstr ""
 
 #: includes/class-coinsnap-bitcoin-donation-shoutouts-list.php:78
