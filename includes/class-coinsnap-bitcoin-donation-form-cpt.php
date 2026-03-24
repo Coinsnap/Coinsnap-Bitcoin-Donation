@@ -458,7 +458,7 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 	public function fix_submenu_highlight( $submenu_file ) {
 		$screen = get_current_screen();
 		if ( $screen && $screen->post_type === self::POST_TYPE ) {
-			return 'edit.php?post_type=donation-form';
+			return 'coinsnap-bitcoin-donation';
 		}
 		return $submenu_file;
 	}
