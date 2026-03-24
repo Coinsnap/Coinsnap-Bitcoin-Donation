@@ -376,6 +376,8 @@ class coinsnap_bitcoin_donation_Webhooks {
                 update_post_meta( $post_id, '_coinsnap_bitcoin_donation_address', $address );
                 update_post_meta( $post_id, '_coinsnap_bitcoin_donation_payment_id', $invoice_id );
                 update_post_meta( $post_id, '_coinsnap_bitcoin_donation_custom_field', $custom );
+                $custom_checkbox = sanitize_text_field( $metadata['donorCustomCheckbox'] ?? '0' );
+                update_post_meta( $post_id, '_coinsnap_bitcoin_donation_custom_checkbox', $custom_checkbox );
                 if ( ! empty( $metadata['donationFormId'] ) ) {
                     update_post_meta( $post_id, '_coinsnap_donation_form_id', absint( $metadata['donationFormId'] ) );
                 }

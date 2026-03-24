@@ -72,6 +72,22 @@
                 id="<?php echo esc_attr($prefix); ?>custom<?php echo esc_attr($sufix); ?>"
                 placeholder="<?php echo esc_html($custom_name); echo $custom === 'mandatory' ? '*' : ''; ?>" />
             <?php endif; ?>
+
+            <?php if ( ! empty( $donor_notice ) ) : ?>
+            <div class="coinsnap-donor-notice">
+                <p><?php echo nl2br( esc_html( $donor_notice ) ); ?></p>
+            </div>
+            <?php endif; ?>
+
+            <?php if ( ! empty( $custom_checkbox_label ) ) : ?>
+            <div class="coinsnap-custom-checkbox">
+                <label>
+                    <input type="checkbox" id="<?php echo esc_attr($prefix); ?>custom-checkbox<?php echo esc_attr($sufix); ?>" value="1">
+                    <?php echo esc_html( $custom_checkbox_label ); ?>
+                </label>
+            </div>
+            <?php endif; ?>
+
             <button type="submit" id="<?php echo esc_attr($prefix); ?>public-donors-pay<?php echo esc_attr($sufix); ?>"><?php esc_html_e('Pay with Bitcoin', 'coinsnap-bitcoin-donation'); ?></button>
         </form>
     </div>

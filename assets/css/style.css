@@ -972,3 +972,38 @@
     font-size: 15px;
   }
 }
+
+/* Donor notice and custom checkbox */
+.coinsnap-donor-notice {
+  margin: 12px 0;
+  padding: 10px 12px;
+  background: #f8f9fa;
+  border-left: 3px solid #f7931a;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #555;
+}
+
+.coinsnap-donor-notice p {
+  margin: 0;
+}
+
+.coinsnap-custom-checkbox {
+  margin: 12px 0;
+}
+
+.coinsnap-custom-checkbox label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #333;
+  cursor: pointer;
+}
+
+.coinsnap-custom-checkbox input[type="checkbox"] {
+  margin-top: 2px;
+  flex-shrink: 0;
+}

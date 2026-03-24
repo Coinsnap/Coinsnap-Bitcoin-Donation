@@ -91,6 +91,7 @@ class Coinsnap_Bitcoin_Donation_Form_Renderer {
             'default_amount', 'default_message', 'redirect_url', 'public_donors',
             'first_name', 'last_name', 'email', 'address',
             'custom_field_name', 'custom_field_visibility',
+            'donor_notice', 'custom_checkbox_label',
             'snap1', 'snap2', 'snap3', 'minimum_amount', 'premium_amount',
         );
 
@@ -123,6 +124,8 @@ class Coinsnap_Bitcoin_Donation_Form_Renderer {
         $public_donors   = $meta['public_donors'] ?: '';
         $custom          = $meta['custom_field_visibility'] ?: 'hidden';
         $custom_name     = $meta['custom_field_name'] ?: '';
+        $donor_notice          = $meta['donor_notice'] ?: '';
+        $custom_checkbox_label = $meta['custom_checkbox_label'] ?: '';
         $default_amount  = $meta['default_amount'] ?: '5';
         $default_message = $meta['default_message'] ?: __( 'Thank you for your support!', 'coinsnap-bitcoin-donation' );
         $redirect_url    = $meta['redirect_url'] ?: home_url();

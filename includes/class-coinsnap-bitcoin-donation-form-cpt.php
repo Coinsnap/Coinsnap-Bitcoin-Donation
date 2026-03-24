@@ -67,6 +67,8 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 			'address',
 			'custom_field_name',
 			'custom_field_visibility',
+			'donor_notice',
+			'custom_checkbox_label',
 			'snap1',
 			'snap2',
 			'snap3',
@@ -138,6 +140,8 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 			'address'                 => get_post_meta( $post->ID, self::META_PREFIX . 'address', true ),
 			'custom_field_name'       => get_post_meta( $post->ID, self::META_PREFIX . 'custom_field_name', true ),
 			'custom_field_visibility' => get_post_meta( $post->ID, self::META_PREFIX . 'custom_field_visibility', true ),
+			'donor_notice'            => get_post_meta( $post->ID, self::META_PREFIX . 'donor_notice', true ),
+			'custom_checkbox_label'   => get_post_meta( $post->ID, self::META_PREFIX . 'custom_checkbox_label', true ),
 		);
 
 		$is_new = get_post_status( $post->ID ) === 'auto-draft';
@@ -361,6 +365,19 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 							</select>
 						</div>
 					</div>
+					<div class="csc-field-row">
+						<label for="<?php echo esc_attr( self::META_PREFIX . 'donor_notice' ); ?>"><?php esc_html_e( 'Donor Notice', 'coinsnap-bitcoin-donation' ); ?></label>
+						<div class="csc-field-input">
+							<textarea id="<?php echo esc_attr( self::META_PREFIX . 'donor_notice' ); ?>" name="<?php echo esc_attr( self::META_PREFIX . 'donor_notice' ); ?>" class="large-text" rows="4" placeholder="<?php esc_attr_e( 'Optional notice displayed to donors (e.g. tax deduction info)', 'coinsnap-bitcoin-donation' ); ?>"><?php echo esc_textarea( $meta['donor_notice'] ); ?></textarea>
+						</div>
+					</div>
+					<div class="csc-field-row">
+						<label for="<?php echo esc_attr( self::META_PREFIX . 'custom_checkbox_label' ); ?>"><?php esc_html_e( 'Custom Checkbox Label', 'coinsnap-bitcoin-donation' ); ?></label>
+						<div class="csc-field-input">
+							<input type="text" id="<?php echo esc_attr( self::META_PREFIX . 'custom_checkbox_label' ); ?>" name="<?php echo esc_attr( self::META_PREFIX . 'custom_checkbox_label' ); ?>" value="<?php echo esc_attr( $meta['custom_checkbox_label'] ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'e.g. I need a donation receipt', 'coinsnap-bitcoin-donation' ); ?>">
+							<p class="description"><?php esc_html_e( 'Leave empty to hide. When set, a checkbox with this label appears in the donor form.', 'coinsnap-bitcoin-donation' ); ?></p>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -415,7 +432,7 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 			'form_type', 'layout', 'currency', 'button_text', 'title_text',
 			'default_amount', 'default_message', 'redirect_url',
 			'first_name', 'last_name', 'email', 'address',
-			'custom_field_name', 'custom_field_visibility',
+			'custom_field_name', 'custom_field_visibility', 'custom_checkbox_label',
 			'snap1', 'snap2', 'snap3', 'minimum_amount', 'premium_amount',
 		);
 		foreach ( $text_fields as $field ) {
@@ -426,6 +443,12 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 		}
 		$public_donors = isset( $_POST[ self::META_PREFIX . 'public_donors' ] ) ? '1' : '';
 		update_post_meta( $post_id, self::META_PREFIX . 'public_donors', $public_donors );
+
+		// Textarea field — preserve line breaks
+		$donor_notice_key = self::META_PREFIX . 'donor_notice';
+		if ( isset( $_POST[ $donor_notice_key ] ) ) {
+			update_post_meta( $post_id, $donor_notice_key, sanitize_textarea_field( wp_unslash( $_POST[ $donor_notice_key ] ) ) );
+		}
 	}
 
 	public function add_columns( $columns ) {

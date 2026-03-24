@@ -228,12 +228,16 @@ const addDonationPopupListener = (prefix, suffix, type, redirect) => {
         var formContainer = payButton ? payButton.closest('.coinsnap-donation-form-instance') : null;
         var donationFormId = formContainer ? formContainer.dataset.formId : '';
 
+        const customCheckbox = document.getElementById(`${prefix}custom-checkbox${suffix}`);
+        const customCheckboxValue = customCheckbox && customCheckbox.checked ? '1' : '0';
+
         const metadata = {
             donorName: `${firstNameField?.value ?? ''} ${lastNameField?.value ?? ''}`.trim(),
             donorEmail: emailField?.value || '',
             donorAddress: address !== ' ,  , ' ? address : '',
             donorMessage: message,
             donorCustom: customContent,
+            donorCustomCheckbox: customCheckboxValue,
             donorOptOut: '0',
             formType: type,
             type: type,
