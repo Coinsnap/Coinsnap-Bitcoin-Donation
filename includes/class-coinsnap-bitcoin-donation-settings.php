@@ -32,13 +32,13 @@ class Coinsnap_Bitcoin_Donation_Settings {
 
         // --- Plugin-specific pages first ---
 
-        // First submenu replaces auto-generated parent label
+        // First submenu uses parent slug to replace the auto-generated parent label
         add_submenu_page(
             'coinsnap-bitcoin-donation',
             __( 'Donation Forms', 'coinsnap-bitcoin-donation' ),
             __( 'Donation Forms', 'coinsnap-bitcoin-donation' ),
             'manage_options',
-            'edit.php?post_type=donation-form'
+            'coinsnap-bitcoin-donation'
         );
 
         add_submenu_page(
