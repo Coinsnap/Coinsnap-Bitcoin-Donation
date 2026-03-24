@@ -17,6 +17,7 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 		add_action( 'manage_' . self::POST_TYPE . '_posts_custom_column', array( $this, 'render_column' ), 10, 2 );
 		add_filter( 'parent_file', array( $this, 'fix_parent_menu' ) );
 		add_filter( 'submenu_file', array( $this, 'fix_submenu_highlight' ) );
+		add_action( 'admin_footer', array( $this, 'render_empty_state' ) );
 	}
 
 	public function register_cpt() {
@@ -509,5 +510,74 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 			return 'coinsnap-bitcoin-donation';
 		}
 		return $submenu_file;
+	}
+
+	public function render_empty_state() {
+		$screen = get_current_screen();
+		if ( ! $screen || $screen->post_type !== self::POST_TYPE || $screen->base !== 'edit' ) {
+			return;
+		}
+
+		$count = wp_count_posts( self::POST_TYPE );
+		$total = ( $count->publish ?? 0 ) + ( $count->draft ?? 0 ) + ( $count->trash ?? 0 );
+		if ( $total > 0 ) {
+			return;
+		}
+
+		$new_url = admin_url( 'post-new.php?post_type=' . self::POST_TYPE );
+		?>
+		<style>
+			.donation-form-empty-state {
+				text-align: center;
+				padding: 60px 20px;
+			}
+			.donation-form-empty-state svg {
+				width: 64px;
+				height: 64px;
+				color: #dcdcde;
+				margin-bottom: 16px;
+			}
+			.donation-form-empty-state h2 {
+				font-size: 20px;
+				font-weight: 400;
+				color: #1d2327;
+				margin: 0 0 8px;
+			}
+			.donation-form-empty-state p {
+				color: #787c82;
+				font-size: 14px;
+				margin: 0 0 24px;
+			}
+			.donation-form-empty-state .button {
+				font-size: 14px;
+				padding: 8px 24px;
+				height: auto;
+			}
+		</style>
+		<script>
+			jQuery(function($) {
+				var $table = $('.wp-list-table');
+				var $noItems = $('.no-items');
+				if ($noItems.length) {
+					$noItems.closest('tr').hide();
+					$table.after($('#donation-form-empty-state'));
+					$('#donation-form-empty-state').show();
+				}
+			});
+		</script>
+		<div id="donation-form-empty-state" class="donation-form-empty-state" style="display:none;">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+				<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+				<polyline points="14 2 14 8 20 8"></polyline>
+				<line x1="12" y1="18" x2="12" y2="12"></line>
+				<line x1="9" y1="15" x2="15" y2="15"></line>
+			</svg>
+			<h2><?php esc_html_e( 'No donation forms yet', 'coinsnap-bitcoin-donation' ); ?></h2>
+			<p><?php esc_html_e( 'Create your first donation form to start accepting Bitcoin payments.', 'coinsnap-bitcoin-donation' ); ?></p>
+			<a href="<?php echo esc_url( $new_url ); ?>" class="button button-primary">
+				<?php esc_html_e( 'Create Your First Form', 'coinsnap-bitcoin-donation' ); ?>
+			</a>
+		</div>
+		<?php
 	}
 }
