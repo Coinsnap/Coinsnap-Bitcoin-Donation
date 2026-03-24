@@ -7,7 +7,7 @@
 * Requires at least: 5.2
 * Tested up to: 6.9
 * Requires PHP: 8.0
-* Stable tag: 1.6.0
+* Stable tag: 1.5.0
 * License: GPL2
 * License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -247,8 +247,6 @@ Plugin's page on Coinsnap website: [https://coinsnap.io/modules/bitcoin-donation
 * Update: Shoutouts submenu always visible (no longer conditional on active checkbox).
 * Fixed: Iframe modal not cleaned up on close — donate button stayed disabled after closing modal.
 * Fixed: Exchange rate API failure (CoinGecko rate limiting) no longer blocks payment creation.
-
-#### 1.6.0 :: 2026-03-24
 * Major: Donation Forms now use a Custom Post Type — create unlimited forms instead of the previous 3-tab limit.
 * New: Visual form type selector with SVG icon cards (Simple Donation, Multi Amount, Shoutout).
 * New: Unified shortcode `[coinsnap_bitcoin_donation_form id="123"]` renders any form type based on its settings.
