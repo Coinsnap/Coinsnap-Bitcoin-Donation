@@ -1006,6 +1006,8 @@
 }
 
 .coinsnap-custom-checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
   margin-top: 2px;
   flex-shrink: 0;
 }
