@@ -17,6 +17,7 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 		add_action( 'manage_' . self::POST_TYPE . '_posts_custom_column', array( $this, 'render_column' ), 10, 2 );
 		add_filter( 'parent_file', array( $this, 'fix_parent_menu' ) );
 		add_filter( 'submenu_file', array( $this, 'fix_submenu_highlight' ) );
+		add_action( 'admin_footer', array( $this, 'render_list_page_scripts' ) );
 		add_action( 'admin_footer', array( $this, 'render_empty_state' ) );
 		add_action( 'load-edit.php', array( $this, 'maybe_create_default_forms' ) );
 		add_action( 'admin_notices', array( $this, 'show_defaults_notice' ) );
@@ -514,6 +515,34 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 		return $submenu_file;
 	}
 
+	public function render_list_page_scripts() {
+		$screen = get_current_screen();
+		if ( ! $screen || $screen->post_type !== self::POST_TYPE || $screen->base !== 'edit' ) {
+			return;
+		}
+		?>
+		<script>
+			jQuery(function($) {
+				$(document).on('click', '.csc-shortcode-copy', function() {
+					var $btn = $(this);
+					var shortcode = $btn.data('shortcode');
+					if (navigator.clipboard && navigator.clipboard.writeText) {
+						navigator.clipboard.writeText(shortcode);
+					} else {
+						var $t = $('<textarea>');
+						$('body').append($t);
+						$t.val(shortcode).select();
+						document.execCommand('copy');
+						$t.remove();
+					}
+					$btn.addClass('is-copied');
+					setTimeout(function() { $btn.removeClass('is-copied'); }, 2000);
+				});
+			});
+		</script>
+		<?php
+	}
+
 	public function render_empty_state() {
 		$screen = get_current_screen();
 		if ( ! $screen || $screen->post_type !== self::POST_TYPE || $screen->base !== 'edit' ) {
@@ -565,22 +594,6 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 					$table.after($('#donation-form-empty-state'));
 					$('#donation-form-empty-state').show();
 				}
-				// Copy shortcode handler for list table
-				$(document).on('click', '.csc-shortcode-copy', function() {
-					var $btn = $(this);
-					var shortcode = $btn.data('shortcode');
-					if (navigator.clipboard && navigator.clipboard.writeText) {
-						navigator.clipboard.writeText(shortcode);
-					} else {
-						var $t = $('<textarea>');
-						$('body').append($t);
-						$t.val(shortcode).select();
-						document.execCommand('copy');
-						$t.remove();
-					}
-					$btn.addClass('is-copied');
-					setTimeout(function() { $btn.removeClass('is-copied'); }, 2000);
-				});
 			});
 		</script>
 		<div id="donation-form-empty-state" class="donation-form-empty-state" style="display:none;">
