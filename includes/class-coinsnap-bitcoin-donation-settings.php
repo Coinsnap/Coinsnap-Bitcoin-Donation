@@ -16,33 +16,32 @@ class Coinsnap_Bitcoin_Donation_Settings {
             \CoinsnapCore\Admin\SettingsPage::render_page_for( $core );
         };
 
-        // Parent menu redirects to CPT list
+        $cpt_url = 'edit.php?post_type=donation-form';
+
+        // Parent menu opens CPT list directly
         add_menu_page(
             __( 'Coinsnap Bitcoin Donation', 'coinsnap-bitcoin-donation' ),
             __( 'Coinsnap Bitcoin Donation', 'coinsnap-bitcoin-donation' ),
             'manage_options',
-            'coinsnap-bitcoin-donation',
-            function() {
-                wp_redirect( admin_url( 'edit.php?post_type=donation-form' ) );
-                exit;
-            },
+            $cpt_url,
+            '',
             plugin_dir_url( dirname( __FILE__ ) ) . 'assets/images/bitcoin.svg',
             100
         );
 
         // --- Plugin-specific pages first ---
 
-        // First submenu uses parent slug to replace the auto-generated parent label
+        // First submenu replaces auto-generated parent label
         add_submenu_page(
-            'coinsnap-bitcoin-donation',
+            $cpt_url,
             __( 'Donation Forms', 'coinsnap-bitcoin-donation' ),
             __( 'Donation Forms', 'coinsnap-bitcoin-donation' ),
             'manage_options',
-            'coinsnap-bitcoin-donation'
+            $cpt_url
         );
 
         add_submenu_page(
-            'coinsnap-bitcoin-donation',
+            $cpt_url,
             __( 'Add New Form', 'coinsnap-bitcoin-donation' ),
             __( 'Add New Form', 'coinsnap-bitcoin-donation' ),
             'manage_options',
@@ -50,7 +49,7 @@ class Coinsnap_Bitcoin_Donation_Settings {
         );
 
         add_submenu_page(
-            'coinsnap-bitcoin-donation',
+            $cpt_url,
             __( 'Shoutouts', 'coinsnap-bitcoin-donation' ),
             __( 'Shoutouts', 'coinsnap-bitcoin-donation' ),
             'manage_options',
@@ -58,7 +57,7 @@ class Coinsnap_Bitcoin_Donation_Settings {
         );
 
         add_submenu_page(
-            'coinsnap-bitcoin-donation',
+            $cpt_url,
             __( 'Donor Information', 'coinsnap-bitcoin-donation' ),
             __( 'Donor Information', 'coinsnap-bitcoin-donation' ),
             'manage_options',
@@ -68,7 +67,7 @@ class Coinsnap_Bitcoin_Donation_Settings {
         // --- Core pages ---
 
         add_submenu_page(
-            'coinsnap-bitcoin-donation',
+            $cpt_url,
             __( 'Transactions', 'coinsnap-bitcoin-donation' ),
             __( 'Transactions', 'coinsnap-bitcoin-donation' ),
             'manage_options',
@@ -79,7 +78,7 @@ class Coinsnap_Bitcoin_Donation_Settings {
         );
 
         add_submenu_page(
-            'coinsnap-bitcoin-donation',
+            $cpt_url,
             __( 'Settings', 'coinsnap-bitcoin-donation' ),
             __( 'Settings', 'coinsnap-bitcoin-donation' ),
             'manage_options',
@@ -88,7 +87,7 @@ class Coinsnap_Bitcoin_Donation_Settings {
         );
 
         add_submenu_page(
-            'coinsnap-bitcoin-donation',
+            $cpt_url,
             __( 'Logs', 'coinsnap-bitcoin-donation' ),
             __( 'Logs', 'coinsnap-bitcoin-donation' ),
             'manage_options',
