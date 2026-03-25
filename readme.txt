@@ -3,7 +3,7 @@
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, donation, BTCPay
 Tested up to: 6.9
-Stable tag: 1.5.2
+Stable tag: 1.5.3
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -261,6 +261,12 @@ Plugin's page on Coinsnap website: [https://coinsnap.io/modules/bitcoin-donation
 * Update: Shoutouts submenu always visible (no longer conditional on active checkbox).
 * Fixed: Iframe modal not cleaned up on close — donate button stayed disabled after closing modal.
 * Fixed: Exchange rate API failure (CoinGecko rate limiting) no longer blocks payment creation.
+
+= 1.5.3 :: 2026-03-25 =
+* Fixed: Shortcode "Copied!" text always visible on list table.
+* Fixed: Shortcode copy button not working on list table.
+* Fixed: Shortcode column overlapping date column in list table.
+* Fixed: Old admin URL (admin.php?page=coinsnap-bitcoin-donation) now redirects correctly.
 
 = 1.5.2 :: 2026-03-25 =
 * New: Empty state page with "Create Your First Form" button when no forms exist.
