@@ -7,6 +7,15 @@ class Coinsnap_Bitcoin_Donation_Settings {
 
     public function __construct() {
         add_action( 'admin_menu', array( $this, 'register_admin_menu' ) );
+        add_action( 'admin_init', array( $this, 'redirect_old_menu_slug' ) );
+    }
+
+    public function redirect_old_menu_slug() {
+        $page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if ( $page === 'coinsnap-bitcoin-donation' && is_admin() ) {
+            wp_safe_redirect( admin_url( 'edit.php?post_type=donation-form' ) );
+            exit;
+        }
     }
 
     public function register_admin_menu() {
