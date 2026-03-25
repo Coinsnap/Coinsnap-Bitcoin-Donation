@@ -3,7 +3,7 @@
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, donation, BTCPay
 Tested up to: 6.9
-Stable tag: 1.5.1
+Stable tag: 1.5.2
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -262,6 +262,15 @@ Plugin's page on Coinsnap website: [https://coinsnap.io/modules/bitcoin-donation
 * Fixed: Iframe modal not cleaned up on close — donate button stayed disabled after closing modal.
 * Fixed: Exchange rate API failure (CoinGecko rate limiting) no longer blocks payment creation.
 
+= 1.5.2 :: 2026-03-25 =
+* New: Empty state page with "Create Your First Form" button when no forms exist.
+* New: Admin notice after default forms are created prompting to review settings.
+* New: 3 default forms (Simple, Multi Amount, Shoutout) auto-created on first visit.
+* Update: "Snap Donations" renamed to "Choose an amount" (German: "Wähle einen Betrag aus").
+* Fixed: Self-healing migration — recovers from failed migration attempts automatically.
+* Fixed: Old admin URL redirect — cached bookmarks to the previous menu page now redirect correctly.
+* Fixed: Menu now links directly to CPT list — no redirect needed.
+
 = 1.5.1 :: 2026-03-24 =
 * Major: Donation Forms now use a Custom Post Type — create unlimited forms instead of the previous 3-tab limit.
 * New: Visual form type selector with SVG icon cards (Simple Donation, Multi Amount, Shoutout).
@@ -282,9 +291,3 @@ Plugin's page on Coinsnap website: [https://coinsnap.io/modules/bitcoin-donation
 * Update: Webhook handler stores donation form ID on shoutout and donor posts for per-form scoping.
 * Update: Uninstall cleanup includes CPT posts and migration options.
 * Fixed: Wide layout shortcodes force correct layout regardless of stored meta value.
-* New: Empty state page with "Create Your First Form" button when no forms exist.
-* New: Admin notice after default forms are created prompting to review settings.
-* New: 3 default forms (Simple, Multi Amount, Shoutout) auto-created on first visit.
-* Update: "Snap Donations" renamed to "Choose an amount" (German: "Wähle einen Betrag aus").
-* Fixed: Self-healing migration — recovers from failed migration attempts automatically.
-* Fixed: Old admin URL redirect — cached bookmarks to the previous menu page now redirect correctly.
