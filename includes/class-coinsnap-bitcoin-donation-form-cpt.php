@@ -19,6 +19,7 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 		add_filter( 'submenu_file', array( $this, 'fix_submenu_highlight' ) );
 		add_action( 'admin_footer', array( $this, 'render_empty_state' ) );
 		add_action( 'load-edit.php', array( $this, 'maybe_create_default_forms' ) );
+		add_action( 'admin_notices', array( $this, 'show_defaults_notice' ) );
 	}
 
 	public function register_cpt() {
@@ -582,6 +583,27 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 		<?php
 	}
 
+	public function show_defaults_notice() {
+		if ( ! get_transient( 'coinsnap_donation_defaults_notice' ) ) {
+			return;
+		}
+
+		$screen = get_current_screen();
+		if ( ! $screen || $screen->post_type !== self::POST_TYPE ) {
+			return;
+		}
+
+		delete_transient( 'coinsnap_donation_defaults_notice' );
+		?>
+		<div class="notice notice-info is-dismissible">
+			<p>
+				<strong><?php esc_html_e( 'Default donation forms have been created.', 'coinsnap-bitcoin-donation' ); ?></strong>
+				<?php esc_html_e( 'Please review each form and update the settings (currency, amounts, button text, etc.) to match your needs.', 'coinsnap-bitcoin-donation' ); ?>
+			</p>
+		</div>
+		<?php
+	}
+
 	public function maybe_create_default_forms() {
 		$post_type = filter_input( INPUT_GET, 'post_type', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		if ( $post_type !== self::POST_TYPE ) {
@@ -691,6 +713,7 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 			update_option( 'coinsnap_donation_migrated_forms', $mapping );
 			update_option( 'coinsnap_donation_forms_migrated', '1' );
 			update_option( 'coinsnap_donation_defaults_created', '1' );
+			set_transient( 'coinsnap_donation_defaults_notice', '1', 60 );
 		}
 
 		// Redirect to reload the page with forms visible
