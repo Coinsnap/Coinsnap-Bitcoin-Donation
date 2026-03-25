@@ -7,15 +7,6 @@ class Coinsnap_Bitcoin_Donation_Settings {
 
     public function __construct() {
         add_action( 'admin_menu', array( $this, 'register_admin_menu' ) );
-        add_action( 'admin_init', array( $this, 'redirect_old_menu_slug' ) );
-    }
-
-    public function redirect_old_menu_slug() {
-        $page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-        if ( $page === 'coinsnap-bitcoin-donation' && is_admin() ) {
-            wp_safe_redirect( admin_url( 'edit.php?post_type=donation-form' ) );
-            exit;
-        }
     }
 
     public function register_admin_menu() {
@@ -108,6 +99,20 @@ class Coinsnap_Bitcoin_Donation_Settings {
                     \CoinsnapCore\Admin\SettingsPage::get_settings_for( $core )['log_level'] ?? 'error'
                 );
                 \CoinsnapCore\Admin\LogsPage::render_page_for( $core, $logger );
+            }
+        );
+
+        // Hidden page for old URL — redirects to CPT list
+        // WordPress checks page exists before admin_init, so we must register it
+        add_submenu_page(
+            null, // hidden, no parent
+            '',
+            '',
+            'manage_options',
+            'coinsnap-bitcoin-donation',
+            function () {
+                wp_safe_redirect( admin_url( 'edit.php?post_type=donation-form' ) );
+                exit;
             }
         );
     }
