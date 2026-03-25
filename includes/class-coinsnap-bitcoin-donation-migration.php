@@ -12,7 +12,13 @@ class Coinsnap_Bitcoin_Donation_Migration {
     public static function maybe_migrate() {
         // Ensure CPT is registered before creating posts
         if ( ! post_type_exists( 'donation-form' ) ) {
-            return;
+            // Register it now — init may not have fired yet (activation, WP-CLI, etc.)
+            $cpt = new Coinsnap_Bitcoin_Donation_Form_CPT();
+            $cpt->register_cpt();
+        }
+
+        if ( ! post_type_exists( 'donation-form' ) ) {
+            return; // Still not registered — bail
         }
 
         // If CPT forms already exist, nothing to do
