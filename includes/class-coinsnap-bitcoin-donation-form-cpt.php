@@ -9,8 +9,15 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 	const META_PREFIX = '_coinsnap_donation_form_';
 
 	public function __construct() {
-		add_action( 'init', array( $this, 'register_cpt' ) );
-		add_action( 'init', array( $this, 'register_meta_fields' ) );
+		// Register CPT immediately if init already fired (e.g. after plugin update),
+		// otherwise hook into init for normal page loads
+		if ( did_action( 'init' ) ) {
+			$this->register_cpt();
+			$this->register_meta_fields();
+		} else {
+			add_action( 'init', array( $this, 'register_cpt' ) );
+			add_action( 'init', array( $this, 'register_meta_fields' ) );
+		}
 		add_action( 'add_meta_boxes', array( $this, 'add_metaboxes' ) );
 		add_action( 'save_post_' . self::POST_TYPE, array( $this, 'save_meta' ), 10, 2 );
 		add_filter( 'manage_' . self::POST_TYPE . '_posts_columns', array( $this, 'add_columns' ) );
