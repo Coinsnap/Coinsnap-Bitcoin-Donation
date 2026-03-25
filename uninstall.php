@@ -23,6 +23,7 @@ $options = array(
     'coinsnap_donation_db_version',
     'coinsnap_donation_migrated_forms',
     'coinsnap_donation_forms_migrated',
+    'coinsnap_donation_defaults_created',
 );
 
 foreach ( $options as $option ) {

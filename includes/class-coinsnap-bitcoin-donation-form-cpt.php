@@ -592,7 +592,12 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 			return;
 		}
 
-		// Already have forms? Nothing to do.
+		// Only run once — if defaults were already created, don't recreate after deletion
+		if ( get_option( 'coinsnap_donation_defaults_created' ) ) {
+			return;
+		}
+
+		// Already have forms? Just set the flag.
 		$existing = get_posts( array(
 			'post_type'      => self::POST_TYPE,
 			'posts_per_page' => 1,
@@ -600,6 +605,7 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 			'fields'         => 'ids',
 		) );
 		if ( ! empty( $existing ) ) {
+			update_option( 'coinsnap_donation_defaults_created', '1' );
 			return;
 		}
 
@@ -684,6 +690,7 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 		if ( ! empty( $mapping ) ) {
 			update_option( 'coinsnap_donation_migrated_forms', $mapping );
 			update_option( 'coinsnap_donation_forms_migrated', '1' );
+			update_option( 'coinsnap_donation_defaults_created', '1' );
 		}
 
 		// Redirect to reload the page with forms visible
