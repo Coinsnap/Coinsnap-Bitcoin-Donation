@@ -18,6 +18,7 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 		add_filter( 'parent_file', array( $this, 'fix_parent_menu' ) );
 		add_filter( 'submenu_file', array( $this, 'fix_submenu_highlight' ) );
 		add_action( 'admin_footer', array( $this, 'render_empty_state' ) );
+		add_action( 'load-edit.php', array( $this, 'maybe_create_default_forms' ) );
 	}
 
 	public function register_cpt() {
@@ -579,5 +580,114 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 			</a>
 		</div>
 		<?php
+	}
+
+	public function maybe_create_default_forms() {
+		$post_type = filter_input( INPUT_GET, 'post_type', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		if ( $post_type !== self::POST_TYPE ) {
+			return;
+		}
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		// Already have forms? Nothing to do.
+		$existing = get_posts( array(
+			'post_type'      => self::POST_TYPE,
+			'posts_per_page' => 1,
+			'post_status'    => 'any',
+			'fields'         => 'ids',
+		) );
+		if ( ! empty( $existing ) ) {
+			return;
+		}
+
+		// Create the 3 default forms
+		$defaults = array(
+			array(
+				'title'     => __( 'Simple Donation', 'coinsnap-bitcoin-donation' ),
+				'form_type' => 'simple_donation',
+				'meta'      => array(
+					'layout'          => 'NARROW',
+					'currency'        => 'EUR',
+					'button_text'     => __( 'Donate', 'coinsnap-bitcoin-donation' ),
+					'title_text'      => __( 'Donate with Bitcoin', 'coinsnap-bitcoin-donation' ),
+					'default_amount'  => '5',
+					'default_message' => __( 'Thank you for your support!', 'coinsnap-bitcoin-donation' ),
+					'redirect_url'    => home_url(),
+				),
+			),
+			array(
+				'title'     => __( 'Multi Amount Donation', 'coinsnap-bitcoin-donation' ),
+				'form_type' => 'multi_amount',
+				'meta'      => array(
+					'layout'          => 'NARROW',
+					'currency'        => 'EUR',
+					'button_text'     => __( 'Donate', 'coinsnap-bitcoin-donation' ),
+					'title_text'      => __( 'Donate with Bitcoin', 'coinsnap-bitcoin-donation' ),
+					'default_amount'  => '10',
+					'default_message' => __( 'Thank you for your support!', 'coinsnap-bitcoin-donation' ),
+					'redirect_url'    => home_url(),
+					'snap1'           => '50',
+					'snap2'           => '100',
+					'snap3'           => '200',
+				),
+			),
+			array(
+				'title'     => __( 'Shoutout', 'coinsnap-bitcoin-donation' ),
+				'form_type' => 'shoutout',
+				'meta'      => array(
+					'currency'        => 'EUR',
+					'button_text'     => __( 'Shoutout', 'coinsnap-bitcoin-donation' ),
+					'title_text'      => __( 'Bitcoin Shoutouts', 'coinsnap-bitcoin-donation' ),
+					'default_amount'  => '20',
+					'default_message' => __( 'Great work!', 'coinsnap-bitcoin-donation' ),
+					'redirect_url'    => home_url(),
+					'minimum_amount'  => '500',
+					'premium_amount'  => '10000',
+				),
+			),
+		);
+
+		$mapping = array();
+
+		foreach ( $defaults as $form ) {
+			$post_id = wp_insert_post( array(
+				'post_title'  => $form['title'],
+				'post_status' => 'publish',
+				'post_type'   => self::POST_TYPE,
+			) );
+
+			if ( ! $post_id || is_wp_error( $post_id ) ) {
+				continue;
+			}
+
+			update_post_meta( $post_id, self::META_PREFIX . 'form_type', $form['form_type'] );
+			foreach ( $form['meta'] as $key => $value ) {
+				update_post_meta( $post_id, self::META_PREFIX . $key, $value );
+			}
+
+			// Map legacy shortcodes
+			if ( $form['form_type'] === 'simple_donation' ) {
+				$mapping['coinsnap_bitcoin_donation']      = $post_id;
+				$mapping['coinsnap_bitcoin_donation_wide'] = $post_id;
+			} elseif ( $form['form_type'] === 'multi_amount' ) {
+				$mapping['multi_amount_donation']      = $post_id;
+				$mapping['multi_amount_donation_wide'] = $post_id;
+			} elseif ( $form['form_type'] === 'shoutout' ) {
+				$mapping['shoutout_form'] = $post_id;
+				$mapping['shoutout_list'] = $post_id;
+			}
+		}
+
+		if ( ! empty( $mapping ) ) {
+			update_option( 'coinsnap_donation_migrated_forms', $mapping );
+			update_option( 'coinsnap_donation_forms_migrated', '1' );
+		}
+
+		// Redirect to reload the page with forms visible
+		wp_safe_redirect( admin_url( 'edit.php?post_type=' . self::POST_TYPE ) );
+		exit;
 	}
 }
