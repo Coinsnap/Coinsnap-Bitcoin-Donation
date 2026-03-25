@@ -89,6 +89,25 @@
     cursor: pointer;
 }
 
+/* List table column widths */
+.post-type-donation-form .column-shortcode {
+    width: 280px;
+}
+
+.post-type-donation-form .column-form_type,
+.post-type-donation-form .column-layout {
+    width: 100px;
+}
+
+.post-type-donation-form .csc-shortcode-copy {
+    padding: 4px 8px;
+}
+
+.post-type-donation-form .csc-shortcode-code {
+    font-size: 11px;
+    word-break: break-all;
+}
+
 /* Shortcode section */
 .donation-form-shortcode-section {
     margin-top: 20px;
