@@ -3,7 +3,7 @@
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, donation, BTCPay
 Tested up to: 6.9
-Stable tag: 1.5.4
+Stable tag: 1.5.5
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 

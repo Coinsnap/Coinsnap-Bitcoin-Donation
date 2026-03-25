@@ -508,7 +508,7 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 
 	public function fix_parent_menu( $parent_file ) {
 		$screen = get_current_screen();
-		if ( $screen && $screen->post_type === self::POST_TYPE ) {
+		if ( $screen && $screen->post_type === self::POST_TYPE && in_array( $screen->base, array( 'edit', 'post' ), true ) ) {
 			return 'edit.php?post_type=donation-form';
 		}
 		return $parent_file;
@@ -517,7 +517,15 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 	public function fix_submenu_highlight( $submenu_file ) {
 		$screen = get_current_screen();
 		if ( $screen && $screen->post_type === self::POST_TYPE ) {
-			return 'edit.php?post_type=donation-form';
+			if ( $screen->base === 'edit' ) {
+				return 'edit.php?post_type=donation-form';
+			}
+			if ( $screen->base === 'post' && $screen->action === 'add' ) {
+				return 'post-new.php?post_type=donation-form';
+			}
+			if ( $screen->base === 'post' ) {
+				return 'edit.php?post_type=donation-form';
+			}
 		}
 		return $submenu_file;
 	}
