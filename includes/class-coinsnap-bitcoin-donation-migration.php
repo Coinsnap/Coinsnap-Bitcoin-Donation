@@ -10,16 +10,12 @@ class Coinsnap_Bitcoin_Donation_Migration {
     const META_PREFIX = '_coinsnap_donation_form_';
 
     public static function maybe_migrate() {
-        if ( get_option( self::FLAG_KEY ) ) {
+        // Ensure CPT is registered before creating posts
+        if ( ! post_type_exists( 'donation-form' ) ) {
             return;
         }
 
-        // Ensure CPT is registered before creating posts
-        if ( ! post_type_exists( 'donation-form' ) ) {
-            return; // Don't set flag — retry on next admin_init when CPT is registered
-        }
-
-        // If CPT forms already exist, just set the flag
+        // If CPT forms already exist, nothing to do
         $existing = get_posts( array(
             'post_type'      => 'donation-form',
             'posts_per_page' => 1,
@@ -29,6 +25,12 @@ class Coinsnap_Bitcoin_Donation_Migration {
         if ( ! empty( $existing ) ) {
             update_option( self::FLAG_KEY, '1' );
             return;
+        }
+
+        // Flag set but no forms exist — previous migration failed, clear and retry
+        if ( get_option( self::FLAG_KEY ) ) {
+            delete_option( self::FLAG_KEY );
+            delete_option( self::MAP_KEY );
         }
 
         $options = get_option( 'coinsnap_bitcoin_donation_forms_options', array() );
