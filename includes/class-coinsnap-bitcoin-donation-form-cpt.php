@@ -565,6 +565,22 @@ class Coinsnap_Bitcoin_Donation_Form_CPT {
 					$table.after($('#donation-form-empty-state'));
 					$('#donation-form-empty-state').show();
 				}
+				// Copy shortcode handler for list table
+				$(document).on('click', '.csc-shortcode-copy', function() {
+					var $btn = $(this);
+					var shortcode = $btn.data('shortcode');
+					if (navigator.clipboard && navigator.clipboard.writeText) {
+						navigator.clipboard.writeText(shortcode);
+					} else {
+						var $t = $('<textarea>');
+						$('body').append($t);
+						$t.val(shortcode).select();
+						document.execCommand('copy');
+						$t.remove();
+					}
+					$btn.addClass('is-copied');
+					setTimeout(function() { $btn.removeClass('is-copied'); }, 2000);
+				});
 			});
 		</script>
 		<div id="donation-form-empty-state" class="donation-form-empty-state" style="display:none;">
