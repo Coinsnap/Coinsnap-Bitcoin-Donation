@@ -96,20 +96,20 @@
     border-top: 1px solid #f0f0f1;
 }
 
-/* Shortcode copy styles (needed here since admin-style.css is not loaded on CPT screens) */
-.donation-form-shortcode-section .csc-shortcode-group {
+/* Shortcode copy styles (used on both list table and edit screen) */
+.csc-shortcode-group {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-.donation-form-shortcode-section .csc-shortcode-row {
+.csc-shortcode-row {
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-.donation-form-shortcode-section .csc-shortcode-label {
+.csc-shortcode-label {
     font-size: 13px;
     font-weight: 600;
     color: #50575e;
@@ -117,7 +117,7 @@
     flex-shrink: 0;
 }
 
-.donation-form-shortcode-section .csc-shortcode-copy {
+.csc-shortcode-copy {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -131,12 +131,12 @@
     font-size: inherit;
 }
 
-.donation-form-shortcode-section .csc-shortcode-copy:hover {
+.csc-shortcode-copy:hover {
     background: #f0f0f1;
     border-color: #c3c4c7;
 }
 
-.donation-form-shortcode-section .csc-shortcode-code {
+.csc-shortcode-code {
     font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
     font-size: 13px;
     font-weight: 500;
@@ -144,17 +144,17 @@
     letter-spacing: 0.2px;
 }
 
-.donation-form-shortcode-section .csc-shortcode-icon {
+.csc-shortcode-icon {
     display: inline-flex;
     color: #a7aaad;
     transition: color 0.15s ease;
 }
 
-.donation-form-shortcode-section .csc-shortcode-copy:hover .csc-shortcode-icon {
+.csc-shortcode-copy:hover .csc-shortcode-icon {
     color: #50575e;
 }
 
-.donation-form-shortcode-section .csc-shortcode-copied {
+.csc-shortcode-copied {
     display: none;
     font-size: 12px;
     font-weight: 500;
@@ -162,15 +162,15 @@
     white-space: nowrap;
 }
 
-.donation-form-shortcode-section .csc-shortcode-copy.is-copied .csc-shortcode-icon {
+.csc-shortcode-copy.is-copied .csc-shortcode-icon {
     display: none;
 }
 
-.donation-form-shortcode-section .csc-shortcode-copy.is-copied .csc-shortcode-copied {
+.csc-shortcode-copy.is-copied .csc-shortcode-copied {
     display: inline;
 }
 
-.donation-form-shortcode-section .csc-shortcode-copy.is-copied {
+.csc-shortcode-copy.is-copied {
     border-color: #00a32a;
     background: #edfcf2;
 }
