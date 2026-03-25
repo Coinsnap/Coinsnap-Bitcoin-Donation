@@ -268,3 +268,9 @@ Plugin's page on Coinsnap website: [https://coinsnap.io/modules/bitcoin-donation
 * Update: Webhook handler stores donation form ID on shoutout and donor posts for per-form scoping.
 * Update: Uninstall cleanup includes CPT posts and migration options.
 * Fixed: Wide layout shortcodes force correct layout regardless of stored meta value.
+* New: Empty state page with "Create Your First Form" button when no forms exist.
+* New: Admin notice after default forms are created prompting to review settings.
+* New: 3 default forms (Simple, Multi Amount, Shoutout) auto-created on first visit.
+* Update: "Snap Donations" renamed to "Choose an amount" (German: "Wähle einen Betrag aus").
+* Fixed: Self-healing migration — recovers from failed migration attempts automatically.
+* Fixed: Old admin URL redirect — cached bookmarks to the previous menu page now redirect correctly.
