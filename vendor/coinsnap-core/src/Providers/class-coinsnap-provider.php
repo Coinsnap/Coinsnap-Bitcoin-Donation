@@ -266,7 +266,12 @@ class CoinsnapProvider implements PaymentProviderInterface {
 		);
 
 		// Convert amount from cents back to currency units for CoinSnap API.
-		$amount_in_currency = $amount / 100;
+		// SATS/BTC are already in whole units — pass through as-is.
+		if ( in_array( strtoupper( $currency ), array( 'SATS', 'BTC' ), true ) ) {
+			$amount_in_currency = $amount;
+		} else {
+			$amount_in_currency = $amount / 100;
+		}
 
 		// Validate currency code.
 		$supported_currencies = COINSNAP_CURRENCIES;

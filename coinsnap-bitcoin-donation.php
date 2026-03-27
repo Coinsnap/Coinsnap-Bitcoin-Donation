@@ -3,7 +3,7 @@
  * Plugin Name:        Coinsnap Bitcoin Donation
  * Plugin URI:         https://coinsnap.io/wp-plugins/wp-bitcoin-donation/
  * Description:        Easy Bitcoin donations on a WordPress website
- * Version:            1.5.5
+ * Version:            1.5.6
  * Author:             Coinsnap
  * Author URI:         https://coinsnap.io/
  * Text Domain:        coinsnap-bitcoin-donation
@@ -18,7 +18,7 @@
 defined( 'ABSPATH' ) || exit;
 
 if ( ! defined( 'COINSNAP_BITCOIN_DONATION_REFERRAL_CODE' ) ) { define( 'COINSNAP_BITCOIN_DONATION_REFERRAL_CODE', 'D19833' ); }
-if ( ! defined( 'COINSNAP_BITCOIN_DONATION_VERSION' ) ) { define( 'COINSNAP_BITCOIN_DONATION_VERSION', '1.5.5' ); }
+if ( ! defined( 'COINSNAP_BITCOIN_DONATION_VERSION' ) ) { define( 'COINSNAP_BITCOIN_DONATION_VERSION', '1.5.6' ); }
 if ( ! defined( 'COINSNAP_BITCOIN_DONATION_PHP_VERSION' ) ) { define( 'COINSNAP_BITCOIN_DONATION_PHP_VERSION', '8.0' ); }
 if ( ! defined( 'COINSNAP_BITCOIN_DONATION_PLUGIN_DIR' ) ) { define( 'COINSNAP_BITCOIN_DONATION_PLUGIN_DIR', plugin_dir_url( __FILE__ ) ); }
 if ( ! defined( 'COINSNAP_BITCOIN_DONATION_PLUGIN_PATH' ) ) { define( 'COINSNAP_BITCOIN_DONATION_PLUGIN_PATH', plugin_dir_path( __FILE__ ) ); }
@@ -95,7 +95,7 @@ function coinsnap_bitcoin_donation_run_upgrade() {
     $version_key = 'coinsnap_donation_db_version';
     $current_version = get_option( $version_key, '0' );
 
-    if ( version_compare( $current_version, '1.5.5', '>=' ) ) {
+    if ( version_compare( $current_version, '1.5.6', '>=' ) ) {
         return;
     }
 
@@ -128,7 +128,7 @@ function coinsnap_bitcoin_donation_run_upgrade() {
         }
     }
 
-    update_option( $version_key, '1.5.5' );
+    update_option( $version_key, '1.5.6' );
 }
 
 class coinsnap_bitcoin_donation {

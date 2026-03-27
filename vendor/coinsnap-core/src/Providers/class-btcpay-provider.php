@@ -250,10 +250,14 @@ class BTCPayProvider implements PaymentProviderInterface {
 
 		$url = $host . sprintf( CoinsnapConstants::BTCPAY_INVOICES, rawurlencode( $store ) );
 
-		// Convert from minor units to BTCPay expected units.
-		// Our service stores amounts in minor units (e.g., cents for fiat, centisats for SATS).
-		// BTCPay expects major units for fiat (e.g., USD) and whole sats for SATS.
-		$api_amount = $amount / 100;
+		// Convert from minor units to API expected units.
+		// Fiat amounts are stored in cents (e.g., 1000 = €10.00) — divide by 100.
+		// SATS/BTC are already in whole units — pass through as-is.
+		if ( in_array( strtoupper( $currency ), array( 'SATS', 'BTC' ), true ) ) {
+			$api_amount = $amount;
+		} else {
+			$api_amount = $amount / 100;
+		}
 
 		$payload = array(
 			'amount'   => (string) $api_amount,

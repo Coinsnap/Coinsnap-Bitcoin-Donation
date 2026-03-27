@@ -51,10 +51,9 @@ class coinsnap_bitcoin_donation_Webhooks {
     }
 
     public function create_payment( WP_REST_Request $request ) {
-        $nonce = $request->get_header( 'X-WP-Nonce' );
-        if ( ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
-            return new WP_REST_Response( array( 'success' => false, 'message' => 'Invalid nonce.' ), 403 );
-        }
+        // No nonce check — this is a public endpoint (permission_callback => __return_true).
+        // Nonce verification breaks when pages are served from cache with a stale wp_rest nonce.
+        // Security is enforced by the payment provider (Coinsnap/BTCPay).
 
         $core     = coinsnap_bitcoin_donation_get_core();
         $settings = \CoinsnapCore\Admin\SettingsPage::get_settings_for( $core );

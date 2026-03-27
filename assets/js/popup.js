@@ -105,8 +105,7 @@ function submitDonationPayment(amount, currency, message, formType, redirectUrl,
         url: coinsnapDonationSharedData.restUrl + 'payment/create',
         method: 'POST',
         contentType: 'application/json',
-        data: JSON.stringify(requestData),
-        headers: { 'X-WP-Nonce': coinsnapDonationSharedData.nonce }
+        data: JSON.stringify(requestData)
     })
     .done(function (response) {
         if (response.success) {
