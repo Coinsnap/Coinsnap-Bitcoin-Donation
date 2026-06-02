@@ -3,7 +3,7 @@
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, donation, BTCPay
 Tested up to: 6.9
-Stable tag: 1.5.7
+Stable tag: 1.5.8
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -307,3 +307,6 @@ Plugin's page on Coinsnap website: [https://coinsnap.io/modules/bitcoin-donation
 * Fixed: Donor and shoutout records created from a confirmed payment read invoice metadata case-insensitively, so name, message and amounts are no longer blank.
 * New: Invoice creation sends the buyer's email, name and description to Coinsnap/BTCPay (buyerEmail, buyerName, itemDesc) and the donation form id.
 * New: Transactions list now shows Source (donation form), Invoice Number and Customer, with a per-row "Check status" action and a Source filter.
+
+= 1.5.8 :: 2026-06-02 =
+* Fixed: The "Invoice Id" link on the Shoutouts list linked to the wrong Coinsnap URL (/td/) — it now opens the transaction detail page (/transactions/).
