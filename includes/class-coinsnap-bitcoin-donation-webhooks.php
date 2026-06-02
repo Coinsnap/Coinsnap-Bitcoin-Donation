@@ -116,12 +116,18 @@ class coinsnap_bitcoin_donation_Webhooks {
         $donor_email  = isset( $sanitized_metadata['donoremail'] ) ? sanitize_email( $sanitized_metadata['donoremail'] ) : '';
         $form_post_id = absint( $sanitized_metadata['donationformid'] ?? 0 );
 
+        // Generate the order reference up front so the same unique id is sent to the
+        // provider (as orderId/orderNumber metadata, used by the wallet for reconciliation)
+        // and stored as the local transaction_id — keeping the two records matched 1:1.
+        $transaction_id = 'donation_' . time() . '_' . wp_generate_password( 8, false );
+
         $invoice_data = array(
             'name'        => $donor_name,
             'email'       => $donor_email,
             'buyer_email' => $donor_email, // back-compat alias
             'description' => $message,
             'redirect'    => $redirect,
+            'order_id'    => $transaction_id,
             'metadata'    => $sanitized_metadata,
         );
 
@@ -138,7 +144,7 @@ class coinsnap_bitcoin_donation_Webhooks {
             $table_name = \CoinsnapCore\Database\PaymentTable::table_name( $core, $wpdb );
             $wpdb->insert( $table_name, array(
                 'source_id'          => $form_post_id,
-                'transaction_id'     => 'donation_' . time() . '_' . wp_generate_password( 8, false ),
+                'transaction_id'     => $transaction_id,
                 'customer_name'      => $sanitized_metadata['donorname'] ?? '',
                 'customer_email'     => $sanitized_metadata['donoremail'] ?? '',
                 'amount'             => $amount,

@@ -3,7 +3,7 @@
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, donation, BTCPay
 Tested up to: 6.9
-Stable tag: 1.5.8
+Stable tag: 1.5.9
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -310,3 +310,6 @@ Plugin's page on Coinsnap website: [https://coinsnap.io/modules/bitcoin-donation
 
 = 1.5.8 :: 2026-06-02 =
 * Fixed: The "Invoice Id" link on the Shoutouts list linked to the wrong Coinsnap URL (/td/) — it now opens the transaction detail page (/transactions/).
+
+= 1.5.9 :: 2026-06-02 =
+* New: Invoice creation now sends orderId and orderNumber in the metadata (set to the unique transaction reference) so the paying wallet can reconcile the payment.

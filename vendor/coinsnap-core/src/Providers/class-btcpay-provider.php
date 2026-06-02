@@ -265,6 +265,7 @@ class BTCPayProvider implements PaymentProviderInterface {
 		$buyer_email = (string) ( $invoice_data['email'] ?? $invoice_data['buyer_email'] ?? '' );
 		$buyer_name  = (string) ( $invoice_data['name'] ?? '' );
 		$item_desc   = (string) ( $invoice_data['description'] ?? '' );
+		$order_id    = (string) ( $invoice_data['order_id'] ?? '' );
 		$custom_meta = ( isset( $invoice_data['metadata'] ) && is_array( $invoice_data['metadata'] ) ) ? $invoice_data['metadata'] : array();
 
 		$payload = array(
@@ -272,11 +273,13 @@ class BTCPayProvider implements PaymentProviderInterface {
 			'currency' => $currency,
 			'metadata' => array_merge(
 				array(
-					'form_id'    => $form_id,
-					'email'      => $buyer_email,
-					'buyerEmail' => $buyer_email,
-					'buyerName'  => $buyer_name,
-					'itemDesc'   => $item_desc,
+					'form_id'     => $form_id,
+					'email'       => $buyer_email,
+					'buyerEmail'  => $buyer_email,
+					'buyerName'   => $buyer_name,
+					'itemDesc'    => $item_desc,
+					'orderId'     => $order_id,
+					'orderNumber' => $order_id,
 				),
 				$custom_meta
 			),
