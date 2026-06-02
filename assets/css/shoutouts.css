@@ -6,11 +6,15 @@
 /* --------------------------------------------------------------------------
    Shoutout Form Container
    -------------------------------------------------------------------------- */
-#coinsnap-bitcoin-donation-shoutouts-form {
+/* Prefix match so this applies to both the legacy id (…-form) and the
+   per-form CPT id (…-form-{id}). Keeps the wide Shoutout form a centered card. */
+[id^="coinsnap-bitcoin-donation-shoutouts-form"] {
   border-radius: 12px;
   box-shadow: none;
   border: none;
   max-width: 645px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #coinsnap-bitcoin-donation-shoutouts-form input {
@@ -124,7 +128,10 @@
   justify-content: center;
 }
 
-#coinsnap-bitcoin-donation-shoutouts-wrapper {
+/* Prefix match so the list styling applies to both the legacy id (…-wrapper)
+   and the per-form CPT id (…-wrapper-{id}). Same 645px width as the form, with
+   spacing between the shoutout cards. */
+[id^="coinsnap-bitcoin-donation-shoutouts-wrapper"] {
   display: flex;
   flex-direction: column;
   gap: 16px;

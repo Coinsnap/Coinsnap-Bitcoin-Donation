@@ -313,3 +313,4 @@ Plugin's page on Coinsnap website: [https://coinsnap.io/modules/bitcoin-donation
 
 = 1.5.9 :: 2026-06-02 =
 * New: Invoice creation now sends orderId and orderNumber in the metadata (set to the unique transaction reference) so the paying wallet can reconcile the payment.
+* Fixed: Shoutout list now matches the Shoutout form width (centered 645px card) with spacing between entries — the list layout previously did not apply to per-form (CPT) shoutout lists.
