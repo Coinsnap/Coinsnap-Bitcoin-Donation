@@ -279,17 +279,29 @@ class CoinsnapProvider implements PaymentProviderInterface {
 			return array();
 		}
 
+		// Accept both 'email' (canonical) and 'buyer_email' (legacy alias) so the buyer
+		// email is never silently dropped, and surface the form's name/description as the
+		// standard buyer fields the Coinsnap/BTCPay dashboard displays. Custom metadata is
+		// merged last so caller-provided keys always win.
+		$buyer_email = (string) ( $invoice_data['email'] ?? $invoice_data['buyer_email'] ?? '' );
+		$buyer_name  = (string) ( $invoice_data['name'] ?? '' );
+		$item_desc   = (string) ( $invoice_data['description'] ?? '' );
+		$custom_meta = ( isset( $invoice_data['metadata'] ) && is_array( $invoice_data['metadata'] ) ) ? $invoice_data['metadata'] : array();
+
 		$payload = array(
 			'amount'       => $amount_in_currency,
 			'currency'     => $currency,
 			'referralCode' => $this->instance->referral_code(),
-			'buyerEmail'   => isset( $invoice_data['email'] ) ? (string) $invoice_data['email'] : '',
+			'buyerEmail'   => $buyer_email,
 			'metadata'     => array_merge(
 				array(
-					'form_id' => $form_id,
-					'email'   => (string) ( $invoice_data['email'] ?? '' ),
+					'form_id'    => $form_id,
+					'email'      => $buyer_email,
+					'buyerEmail' => $buyer_email,
+					'buyerName'  => $buyer_name,
+					'itemDesc'   => $item_desc,
 				),
-				isset( $invoice_data['metadata'] ) && is_array( $invoice_data['metadata'] ) ? $invoice_data['metadata'] : array()
+				$custom_meta
 			),
 			'checkout'     => array(
 				'defaultPaymentMethod' => 'LightningNetwork',

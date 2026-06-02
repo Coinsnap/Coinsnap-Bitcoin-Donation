@@ -37,6 +37,7 @@ require_once COINSNAP_BITCOIN_DONATION_PLUGIN_PATH . 'includes/class-coinsnap-bi
 require_once COINSNAP_BITCOIN_DONATION_PLUGIN_PATH . 'includes/class-coinsnap-bitcoin-donation-shoutouts-list.php';
 require_once COINSNAP_BITCOIN_DONATION_PLUGIN_PATH . 'includes/class-coinsnap-bitcoin-donation-shoutouts-form.php';
 require_once COINSNAP_BITCOIN_DONATION_PLUGIN_PATH . 'includes/class-coinsnap-bitcoin-donation-webhooks.php';
+require_once COINSNAP_BITCOIN_DONATION_PLUGIN_PATH . 'includes/class-coinsnap-bitcoin-donation-reconcile.php';
 require_once COINSNAP_BITCOIN_DONATION_PLUGIN_PATH . 'includes/class-coinsnap-bitcoin-donation-form-cpt.php';
 require_once COINSNAP_BITCOIN_DONATION_PLUGIN_PATH . 'includes/class-coinsnap-bitcoin-donation-form-renderer.php';
 require_once COINSNAP_BITCOIN_DONATION_PLUGIN_PATH . 'includes/class-coinsnap-bitcoin-donation-migration.php';

@@ -202,6 +202,16 @@ class TransactionsPage {
 										<?php esc_html_e( 'View Payment', 'coinsnap-core' ); ?>
 									</a>
 								<?php endif; ?>
+								<?php
+								/**
+								 * Render extra per-row actions for a transaction (e.g. a manual
+								 * status re-check for installs where webhooks don't arrive).
+								 *
+								 * @param object         $transaction Transaction row object.
+								 * @param PluginInstance $instance    Plugin configuration.
+								 */
+								do_action( 'coinsnap_core_transaction_row_actions', $transaction, $instance );
+								?>
 							</td>
 						</tr>
 					<?php endforeach; ?>

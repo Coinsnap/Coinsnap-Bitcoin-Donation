@@ -259,15 +259,26 @@ class BTCPayProvider implements PaymentProviderInterface {
 			$api_amount = $amount / 100;
 		}
 
+		// Accept both 'email' (canonical) and 'buyer_email' (legacy alias) and surface the
+		// form's name/description as the standard buyer fields BTCPay displays. Custom
+		// metadata is merged last so caller-provided keys always win.
+		$buyer_email = (string) ( $invoice_data['email'] ?? $invoice_data['buyer_email'] ?? '' );
+		$buyer_name  = (string) ( $invoice_data['name'] ?? '' );
+		$item_desc   = (string) ( $invoice_data['description'] ?? '' );
+		$custom_meta = ( isset( $invoice_data['metadata'] ) && is_array( $invoice_data['metadata'] ) ) ? $invoice_data['metadata'] : array();
+
 		$payload = array(
 			'amount'   => (string) $api_amount,
 			'currency' => $currency,
 			'metadata' => array_merge(
 				array(
-					'form_id' => $form_id,
-					'email'   => (string) ( $invoice_data['email'] ?? '' ),
+					'form_id'    => $form_id,
+					'email'      => $buyer_email,
+					'buyerEmail' => $buyer_email,
+					'buyerName'  => $buyer_name,
+					'itemDesc'   => $item_desc,
 				),
-				isset( $invoice_data['metadata'] ) && is_array( $invoice_data['metadata'] ) ? $invoice_data['metadata'] : array()
+				$custom_meta
 			),
 		);
 
