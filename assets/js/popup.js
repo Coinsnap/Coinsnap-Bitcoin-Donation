@@ -216,10 +216,13 @@ const addDonationPopupListener = (prefix, suffix, type, redirect) => {
         showDonationElementById('payment-loading', 'flex', prefix, suffix);
         hideDonationElementById('public-donor-popup', prefix, suffix);
 
-        var name = undefined;
+        // The shoutout form collects the donor's name in its own "name" field, while
+        // donation forms collect it via the public-donor first/last name fields. Capture
+        // the shoutout name so it isn't lost (otherwise every shoutout shows "Anonymous").
+        var shoutoutName = '';
         if (type === "Bitcoin Shoutout") {
             const nameField = document.getElementById(`${prefix}name${suffix}`);
-            name = nameField?.value || "Anonymous";
+            shoutoutName = (nameField?.value || '').trim();
         }
 
         // Find the form container to get the donation form ID
@@ -230,8 +233,10 @@ const addDonationPopupListener = (prefix, suffix, type, redirect) => {
         const customCheckbox = document.getElementById(`${prefix}custom-checkbox${suffix}`);
         const customCheckboxValue = customCheckbox && customCheckbox.checked ? '1' : '0';
 
+        const fullName = `${firstNameField?.value ?? ''} ${lastNameField?.value ?? ''}`.trim();
+
         const metadata = {
-            donorName: `${firstNameField?.value ?? ''} ${lastNameField?.value ?? ''}`.trim(),
+            donorName: fullName !== '' ? fullName : shoutoutName,
             donorEmail: emailField?.value || '',
             donorAddress: address !== ' ,  , ' ? address : '',
             donorMessage: message,

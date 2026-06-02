@@ -3,7 +3,7 @@
 Contributors: coinsnap
 Tags: Lightning, SATS, bitcoin, donation, BTCPay
 Tested up to: 6.9
-Stable tag: 1.5.6
+Stable tag: 1.5.7
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -300,3 +300,10 @@ Plugin's page on Coinsnap website: [https://coinsnap.io/modules/bitcoin-donation
 * Update: Webhook handler stores donation form ID on shoutout and donor posts for per-form scoping.
 * Update: Uninstall cleanup includes CPT posts and migration options.
 * Fixed: Wide layout shortcodes force correct layout regardless of stored meta value.
+
+= 1.5.7 :: 2026-06-02 =
+* Fixed: Payment status now syncs even when the provider webhook cannot reach the site (local dev or lost webhooks) — the status check and a new admin "Check status" action query Coinsnap/BTCPay directly.
+* Fixed: Shoutout name entered in the form is now saved — previously every shoutout was recorded as "Anonymous".
+* Fixed: Donor and shoutout records created from a confirmed payment read invoice metadata case-insensitively, so name, message and amounts are no longer blank.
+* New: Invoice creation sends the buyer's email, name and description to Coinsnap/BTCPay (buyerEmail, buyerName, itemDesc) and the donation form id.
+* New: Transactions list now shows Source (donation form), Invoice Number and Customer, with a per-row "Check status" action and a Source filter.

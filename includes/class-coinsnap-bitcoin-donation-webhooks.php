@@ -145,6 +145,7 @@ class coinsnap_bitcoin_donation_Webhooks {
                 'currency'           => $currency,
                 'description'        => $form_type,
                 'payment_provider'   => $provider_name,
+                'invoice_number'     => $result['invoice_id'],
                 'payment_invoice_id' => $result['invoice_id'],
                 'payment_status'     => 'unpaid',
                 'payment_url'        => $result['payment_url'],
