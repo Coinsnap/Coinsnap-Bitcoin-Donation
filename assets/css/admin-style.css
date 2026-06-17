@@ -1,0 +1,148 @@
+/* Coinsnap Bitcoin Donation - Admin Styles */
+
+/* =============================================
+   Forms Page - Card-based layout
+   ============================================= */
+
+/* Forms page — uses core's csc-settings-page, csc-tabs, csc-tab, csc-tab-content,
+   csc-card, csc-field-row, csc-field-input classes from coinsnap-core admin.css */
+
+/* Shortcode group */
+.csc-shortcode-group {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.csc-shortcode-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.csc-shortcode-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #50575e;
+  min-width: 100px;
+  flex-shrink: 0;
+}
+
+.csc-shortcode-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: #f6f7f7;
+  border: 1px solid #dcdcde;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.csc-shortcode-copy:hover {
+  background: #f0f0f1;
+  border-color: #c3c4c7;
+}
+
+.csc-shortcode-copy:active {
+  background: #e8e8e8;
+}
+
+.csc-shortcode-code {
+  font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1d2327;
+  letter-spacing: 0.2px;
+}
+
+.csc-shortcode-icon {
+  display: inline-flex;
+  color: #a7aaad;
+  transition: color 0.15s ease;
+}
+
+.csc-shortcode-copy:hover .csc-shortcode-icon {
+  color: #50575e;
+}
+
+.csc-shortcode-copied {
+  display: none;
+  font-size: 12px;
+  font-weight: 500;
+  color: #00a32a;
+  white-space: nowrap;
+}
+
+.csc-shortcode-copy.is-copied .csc-shortcode-icon {
+  display: none;
+}
+
+.csc-shortcode-copy.is-copied .csc-shortcode-copied {
+  display: inline;
+}
+
+.csc-shortcode-copy.is-copied {
+  border-color: #00a32a;
+  background: #edfcf2;
+}
+
+/* Toast CSS is in coinsnap-core admin.css */
+
+/* Legacy shortcode wrappers (keep for backward compat) */
+.shortcode_text_wrapper {
+  display: none;
+}
+
+.shortcode_text_wrapper_disabled {
+  display: none;
+}
+
+/* Public donor field styling */
+.csc-field-row.public-donor-field {
+  padding-left: 16px;
+  border-left: 3px solid #f0f0f1;
+  margin-left: 4px;
+}
+
+/* Hidden row */
+.hiddenRow {
+  display: none !important;
+}
+
+/* =============================================
+   Legacy styles (donation list, connection)
+   ============================================= */
+
+.coinsnapConnectionStatus {
+  display: none;
+}
+
+.donation-list-table th:nth-child(1),
+.donation-list-table td:nth-child(1) { width: 150px; }
+.donation-list-table th:nth-child(2),
+.donation-list-table td:nth-child(2) { width: 100px; }
+.donation-list-table th:nth-child(3),
+.donation-list-table td:nth-child(3) { width: 140px; }
+.donation-list-table th:nth-child(5),
+.donation-list-table td:nth-child(5) { width: 200px; }
+
+/* =============================================
+   Responsive
+   ============================================= */
+
+@media (max-width: 600px) {
+  .csc-forms-tabs {
+    flex-direction: column;
+  }
+
+  .csc-forms-tab {
+    text-align: left;
+    justify-content: flex-start;
+  }
+}

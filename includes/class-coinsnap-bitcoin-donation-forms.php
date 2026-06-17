@@ -1,0 +1,1042 @@
+<?php
+if (!defined('ABSPATH')){ exit; }
+class Coinsnap_Bitcoin_Donation_Forms {
+
+    public function __construct(){
+        add_action('admin_init', [$this, 'coinsnap_bitcoin_donation_forms_settings_init']);
+    }
+
+    function coinsnap_bitcoin_donation_forms_settings_init(){
+        
+        $coinsnapCurrencies = defined('COINSNAP_CURRENCIES') ? COINSNAP_CURRENCIES : array("EUR","USD","SATS","BTC","CAD","JPY","GBP","CHF","RUB");
+        $coinsnapCurrenciesOptions = array();
+        foreach($coinsnapCurrencies as $coinsnapCurrency){
+            $coinsnapCurrenciesOptions[$coinsnapCurrency] = $coinsnapCurrency;
+        }
+        register_setting('coinsnap_bitcoin_donation_forms_settings', 'coinsnap_bitcoin_donation_forms_options', [
+            'type'              => 'array',
+            'sanitize_callback' => [$this, 'sanitize_forms_options']
+	]);
+
+		// Simple Donation Section
+		add_settings_section(
+			'bitcoin_donation_simple_donation_section',
+			__('Simple Donation Settings','coinsnap-bitcoin-donation'),
+			[$this, 'simple_donation_section_callback'],
+			'bitcoin_donation'
+		);
+
+		add_settings_field(
+			'currency',
+			__('Currency','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_simple_donation_section',
+			[
+				'label_for' => 'currency',
+				'type'      => 'select',
+				'options'   => $coinsnapCurrenciesOptions
+			]
+		);
+
+		add_settings_field(
+			'button_text',
+			__('Button Text','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_simple_donation_section',
+			[
+				'label_for' => 'button_text',
+				'type'      => 'text',
+				'required' => true
+			]
+		);
+
+		add_settings_field(
+			'title_text',
+			__('Title Text','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_simple_donation_section',
+			[
+				'label_for' => 'title_text',
+				'type'      => 'text',
+				'required' => true
+			]
+		);
+
+		add_settings_field(
+			'default_amount',
+			__('Default Amount','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_simple_donation_section',
+			[
+				'label_for' => 'default_amount',
+				'type'      => 'text',
+				'required' => true
+			]
+		);
+
+		add_settings_field(
+			'default_message',
+			__('Default Message','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_simple_donation_section',
+			[
+				'label_for' => 'default_message',
+				'type'      => 'text'
+			]
+		);
+
+		add_settings_field(
+			'redirect_url',
+			__('Redirect Url (Thank You Page)','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_simple_donation_section',
+			[
+				'label_for' => 'redirect_url',
+				'type'      => 'text'
+			]
+		);
+
+		add_settings_field(
+			'form_type',
+			__('Form Type','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_simple_donation_section',
+			[
+				'label_for' => 'form_type',
+				'type'      => 'select',
+				'options'   => [
+					"NARROW" => "Narrow",
+					"WIDE" => "Wide"
+				]
+			]
+		);
+
+		add_settings_field(
+			'simple_donation_public_donors',
+			__('Collect donor information','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_simple_donation_section',
+			[
+				'label_for' => 'simple_donation_public_donors',
+				'type'      => 'checkbox'
+			]
+		);
+
+		add_settings_field(
+			'simple_donation_first_name',
+			__('First Name','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_simple_donation_section',
+			[
+				'label_for' => 'simple_donation_first_name',
+				'type'      => 'select',
+				'options'   => [
+					'optional' => 'Optional',
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
+				],
+				'class' => 'public-donor-field simple-donation'
+			]
+		);
+
+		add_settings_field(
+			'simple_donation_last_name',
+			__('Last Name','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_simple_donation_section',
+			[
+				'label_for' => 'simple_donation_last_name',
+				'type'      => 'select',
+				'options'   => [
+					'optional' => 'Optional',
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
+				],
+				'class' => 'public-donor-field simple-donation'
+			]
+		);
+
+		add_settings_field(
+			'simple_donation_email',
+			__('Email','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_simple_donation_section',
+			[
+				'label_for' => 'simple_donation_email',
+				'type'      => 'select',
+				'options'   => [
+					'optional' => 'Optional',
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
+				],
+				'class' => 'public-donor-field simple-donation'
+			]
+		);
+
+		add_settings_field(
+			'simple_donation_address',
+			__('Address','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_simple_donation_section',
+			[
+				'label_for' => 'simple_donation_address',
+				'type'      => 'select',
+				'options'   => [
+					'optional' => 'Optional',
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
+				],
+				'class' => 'public-donor-field simple-donation'
+			]
+		);
+
+		add_settings_field(
+			'simple_donation_custom_field_name',
+			__('Custom Field Name','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_simple_donation_section',
+			[
+				'label_for' => 'simple_donation_custom_field_name',
+				'type'      => 'text',
+				'class' => 'public-donor-field simple-donation'
+			]
+		);
+
+		add_settings_field(
+			'simple_donation_custom_field_visibility',
+			__('Custom Field Visibility','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_simple_donation_section',
+			[
+				'label_for' => 'simple_donation_custom_field_visibility',
+				'type'      => 'select',
+				'options'   => [
+					'optional' => 'Optional',
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
+				],
+				'class' => 'public-donor-field simple-donation'
+			]
+		);
+
+		//Shoutout Section
+		add_settings_section(
+			'bitcoin_donation_shoutout_donation_section',
+			__('Shoutout Donation Settings','coinsnap-bitcoin-donation'),
+			[$this, 'shoutout_donation_section_callback'],
+			'bitcoin_donation'
+		);
+
+		add_settings_field(
+			'shoutout_currency',
+			__('Currency','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_shoutout_donation_section',
+			[
+				'label_for' => 'shoutout_currency',
+				'type'      => 'select',
+				'options'   => $coinsnapCurrenciesOptions
+			]
+		);
+
+		add_settings_field(
+			'shoutout_button_text',
+			__('Button Text','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_shoutout_donation_section',
+			[
+				'label_for' => 'shoutout_button_text',
+				'type'      => 'text',
+				'required' => true
+			]
+		);
+
+		add_settings_field(
+			'shoutout_title_text',
+			__('Title Text','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_shoutout_donation_section',
+			[
+				'label_for' => 'shoutout_title_text',
+				'type'      => 'text',
+				'required' => true
+			]
+		);
+
+		add_settings_field(
+			'shoutout_default_amount',
+			__('Default Amount','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_shoutout_donation_section',
+			[
+				'label_for' => 'shoutout_default_amount',
+				'type'      => 'text',
+				'required' => true
+			]
+		);
+
+		add_settings_field(
+			'shoutout_default_message',
+			__('Default Message','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_shoutout_donation_section',
+			[
+				'label_for' => 'shoutout_default_message',
+				'type'      => 'text'
+			]
+		);
+
+		add_settings_field(
+			'shoutout_minimum_amount',
+			__('Minimum Shoutout Amount, SATS','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_shoutout_donation_section',
+			[
+				'label_for' => 'shoutout_minimum_amount',
+				'type'      => 'text',
+				'required' => true
+			]
+		);
+
+		add_settings_field(
+			'shoutout_premium_amount',
+			__('Premium Shoutout Amount, SATS','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_shoutout_donation_section',
+			[
+				'label_for' => 'shoutout_premium_amount',
+				'type'      => 'text',
+				'required' => true
+			]
+		);
+
+		add_settings_field(
+			'shoutout_redirect_url',
+			__('Shoutout List Page Url','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_shoutout_donation_section',
+			[
+				'label_for' => 'shoutout_redirect_url',
+				'type'      => 'text'
+			]
+		);
+
+		add_settings_field(
+			'shoutout_public_donors',
+			__('Donor Information','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_shoutout_donation_section',
+			[
+				'label_for' => 'shoutout_public_donors',
+				'type'      => 'checkbox'
+			]
+		);
+
+		add_settings_field(
+			'shoutout_first_name',
+			__('First Name','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_shoutout_donation_section',
+			[
+				'label_for' => 'shoutout_first_name',
+				'type'      => 'select',
+				'options'   => [
+					'optional' => 'Optional',
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
+				],
+				'class' => 'public-donor-field shoutout'
+			]
+		);
+
+		add_settings_field(
+			'shoutout_last_name',
+			__('Last Name','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_shoutout_donation_section',
+			[
+				'label_for' => 'shoutout_last_name',
+				'type'      => 'select',
+				'options'   => [
+					'optional' => 'Optional',
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
+				],
+				'class' => 'public-donor-field shoutout'
+			]
+		);
+
+		add_settings_field(
+			'shoutout_email',
+			__('Email','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_shoutout_donation_section',
+			[
+				'label_for' => 'shoutout_email',
+				'type'      => 'select',
+				'options'   => [
+					'optional' => 'Optional',
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
+				],
+				'class' => 'public-donor-field shoutout'
+			]
+		);
+
+		add_settings_field(
+			'shoutout_address',
+			__('Address','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_shoutout_donation_section',
+			[
+				'label_for' => 'shoutout_address',
+				'type'      => 'select',
+				'options'   => [
+					'optional' => 'Optional',
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
+				],
+				'class' => 'public-donor-field shoutout'
+			]
+		);
+
+		add_settings_field(
+			'shoutout_custom_field_name',
+			__('Custom Field Name','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_shoutout_donation_section',
+			[
+				'label_for' => 'shoutout_custom_field_name',
+				'type'      => 'text',
+				'class' => 'public-donor-field shoutout'
+			]
+		);
+
+		add_settings_field(
+			'shoutout_custom_field_visibility',
+			__('Custom Field Visibility','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_shoutout_donation_section',
+			[
+				'label_for' => 'shoutout_custom_field_visibility',
+				'type'      => 'select',
+				'options'   => [
+					'optional' => 'Optional',
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
+				],
+				'class' => 'public-donor-field shoutout'
+			]
+		);
+
+		// Multi Amount
+		add_settings_section(
+			'bitcoin_donation_multi_amount_section',
+			__('Multi Amount Donation Settings','coinsnap-bitcoin-donation'),
+			[$this, 'multi_amount_section_callback'],
+			'bitcoin_donation'
+		);
+
+                add_settings_field(
+			'multi_amount_currency',
+			__('Currency','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_currency',
+				'type'      => 'select',
+				'options'   => $coinsnapCurrenciesOptions
+			]
+		);
+
+		add_settings_field(
+			'multi_amount_button_text',
+			__('Button Text','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_button_text',
+				'type'      => 'text',
+				'required' => true
+			]
+		);
+
+		add_settings_field(
+			'multi_amount_title_text',
+			__('Title Text','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_title_text',
+				'type'      => 'text',
+				'required' => true
+			]
+		);
+
+		add_settings_field(
+			'multi_amount_default_amount',
+			__('Default Amount','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_default_amount',
+				'type'      => 'text',
+				'required' => true
+			]
+		);
+
+		add_settings_field(
+			'multi_amount_default_message',
+			__('Default Message','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_default_message',
+				'type'      => 'text'
+			]
+		);
+
+		add_settings_field(
+			'multi_amount_redirect_url',
+			__('Redirect Url (Thank You Page)','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_redirect_url',
+				'type'      => 'text'
+			]
+		);
+
+		add_settings_field(
+			'multi_amount_default_snap1',
+			__('Default Amount Field 1','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_default_snap1',
+				'type'      => 'text',
+				'required' => true
+			]
+		);
+
+		add_settings_field(
+			'multi_amount_default_snap2',
+			__('Default Amount Field 2','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_default_snap2',
+				'type'      => 'text',
+				'required' => true
+			]
+		);
+
+		add_settings_field(
+			'multi_amount_default_snap3',
+			__('Default Amount Field 3','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_default_snap3',
+				'type'      => 'text',
+				'required' => true
+			]
+		);
+
+		add_settings_field(
+			'multi_amount_form_type',
+			__('Form Type','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_form_type',
+				'type'      => 'select',
+				'options'   => [
+					"NARROW" => "Narrow",
+					"WIDE" => "Wide"
+				]
+			]
+		);
+
+		add_settings_field(
+			'multi_amount_public_donors',
+			__('Collect donor information','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_public_donors',
+				'type'      => 'checkbox'
+			]
+		);
+
+		add_settings_field(
+			'multi_amount_first_name',
+			__('First Name','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_first_name',
+				'type'      => 'select',
+				'options'   => [
+					'optional' => 'Optional',
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
+				],
+				'class' => 'public-donor-field multi-amount'
+			]
+		);
+		add_settings_field(
+			'multi_amount_last_name',
+			__('Last Name','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_last_name',
+				'type'      => 'select',
+				'options'   => [
+					'optional' => 'Optional',
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
+				],
+				'class' => 'public-donor-field multi-amount'
+			]
+		);
+		add_settings_field(
+			'multi_amount_email',
+			__('Email','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_email',
+				'type'      => 'select',
+				'options'   => [
+					'optional' => 'Optional',
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
+				],
+				'class' => 'public-donor-field multi-amount'
+			]
+		);
+		add_settings_field(
+			'multi_amount_address',
+			__('Address','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_address',
+				'type'      => 'select',
+				'options'   => [
+					'optional' => 'Optional',
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
+				],
+				'class' => 'public-donor-field multi-amount'
+			]
+		);
+
+		add_settings_field(
+			'multi_amount_custom_field_name',
+			__('Custom Field Name','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_custom_field_name',
+				'type'      => 'text',
+				'class' => 'public-donor-field multi-amount'
+			]
+		);
+
+		add_settings_field(
+			'multi_amount_custom_field_visibility',
+			__('Custom Field Visibility','coinsnap-bitcoin-donation'),
+			[$this, 'render_field'],
+			'bitcoin_donation',
+			'bitcoin_donation_multi_amount_section',
+			[
+				'label_for' => 'multi_amount_custom_field_visibility',
+				'type'      => 'select',
+				'options'   => [
+					'optional' => 'Optional',
+					'mandatory' => 'Mandatory',
+					'hidden' => 'Hidden'
+				],
+				'class' => 'public-donor-field multi-amount'
+			]
+		);
+	}
+
+	public function sanitize_forms_options($options)
+	{
+		$sanitized = [];
+
+		$sections = ['simple_donation', 'shoutout', 'multi_amount'];
+		$public_donor_fields = ['first_name', 'last_name', 'email', 'address', 'custom_field_name', 'custom_field_visibility'];
+		$simple_donation_fields = ['currency', 'button_text', 'title_text', 'default_amount', 'default_message', 'redirect_url', 'form_type'];
+                $multi_amount_fields = ['currency', 'button_text', 'title_text', 'default_amount', 'default_message', 'redirect_url','form_type', 'default_snap1', 'default_snap2', 'default_snap3'];
+		$shoutout_fields = ['currency', 'button_text', 'title_text', 'default_amount', 'default_message', 'minimum_amount', 'premium_amount', 'redirect_url'];
+		
+
+		foreach ($simple_donation_fields as $field) {
+			$field_name = "{$field}";
+			if (isset($options[$field_name])) {
+				$sanitized[$field_name] = sanitize_text_field($options[$field_name]);
+			}
+		}
+
+		foreach ($shoutout_fields as $field) {
+			$field_name = "shoutout_{$field}";
+			if (isset($options[$field_name])) {
+				$sanitized[$field_name] = sanitize_text_field($options[$field_name]);
+			}
+		}
+
+		foreach ($multi_amount_fields as $field) {
+			$field_name = "multi_amount_{$field}";
+			if (isset($options[$field_name])) {
+				$sanitized[$field_name] = sanitize_text_field($options[$field_name]);
+			}
+		}
+
+		foreach ($sections as $section) {
+			foreach ($public_donor_fields as $field) {
+				$field_name = "{$section}_{$field}";
+				if (isset($options[$field_name])) {
+					$sanitized[$field_name] = sanitize_text_field($options[$field_name]);
+				}
+			}
+		}
+
+		$sanitized['simple_donation_public_donors'] = isset($options['simple_donation_public_donors']) ? true : false;
+		$sanitized['shoutout_public_donors'] = isset($options['shoutout_public_donors']) ? true : false;
+		$sanitized['multi_amount_public_donors'] = isset($options['multi_amount_public_donors']) ? true : false;
+
+		return $sanitized;
+	}
+
+	private function render_shortcode_row($name, $shortcode)
+	{
+		$sc = '[' . esc_attr($shortcode) . ']';
+		echo '<div class="csc-shortcode-row" id="shortcode_' . esc_attr($shortcode) . '">';
+		echo '  <span class="csc-shortcode-label">' . esc_html($name) . '</span>';
+		echo '  <button type="button" class="csc-shortcode-copy" data-shortcode="' . esc_attr($sc) . '" title="' . esc_attr__('Click to copy', 'coinsnap-bitcoin-donation') . '">';
+		echo '    <code class="csc-shortcode-code">' . esc_html($sc) . '</code>';
+		echo '    <span class="csc-shortcode-icon">';
+		echo '      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+		echo '    </span>';
+		echo '    <span class="csc-shortcode-copied">' . esc_html__('Copied!', 'coinsnap-bitcoin-donation') . '</span>';
+		echo '  </button>';
+		echo '</div>';
+	}
+
+	private function render_shortcode_section($section_id)
+	{
+		echo '<div class="csc-shortcode-group">';
+		if ($section_id == 'bitcoin_donation_simple_donation_section') {
+			$this->render_shortcode_row('Narrow form', 'coinsnap_bitcoin_donation');
+			$this->render_shortcode_row('Wide form', 'coinsnap_bitcoin_donation_wide');
+		} elseif ($section_id == 'bitcoin_donation_shoutout_donation_section') {
+			$this->render_shortcode_row('Shoutout form', 'shoutout_form');
+			$this->render_shortcode_row('Shoutouts list', 'shoutout_list');
+		} elseif ($section_id == 'bitcoin_donation_multi_amount_section') {
+			$this->render_shortcode_row('Narrow form', 'multi_amount_donation');
+			$this->render_shortcode_row('Wide form', 'multi_amount_donation_wide');
+		}
+		echo '</div>';
+	}
+
+	/**
+	 * Renders a specific settings section manually.
+	 *
+	 * @param string $section_id The ID of the section to render.
+	 */
+	private function render_section($section_id)
+	{
+		global $wp_settings_sections, $wp_settings_fields;
+		if (! isset($wp_settings_sections['bitcoin_donation'][$section_id])) {
+			return;
+		}
+
+		$section = $wp_settings_sections['bitcoin_donation'][$section_id];
+
+		if ($section['title']) {
+			echo '<h3>' . esc_html($section['title']) . '</h3>';
+		}
+		if ($section['callback']) {
+			call_user_func($section['callback'], $section);
+		}
+
+		if (! empty($wp_settings_fields['bitcoin_donation'][$section_id])) {
+			echo '<table class="form-table">';
+			do_settings_fields('bitcoin_donation', $section_id);
+			$this->render_shortcode_section($section_id);
+			echo '</table>';
+		}
+	}
+
+	public function simple_donation_section_callback(){
+            esc_html_e('Configure simple donation form.', 'coinsnap-bitcoin-donation');
+	}
+
+	public function shoutout_donation_section_callback(){
+            esc_html_e('Configure shoutout donation form.', 'coinsnap-bitcoin-donation');
+	}
+
+	public function multi_amount_section_callback(){
+            esc_html_e('Configure multi amount donation form.', 'coinsnap-bitcoin-donation');
+	}
+
+	public function render_field($args)
+	{
+		$options     = get_option('coinsnap_bitcoin_donation_forms_options', []);
+		$field_id    = $args['label_for'];
+		$field_type  = $args['type'];
+		$field_value = isset($options[$field_id]) ? $options[$field_id] : '';
+		$defaults = [
+			'default_message' => 'Thank you for your support',
+			'default_amount'  => '5',
+			'button_text'     => 'Donate',
+			'title_text'      => 'Donate with Bitcoin',
+			'shoutout_default_message' => 'Thank you!',
+			'shoutout_default_amount'  => '5',
+			'shoutout_button_text'     => 'Shoutout',
+			'shoutout_title_text'      => 'Bitcoin Shoutouts',
+			'shoutout_minimum_amount'  => '21',
+			'shoutout_premium_amount'  => '21000',
+			'multi_amount_default_message' => 'Thank you for your support',
+			'multi_amount_default_amount'  => '5',
+			'multi_amount_button_text'     => 'Donate',
+			'multi_amount_title_text'      => 'Donate with Bitcoin',
+			'multi_amount_default_snap1'      => '1000',
+			'multi_amount_default_snap2'      => '5000',
+			'multi_amount_default_snap3'      => '10000',
+			'simple_donation_public_donors' => false,
+			'shoutout_public_donors' => false,
+			'multi_amount_public_donors' => false,
+			'simple_donation_first_name' => 'optional',
+			'simple_donation_last_name' => 'optional',
+			'simple_donation_email' => 'optional',
+			'simple_donation_address' => 'optional',
+			'simple_donation_custom_field_name' => 'Custom Field',
+			'simple_donation_custom_field_visibility' => 'hidden',
+			'shoutout_first_name' => 'optional',
+			'shoutout_last_name' => 'optional',
+			'shoutout_email' => 'optional',
+			'shoutout_address' => 'optional',
+			'shoutout_custom_field_name' => 'Custom Field',
+			'shoutout_custom_field_visibility' => 'hidden',
+			'multi_amount_first_name' => 'optional',
+			'multi_amount_last_name' => 'optional',
+			'multi_amount_email' => 'optional',
+			'multi_amount_address' => 'optional',
+			'multi_amount_custom_field_name' => 'Custom Field',
+			'multi_amount_custom_field_visibility' => 'hidden',
+			'form_type' => 'NARROW',
+			'multi_amount_form_type' => 'NARROW'
+		];
+		if ($field_type == 'text') {
+			$field_value = isset($options[$field_id]) ? $options[$field_id] : ($defaults[$field_id] ?? '');
+		}
+		switch ($field_type) {
+			case 'select':
+				echo '<select 
+                id="' . esc_attr($field_id) . '" 
+                name="coinsnap_bitcoin_donation_forms_options[' . esc_attr($field_id) . ']"
+                class="regular-text">';
+				foreach ($args['options'] as $value => $label) {
+					echo '<option value="' . esc_attr($value) . '"' .
+						selected($field_value, $value, false) . '>' .
+						esc_html($label) . '</option>';
+				}
+				echo '</select>';
+				break;
+
+			case 'check_connection':
+				$id = isset($args['id']) ? $args['id'] : 'check_connection';
+
+				echo '<div >' . '<button id="' . esc_attr($id) . '_button">Check</button>' . '<span style="" id="' . esc_attr($id) .  '">' . '</span>' . '</div>';
+				break;
+
+			case 'text':
+				echo '<input type="text" 
+                id="' . esc_attr($field_id) . '" 
+                name="coinsnap_bitcoin_donation_forms_options[' . esc_attr($field_id) . ']" 
+                value="' . esc_attr($field_value) . '" 
+                class="regular-text"' .
+					(isset($args['readonly']) && $args['readonly'] ? ' readonly' : '') .
+					(isset($args['value']) ? ' value="' . esc_attr($args['value']) . '"' : '') .
+					(isset($args['required']) && $args['required'] ? ' required' : '') .
+					'>';
+				break;
+
+			case 'checkbox':
+				$checked = isset($options[$field_id]) ? $options[$field_id] : ($defaults[$field_id] ?? false);
+				echo '<input type="checkbox" 
+                    id="' . esc_attr($field_id) . '" 
+                    name="coinsnap_bitcoin_donation_forms_options[' . esc_attr($field_id) . ']" 
+                    value="1"' .
+					checked($checked, true, false) . '>';
+				break;
+		}
+
+		if (isset($args['description'])) {
+			echo '<p class="description">' . esc_html($args['description']) . '</p>';
+		}
+	}
+
+    public function render_donation_forms_page(){
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display-only flag added by WP Settings API after redirect; no data is processed.
+        $saved = isset( $_GET['settings-updated'] ) && 'true' === sanitize_key( wp_unslash( $_GET['settings-updated'] ) );
+        $core = coinsnap_bitcoin_donation_get_core();
+        $plugin_icon_url = $core->get('plugin_icon_url');
+        ?>
+        <div class="wrap csc-admin csc-settings-page">
+            <?php if ( $saved ) : ?>
+            <div class="csc-toast" id="csc-save-toast">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                <?php esc_html_e('Settings saved successfully', 'coinsnap-bitcoin-donation'); ?>
+            </div>
+            <?php endif; ?>
+
+            <div class="csc-settings-header">
+                <div class="csc-settings-header-left">
+                    <h1>
+                        <?php if ( ! empty( $plugin_icon_url ) ) : ?>
+                            <span class="csc-header-icon">
+                                <img src="<?php echo esc_url( $plugin_icon_url ); ?>" alt="" />
+                            </span>
+                        <?php endif; ?>
+                        <?php esc_html_e('Donation Forms', 'coinsnap-bitcoin-donation'); ?>
+                    </h1>
+                    <p class="csc-settings-subtitle"><?php esc_html_e('Configure the donation form types displayed on your site.', 'coinsnap-bitcoin-donation'); ?></p>
+                </div>
+            </div>
+
+            <form method="post" action="options.php">
+                <?php settings_fields('coinsnap_bitcoin_donation_forms_settings'); ?>
+
+                <!-- Form Type Card (matches settings page card with provider toggle) -->
+                <div class="csc-card">
+                    <div class="csc-card-header">
+                        <h2><?php esc_html_e('Form Type', 'coinsnap-bitcoin-donation'); ?></h2>
+                        <p class="description"><?php esc_html_e('Select a form type to configure its settings.', 'coinsnap-bitcoin-donation'); ?></p>
+                    </div>
+                    <div class="csc-card-body">
+                        <div class="csc-tabs">
+                            <a href="#" class="csc-tab" data-tab="simple-donation"><?php esc_html_e('Donation Button', 'coinsnap-bitcoin-donation'); ?></a>
+                            <a href="#" class="csc-tab" data-tab="multi-amount-donation"><?php esc_html_e('Multi Amount', 'coinsnap-bitcoin-donation'); ?></a>
+                            <a href="#" class="csc-tab" data-tab="shoutout-donation"><?php esc_html_e('Shoutouts', 'coinsnap-bitcoin-donation'); ?></a>
+                        </div>
+
+                        <div id="simple-donation" class="csc-tab-content">
+                            <div class="csc-form-fields">
+                                <?php $this->render_section_fields('bitcoin_donation_simple_donation_section'); ?>
+                            </div>
+                        </div>
+
+                        <div id="multi-amount-donation" class="csc-tab-content">
+                            <div class="csc-form-fields">
+                                <?php $this->render_section_fields('bitcoin_donation_multi_amount_section'); ?>
+                            </div>
+                        </div>
+
+                        <div id="shoutout-donation" class="csc-tab-content">
+                            <div class="csc-form-fields">
+                                <?php $this->render_section_fields('bitcoin_donation_shoutout_donation_section'); ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="csc-save-bar">
+                    <p class="csc-save-hint"><?php esc_html_e('Save your form settings', 'coinsnap-bitcoin-donation'); ?></p>
+                    <?php submit_button(
+                        __('Save Settings', 'coinsnap-bitcoin-donation'),
+                        'primary',
+                        'coinsnap_bitcoin_donation_forms_options[submit]',
+                        false,
+                        ['id' => 'submit-button']
+                    ); ?>
+                </div>
+            </form>
+        </div>
+<?php
+    }
+
+    /**
+     * Render settings fields for a section inside a card (without table wrapper).
+     */
+    private function render_section_fields($section_id) {
+        global $wp_settings_fields;
+        if ( empty($wp_settings_fields['bitcoin_donation'][$section_id]) ) {
+            return;
+        }
+        echo '<div class="csc-form-fields">';
+        foreach ( $wp_settings_fields['bitcoin_donation'][$section_id] as $field ) {
+            $class = '';
+            if ( ! empty( $field['args']['class'] ) ) {
+                $class = ' ' . esc_attr( $field['args']['class'] );
+            }
+            echo '<div class="csc-field-row' . esc_attr( $class ) . '">';
+            if ( ! empty( $field['title'] ) ) {
+                $label_for = ! empty( $field['args']['label_for'] ) ? $field['args']['label_for'] : '';
+                if ( $label_for ) {
+                    echo '<label for="' . esc_attr( $label_for ) . '">' . esc_html( $field['title'] ) . '</label>';
+                } else {
+                    echo '<label>' . esc_html( $field['title'] ) . '</label>';
+                }
+            }
+            echo '<div class="csc-field-input">';
+            call_user_func( $field['callback'], $field['args'] );
+            echo '</div>';
+            echo '</div>';
+        }
+        // Render shortcode section if applicable
+        $this->render_shortcode_section($section_id);
+        echo '</div>';
+    }
+}
