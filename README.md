@@ -5,9 +5,9 @@
 * Contributors: coinsnap
 * Tags: Lightning, Lightning Payment, SATS, Satoshi sats, bitcoin, Wordpress, bitcoin, donation, BTCPay, payment gateway, accept bitcoin, bitcoin plugin, bitcoin payment processor, bitcoin e-commerce, Lightning Network, cryptocurrency, lightning payment processor
 * Requires at least: 5.2
-* Tested up to: 6.9
+* Tested up to: 7.0
 * Requires PHP: 8.0
-* Stable tag: 1.5.6
+* Stable tag: 1.5.9
 * License: GPL2
 * License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -247,6 +247,20 @@ Plugin's page on Coinsnap website: [https://coinsnap.io/modules/bitcoin-donation
 * Update: Shoutouts submenu always visible (no longer conditional on active checkbox).
 * Fixed: Iframe modal not cleaned up on close — donate button stayed disabled after closing modal.
 * Fixed: Exchange rate API failure (CoinGecko rate limiting) no longer blocks payment creation.
+
+#### 1.5.9 :: 2026-06-02
+* New: Invoice creation now sends orderId and orderNumber in the metadata (set to the unique transaction reference) so the paying wallet can reconcile the payment.
+* Fixed: Shoutout list now matches the Shoutout form width (centered 645px card) with spacing between entries — the list layout previously did not apply to per-form (CPT) shoutout lists.
+
+#### 1.5.8 :: 2026-06-02
+* Fixed: The "Invoice Id" link on the Shoutouts list linked to the wrong Coinsnap URL (/td/) — it now opens the transaction detail page (/transactions/).
+
+#### 1.5.7 :: 2026-06-02
+* Fixed: Payment status now syncs even when the provider webhook cannot reach the site (local dev or lost webhooks) — the status check and a new admin "Check status" action query Coinsnap/BTCPay directly.
+* Fixed: Shoutout name entered in the form is now saved — previously every shoutout was recorded as "Anonymous".
+* Fixed: Donor and shoutout records created from a confirmed payment read invoice metadata case-insensitively, so name, message and amounts are no longer blank.
+* New: Invoice creation sends the buyer's email, name and description to Coinsnap/BTCPay (buyerEmail, buyerName, itemDesc) and the donation form id.
+* New: Transactions list now shows Source (donation form), Invoice Number and Customer, with a per-row "Check status" action and a Source filter.
 
 #### 1.5.6 :: 2026-03-27
 * Fixed: SATS/BTC amounts divided by 100 when creating invoices via BTCPay and Coinsnap providers.
