@@ -1,159 +1,142 @@
 === Coinsnap Bitcoin Donation ===
 
 Contributors: coinsnap
-Tags: Lightning, SATS, bitcoin, donation, BTCPay
+Tags: bitcoin, lightning, donation, bitcoin donations, sats, btcpay, btcpay server
+Requires at least: 5.2
 Tested up to: 6.9
+Requires PHP: 8.0
 Stable tag: 1.5.9
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Let visitors donate Bitcoin anywhere on your WordPress site. Simple setup, optional shoutouts, and display messages beside or below the donation form
+Accept Bitcoin and Lightning donations on WordPress with unlimited donation forms, shoutouts, Coinsnap or your own BTCPay Server.
 
 == Description ==
 
-= Accept Bitcoin Donations with Coinsnap Bitcoin Donation! =
+Coinsnap Bitcoin Donation is a WordPress plugin for accepting voluntary Bitcoin contributions directly on your website.
 
-Enable the visitors on your WordPress website to make donations with Bitcoin wherever you want. Make it extremely simple to donate, or even let them make a shoutout and display all shoutouts next to the donation form or on a dedicated website. If you wish, you can also gather your donors’ contact data for later interactions.
+Visitors can donate with Bitcoin via Lightning or Bitcoin on-chain. You can use Coinsnap for a simple payment setup or connect your own BTCPay Server.
 
-With Coinsnap Bitcoin Donation for WordPress you can accept Bitcoin donations on your website in three ways:
+= Donation forms =
 
-* **Bitcoin Donation button**: For a simple Bitcoin donation with a message to the site owner.
-* **Multi Amount Bitcoin Donation**: With three predefined Bitcoin amounts to choose from and a message to the site operator.
-* **Shoutout**: The Bitcoin donation with a comment that will be published on the website.
+Create unlimited donation forms and place them anywhere with shortcodes.
 
-Coinsnap Bitcoin Donation works with Coinsnap or your own BTCPay Server.
+The plugin includes three form types:
 
-= Requirements: =
+* **Simple Donation** — visitors choose their own contribution amount.
+* **Multi Amount Donation** — offer predefined donation amounts.
+* **Shoutout Donation** — supporters donate and publish a paid message after successful payment.
 
-* A WordPress website
-* The Coinsnap Bitcoin Donation plugin
-* A [Coinsnap account](https://app.coinsnap.io/register) or your own BTCPay Server
+Forms support wide and narrow layouts, multiple forms on the same page, configurable donor fields, donor notices and custom checkboxes.
 
-= Features & functions: =
+= Payment providers =
 
-* **Customisable donation buttons**:
-	* Freely selectable or preset donation amount
-	* Optional: Message from the donor or shoutout function
-	* Selection of fields for donor data (name, e-mail, address, etc.)
-* **Easy integration via shortcodes** - donation buttons can be placed anywhere on your website: in the content, in the sidebar or in the footer, by pasting the shortcode at the appropriate place.
-* **Receive payments directly into your Bitcoin wallet** - either via Coinsnap or your own BTCPay Server.
+* **Coinsnap** — accept Bitcoin and Lightning without running your own payment infrastructure.
+* **BTCPay Server** — connect your own BTCPay Server for a self-hosted payment setup.
 
-= Quick setup: =
+= Key features =
 
-* Install plugin directly via the WordPress plugin directory
-* Configure with just a few clicks
-* And that's it!
+* Bitcoin Lightning and on-chain payments
+* Unlimited donation forms
+* Simple, Multi Amount and Shoutout form types
+* Shortcode-based placement
+* Multiple forms per page
+* Optional donor information
+* Public paid shoutouts
+* Fiat and Bitcoin amount calculation
+* Transactions and payment history in WordPress
+* Automatic webhook registration
+* Webhook signature verification
+* Light and dark themes
+* German translation included
+* Non-custodial / self-custody payment model
 
-= Two operating modes: =
+= Requirements =
 
-* Use Coinsnap (no technical know-how required)
-* Or use your own BTCPay server (for advanced users)
+* WordPress 5.2 or newer
+* PHP 8.0 or newer
+* A Coinsnap account or your own BTCPay Server
 
-= Why Coinsnap Bitcoin Donation? =
+= Shortcodes =
 
-* Open source and free in the WordPress Plugin Directory
-* No programming knowledge required
-* Immediate credit to your Bitcoin wallet
-* GDPR-friendly: no unnecessary data storage
-* Continuous further development
-* Strong support through our support team, accessible in your Coinsnap account
+Each current donation form has its own shortcode:
 
+[coinsnap_bitcoin_donation_form id="123"]
+
+Shoutout lists can be displayed with:
+
+[coinsnap_donation_list id="123"]
+
+Legacy shortcodes remain supported for backward compatibility.
 
 = More information =
 
-* Live demo: [https://donation.coinsnap.org/](https://donation.coinsnap.org/)
-* Product page: [https://coinsnap.io/modules/bitcoin-donation/](https://coinsnap.io/modules/bitcoin-donation/)
-* Installation Guide: [https://coinsnap.io/modules/bitcoin-donation/bitcoin-donation-plugin-installation-guide/](https://coinsnap.io/modules/bitcoin-donation/bitcoin-donation-plugin-installation-guide/)
-* Github plugin page: [https://github.com/Coinsnap/Coinsnap-bitcoin-donation/](https://github.com/Coinsnap/Coinsnap-bitcoin-donation/)
+* Product page: https://coinsnap.io/wp-plugins/wp-bitcoin-donation/
+* Live demo: https://donation.coinsnap.org/
+* GitHub: https://github.com/Coinsnap/Coinsnap-Bitcoin-Donation
+* Coinsnap Wallet: https://coinsnap.io/wallet/
+* Coinsnap API: https://docs.coinsnap.io/
+* Coinsnap account: https://app.coinsnap.io/register
 
-
-= Documentation: =
-
-* [Coinsnap API (1.0) documentation](https://docs.coinsnap.io/)
-* [Frequently Asked Questions](https://coinsnap.io/help/coinsnap-faq/)
-* [Terms and Conditions](https://coinsnap.io/info/general-terms-and-conditions/)
-* [Privacy Policy](https://coinsnap.io/info/privacy-policy/)
-
+Coinsnap is Bitcoin payment software for merchants and a brand of Onlineshop24 d.o.o., Serbia.
 
 == Installation ==
 
-= 1. Install the Coinsnap Bitcoin Donation plugin from the WordPress plugin repository =
+= Install from WordPress.org =
 
-The Coinsnap Bitcoin Donation plugin can be searched and installed in the WordPress plugin directory.
+1. In WordPress, go to **Plugins → Add New**.
+2. Search for **Coinsnap Bitcoin Donation**.
+3. Click **Install Now** and activate the plugin.
+4. Go to **Bitcoin Donations → Settings**.
+5. Select Coinsnap or BTCPay Server and enter the required credentials.
+6. Create a donation form.
+7. Copy its shortcode into a page, post, sidebar or other shortcode-compatible area.
+8. Make a test payment.
 
-You can easily find the Coinsnap Bitcoin Donation plugin under **Plugins/Install new plugin** if you enter Coinsnap Bitcoin Donation in the search field. Simply click on **Install now** in the Coinsnap plugin and WordPress will install it for you.
+= Install from GitHub =
 
-Now WordPress will offer you to **Activate** the plugin – click the button and you are set to go!
+1. Download this repository as a ZIP archive.
+2. Upload it through **Plugins → Add New → Upload Plugin**.
+3. Install and activate the plugin.
+4. Configure Coinsnap or BTCPay Server.
 
-Next, you will connect the plugin with your Coinsnap account.
+== Frequently Asked Questions ==
 
+= Can visitors pay with both Lightning and Bitcoin on-chain? =
 
-= 1.1. Coinsnap Bitcoin Donation Settings =
+Yes. The plugin supports both Lightning and Bitcoin on-chain donations.
 
-After you have installed and activated the Coinsnap Bitcoin Donation plugin, you need to configure the Coinsnap settings. Go to **Bitcoin Donations -> Settings** [1] in the black sidebar on the left.
+= Can I use my own BTCPay Server? =
 
-Now choose your payment gateway **Coinsnap** [1]. (You can also choose BTCPay server if you are using one, and then fill in the respective information.)
-Then you’ll have to enter your **Coinsnap Store ID** and your **Coinsnap API Key**. [2] (See below to learn how to retrieve these from your Coinsnap account.)
+Yes. BTCPay Server is supported as an alternative to Coinsnap.
 
-As soon as you’ve pasted the Store ID and the API Key into their fields, click on **check**. If you see a green message next to it saying **Connection successful**, your plugin is ready to accept Bitcoin donations and credit them to your Lightning wallet.
+= How many donation forms can I create? =
 
-Don’t forget to klick on **Save changes** before you start configuring your donation form(s)!
+You can create unlimited donation forms.
 
+= Can I use multiple donation forms on the same page? =
 
-= 1.2. Enter Store ID and API Key in your Coinsnap Bitcoin Donation Settings =
+Yes. Multiple forms can be used independently on one page.
 
-Go to the **Settings** menu item in your Coinsnap merchant admin backend [https://app.coinsnap.io/login](https://app.coinsnap.io/login). Then click on **Store** and you will see your Coinsnap **Store ID** and the Coinsnap **API Key** in the **Store** section.
+= Can I collect donor information? =
 
-**Copy** these two strings and **paste** them into the matching fields in the **Coinsnap Bitcoin Donation settings** in your WordPress backend.
+Yes. Donor information fields, a donor notice and a custom checkbox can be configured.
 
-Click on the “**Save changes**” button at the bottom of the page to apply and save the settings. You are ready to start selling for Bitcoin now: Just create a donation form and place it via the shortcode on your website.
+= Do I need my own Lightning node? =
 
-= YOU ARE SET TO SELL FOR BITCOIN NOW! To be sure all works fine, you should now... =
+No. When using Coinsnap, you do not need to operate your own Lightning node or Bitcoin payment server.
 
+== Screenshots ==
 
-= 1.3. Test the payment method in a Coinsnap Bitcoin Donation form on your website =
-
-After all settings have been made, a test transaction should be carried out.
-
-Choose an amount you want to donate in your test donation and click the payment button. Fill in the information you decided and configured to gather.
-
-You will now be redirected to the Bitcoin-Lightning payment page to make your contribution by scanning the displayed QR code and authorizing the payment. After successful payment, you will see a confirmation that the payment has been transferred.
-
-
-= 2. Install the Coinsnap Bitcoin Donation plugin from our Github page =
-
-If you don’t want to install Coinsnap Bitcoin Donation plugin directly from your WordPress backend, download the Coinsnap Bitcoin Donation plugin from the [Coinsnap Github page here](https://github.com/Coinsnap/Coinsnap-bitcoin-donation/).
-
-Find the green button labeled **Code**. When you click on it, the menu opens and Download ZIP appears. Here you can download the latest version of the Coinsnap plugin to your computer.
-
-Then use the “**Upload plugin**” function to install it. Click on “**Install now**” and the Coinsnap Bitcoin Donation plugin will be added to your WordPress website. It can then be connected to the Coinsnap payment gateway or BTCPay server.
-
-As soon as the Coinsnap Bitcoin Donation plugin is installed and activated, a message will appear asking you to configure the plugin settings.
-
-From here on you can follow 1.1 to 1.3 and you will be set to sell for Bitcoin in no time at all!
-
-
-=== Upgrade Notice ===
-
-Follow updates on plugin's GitHub page:
-
-[https://github.com/Coinsnap/Coinsnap-Bitcoin-Donation](https://github.com/Coinsnap/Coinsnap-Bitcoin-Donation)
-
-=== Frequently Asked Questions ===
-
-Plugin's page on Coinsnap website: [https://coinsnap.io/modules/bitcoin-donation/](https://coinsnap.io/modules/bitcoin-donation/)
-
-=== Screenshots ===
-
-1. Coinsnap Bitcoin Donation plugin with plugin search installation
-2. Plugin settings for payment with Coinsnap payment gateway
-3. Plugin settings for payment with BTCPay payment gateway
+1. Coinsnap Bitcoin Donation plugin installation
+2. Coinsnap payment settings
+3. BTCPay Server payment settings
 4. Donation form
-5. Donations list
-6. QR code
-7. Registration in Cooinsnap
-8. Email address confirmation
-9. Setting up website at Coinsnap
+5. Donation and transaction list
+6. Bitcoin and Lightning payment
+7. Donation form configuration
+8. Shoutout form
+9. Shoutout list
 
 === Changelog ===
 
