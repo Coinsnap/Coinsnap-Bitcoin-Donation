@@ -151,7 +151,10 @@ class coinsnap_bitcoin_donation {
 
         add_action( 'admin_notices', array( $this, 'maybe_register_webhooks' ) );
         add_action( 'admin_notices', function () use ( $core ) {
-            \CoinsnapCore\Admin\SettingsPage::maybe_show_setup_notice( $core );
+            // Check if method exists before calling (backward compatibility).
+            if ( method_exists( '\CoinsnapCore\Admin\SettingsPage', 'maybe_show_setup_notice' ) ) {
+                \CoinsnapCore\Admin\SettingsPage::maybe_show_setup_notice( $core );
+            }
         } );
     }
 

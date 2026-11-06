@@ -50,6 +50,21 @@ class coinsnap_bitcoin_donation_Webhooks {
         ) );
     }
 
+    /**
+     * Collect version information for invoice metadata
+     *
+     * @return array Array with wpVersion, version, and title
+     */
+    private function get_version_info(): array {
+        $version_info = [
+            'wpVersion' => get_bloginfo('version'),
+            'version'   => defined( 'COINSNAP_BITCOIN_DONATION_VERSION' ) ? COINSNAP_BITCOIN_DONATION_VERSION : 'unknown',
+            'title'     => 'Coinsnap Bitcoin Donation',
+        ];
+
+        return $version_info;
+    }
+
     public function create_payment( WP_REST_Request $request ) {
         // No nonce check — this is a public endpoint (permission_callback => __return_true).
         // Nonce verification breaks when pages are served from cache with a stale wp_rest nonce.
@@ -109,7 +124,9 @@ class coinsnap_bitcoin_donation_Webhooks {
             $sanitized_metadata[ sanitize_key( $key ) ] = sanitize_text_field( $val );
         }
         $sanitized_metadata['modal']     = '1';
-        $sanitized_metadata['formType']  = $form_type;
+
+        // Add version information
+        $sanitized_metadata = array_merge( $sanitized_metadata, $this->get_version_info() );
 
         // Surface the form's data on the provider invoice. Custom donor fields already
         // travel inside 'metadata'; these top-level keys let the provider also populate
