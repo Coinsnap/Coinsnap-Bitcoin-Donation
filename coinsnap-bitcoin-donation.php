@@ -92,6 +92,41 @@ function coinsnap_bitcoin_donation_get_core() {
     return $core;
 }
 
+/**
+ * Whether the loaded coinsnap-core has the webhook checks this plugin relies on. Only one copy of the
+ * core runs per site; if another plugin loaded an older one, webhooks are refused instead of trusted.
+ */
+function coinsnap_bitcoin_donation_core_ok() {
+    return method_exists( '\\CoinsnapCore\\Rest\\WebhookHelper', 'check_request' )
+        && method_exists( '\\CoinsnapCore\\Database\\PaymentTable', 'mark_paid_once' );
+}
+
+/**
+ * Once after the security update: forget the stored webhook secrets (an older version copied the
+ * secret shared by all Coinsnap plugins into them), so the next admin page view deletes this site's
+ * old webhook at the provider and registers a new one with a new secret.
+ */
+function coinsnap_bitcoin_donation_rotate_webhook_secret_once() {
+    if ( '2026-11' === get_option( 'coinsnap_donation_webhook_rotated' ) ) {
+        return;
+    }
+    $core   = coinsnap_bitcoin_donation_get_core();
+    $stored = get_option( $core->webhook_key(), array() );
+    if ( is_array( $stored ) ) {
+        foreach ( array( 'coinsnap', 'btcpay' ) as $provider ) {
+            if ( isset( $stored[ $provider ] ) ) {
+                // An empty id makes check_webhook() delete the webhook registered for this site and report it missing.
+                $stored[ $provider ] = array( 'id' => '', 'secret' => '' );
+            }
+        }
+        update_option( $core->webhook_key(), $stored );
+    }
+    $settings = \CoinsnapCore\Admin\SettingsPage::get_settings_for( $core );
+    delete_transient( 'coinsnap_donation_wh_' . md5( 'coinsnap' . ( $settings['coinsnap_store_id'] ?? '' ) ) );
+    delete_transient( 'coinsnap_donation_wh_' . md5( 'btcpay' . ( $settings['btcpay_store_id'] ?? '' ) ) );
+    update_option( 'coinsnap_donation_webhook_rotated', '2026-11' );
+}
+
 function coinsnap_bitcoin_donation_run_upgrade() {
     $version_key = 'coinsnap_donation_db_version';
     $current_version = get_option( $version_key, '0' );
@@ -119,15 +154,8 @@ function coinsnap_bitcoin_donation_run_upgrade() {
         update_option( 'coinsnap_bitcoin_donation_options', $options );
     }
 
-    $old_secret = get_option( 'coinsnap_webhook_secret', '' );
-    if ( $old_secret ) {
-        $provider = $options['payment_provider'] ?? 'coinsnap';
-        $webhook_data = get_option( 'coinsnap_donation_webhook', array() );
-        if ( empty( $webhook_data[ $provider ]['secret'] ) ) {
-            $webhook_data[ $provider ] = array( 'secret' => $old_secret );
-            update_option( 'coinsnap_donation_webhook', $webhook_data );
-        }
-    }
+    // The secret shared by all Coinsnap plugins (coinsnap_webhook_secret) is not taken over: this
+    // plugin registers its own webhook with its own secret (see maybe_register_webhooks()).
 
     update_option( $version_key, '1.5.6' );
 }
@@ -154,6 +182,11 @@ class coinsnap_bitcoin_donation {
         add_action( 'admin_notices', function () use ( $core ) {
             \CoinsnapCore\Admin\SettingsPage::maybe_show_setup_notice( $core );
         } );
+        add_action( 'admin_notices', function () {
+            if ( ! coinsnap_bitcoin_donation_core_ok() && current_user_can( 'manage_options' ) ) {
+                echo '<div class="notice notice-error"><p>' . esc_html__( 'Coinsnap Bitcoin Donation: another plugin loaded an older Coinsnap core. Donation webhooks are refused until all Coinsnap plugins are updated.', 'coinsnap-bitcoin-donation' ) . '</p></div>';
+            }
+        } );
     }
 
     public function load_textdomain() {
@@ -178,17 +211,21 @@ class coinsnap_bitcoin_donation {
         $settings = \CoinsnapCore\Admin\SettingsPage::get_settings_for( $core );
         $provider_name = $settings['payment_provider'] ?? 'coinsnap';
 
-        // Clear stored webhook and transients
-        delete_option( $core->webhook_key() );
-        $webhook_transient = 'coinsnap_donation_wh_' . md5( $provider_name . ( $settings['coinsnap_store_id'] ?? '' ) );
-        delete_transient( $webhook_transient );
+        // Forget this provider's stored webhook and secret. An empty id makes check_webhook()
+        // delete the webhook registered for this site, so the old secret stops working.
+        $stored = get_option( $core->webhook_key(), array() );
+        $stored = is_array( $stored ) ? $stored : array();
+        $stored[ $provider_name ] = array( 'id' => '', 'secret' => '' );
+        update_option( $core->webhook_key(), $stored );
+        $store_id = ( 'btcpay' === $provider_name ) ? ( $settings['btcpay_store_id'] ?? '' ) : ( $settings['coinsnap_store_id'] ?? '' );
+        delete_transient( 'coinsnap_donation_wh_' . md5( $provider_name . $store_id ) );
 
         try {
             $provider = \CoinsnapCore\Util\ProviderFactory::create( $core );
+            $provider->check_webhook();
             $result = $provider->register_webhook();
 
-            if ( ! isset( $result['error'] ) && isset( $result['result'] ) ) {
-                $stored = array();
+            if ( ! isset( $result['error'] ) && ! empty( $result['result']['id'] ) && ! empty( $result['result']['secret'] ) ) {
                 $stored[ $provider_name ] = array(
                     'id'     => $result['result']['id'],
                     'secret' => $result['result']['secret'],
@@ -201,14 +238,20 @@ class coinsnap_bitcoin_donation {
                     'id'      => $result['result']['id'],
                 ) );
             } else {
-                wp_send_json_error( $result['message'] ?? 'Registration failed' );
+                wp_send_json_error( __( 'Webhook registration failed. Check the connection settings.', 'coinsnap-bitcoin-donation' ) );
             }
-        } catch ( \Exception $e ) {
-            wp_send_json_error( $e->getMessage() );
+        } catch ( \Throwable $e ) {
+            wp_send_json_error( __( 'Webhook registration failed. Check the connection settings.', 'coinsnap-bitcoin-donation' ) );
         }
     }
 
     public function maybe_register_webhooks() {
+        // Registering a webhook replaces its secret: only administrators' page views may trigger it.
+        if ( ! current_user_can( 'manage_options' ) ) {
+            return;
+        }
+        coinsnap_bitcoin_donation_rotate_webhook_secret_once();
+
         $core = coinsnap_bitcoin_donation_get_core();
         $settings = \CoinsnapCore\Admin\SettingsPage::get_settings_for( $core );
         $provider_name = $settings['payment_provider'] ?? 'coinsnap';
@@ -229,7 +272,7 @@ class coinsnap_bitcoin_donation {
                 if ( isset( $store['code'] ) && $store['code'] === 200 ) {
                     if ( ! $provider->check_webhook() ) {
                         $result = $provider->register_webhook();
-                        if ( ! isset( $result['error'] ) && isset( $result['result'] ) ) {
+                        if ( ! isset( $result['error'] ) && ! empty( $result['result']['id'] ) && ! empty( $result['result']['secret'] ) ) {
                             $stored = get_option( $core->webhook_key(), array() );
                             $stored[ $provider_name ] = array(
                                 'id'     => $result['result']['id'],

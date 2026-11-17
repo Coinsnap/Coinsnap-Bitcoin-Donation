@@ -33,7 +33,7 @@ class AjaxHandlers {
 	 */
 	public static function handle_connection_check( PluginInstance $instance ): void {
 		$nonce = filter_input( INPUT_POST, 'apiNonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		if ( ! wp_verify_nonce( $nonce, 'coinsnap-ajax-nonce' ) ) {
+		if ( ! wp_verify_nonce( $nonce, 'coinsnap-ajax-nonce' ) || ! current_user_can( 'manage_options' ) ) {
 			wp_die( 'Unauthorized!', '', array( 'response' => 401 ) );
 		}
 
@@ -123,10 +123,7 @@ class AjaxHandlers {
 			wp_send_json_error( 'Insufficient permissions.' );
 		}
 
-		$host = filter_var(
-			filter_input( INPUT_POST, 'host', FILTER_SANITIZE_FULL_SPECIAL_CHARS ),
-			FILTER_VALIDATE_URL
-		);
+		$host = filter_var( trim( (string) filter_input( INPUT_POST, 'host', FILTER_UNSAFE_RAW ) ), FILTER_VALIDATE_URL );
 
 		if ( false === $host || ( substr( $host, 0, 7 ) !== 'http://' && substr( $host, 0, 8 ) !== 'https://' ) ) {
 			wp_send_json_error( 'Error validating BTCPay Server URL.' );
@@ -137,6 +134,9 @@ class AjaxHandlers {
 			BTCPayAuthorizer::OPTIONAL_PERMISSIONS
 		);
 
+		$state = wp_generate_password( 32, false );
+		set_transient( BTCPayAuthorizer::state_key( $state ), $host, 15 * MINUTE_IN_SECONDS );
+
 		try {
 			$url = BTCPayAuthorizer::get_authorize_url(
 				$host,
@@ -144,12 +144,11 @@ class AjaxHandlers {
 				$instance->get( 'btcpay_app_name', 'Coinsnap' ),
 				true,
 				true,
-				home_url( '?' . $instance->get( 'btcpay_callback_endpoint' ) ),
+				add_query_arg( 'state', $state, home_url( '?' . $instance->get( 'btcpay_callback_endpoint' ) ) ),
 				null
 			);
 
-			BTCPayAuthorizer::update_settings( $instance->option_key(), array( 'btcpay_host' => $host ) );
-
+			// The host is saved by the callback, together with a key verified on it.
 			wp_send_json_success( array( 'url' => $url ) );
 		} catch ( \Throwable $e ) {
 			wp_send_json_error( 'Error processing request.' );

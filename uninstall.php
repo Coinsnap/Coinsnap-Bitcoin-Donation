@@ -18,17 +18,21 @@ foreach ( $tables as $table ) {
 $options = array(
     'coinsnap_bitcoin_donation_options',
     'coinsnap_bitcoin_donation_forms_options',
-    'coinsnap_webhook_secret',
     'coinsnap_donation_webhook',
     'coinsnap_donation_db_version',
     'coinsnap_donation_migrated_forms',
     'coinsnap_donation_forms_migrated',
     'coinsnap_donation_defaults_created',
+    'coinsnap_donation_webhook_rotated',
 );
+// coinsnap_webhook_secret is shared with other Coinsnap plugins and is left alone.
 
 foreach ( $options as $option ) {
     delete_option( $option );
 }
+
+// Donor details saved for invoices that were never paid.
+$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $wpdb->esc_like( 'coinsnap_bitcoin_donation_donor_' ) . '%' ) );
 
 // Delete all donation-form CPT posts
 $donation_forms = get_posts( array(

@@ -41,7 +41,8 @@ class Coinsnap_Bitcoin_Donation_Public_Donors
             'has_archive'        => false,
             'hierarchical'       => false,
             'supports'           => ['title'],
-            'show_in_rest'       => true
+            // Donor records hold e-mail and postal addresses: never readable through the REST API.
+            'show_in_rest'       => false
         ]);
     }
 
@@ -51,56 +52,56 @@ class Coinsnap_Bitcoin_Donation_Public_Donors
             'object_subtype' => 'bitcoin-pds',
             'type' => 'string',
             'single' => true,
-            'show_in_rest' => true,
+            'show_in_rest' => false,
         ]);
 
         register_meta('post', '_coinsnap_bitcoin_donation_amount', [
             'object_subtype' => 'bitcoin-pds',
             'type' => 'string',
             'single' => true,
-            'show_in_rest' => true,
+            'show_in_rest' => false,
         ]);
 
         register_meta('post', '_coinsnap_bitcoin_donation_message', [
             'object_subtype' => 'bitcoin-pds',
             'type' => 'string',
             'single' => true,
-            'show_in_rest' => true,
+            'show_in_rest' => false,
         ]);
 
         register_meta('post', '_coinsnap_bitcoin_donation_form_type', [
             'object_subtype' => 'bitcoin-pds',
             'type' => 'string',
             'single' => true,
-            'show_in_rest' => true,
+            'show_in_rest' => false,
         ]);
 
         register_meta('post', '_coinsnap_bitcoin_donation_email', [
             'object_subtype' => 'bitcoin-pds',
             'type' => 'string',
             'single' => true,
-            'show_in_rest' => true,
+            'show_in_rest' => false,
         ]);
 
         register_meta('post', '_coinsnap_bitcoin_donation_address', [
             'object_subtype' => 'bitcoin-pds',
             'type' => 'string',
             'single' => true,
-            'show_in_rest' => true,
+            'show_in_rest' => false,
         ]);
 
         register_meta('post', '_coinsnap_bitcoin_donation_payment_id', [
             'object_subtype' => 'bitcoin-pds',
             'type' => 'string',
             'single' => true,
-            'show_in_rest' => true,
+            'show_in_rest' => false,
         ]);
 
         register_meta('post', '_coinsnap_bitcoin_donation_custom_field', [
             'object_subtype' => 'bitcoin-pds',
             'type' => 'string',
             'single' => true,
-            'show_in_rest' => true,
+            'show_in_rest' => false,
         ]);
     }
 

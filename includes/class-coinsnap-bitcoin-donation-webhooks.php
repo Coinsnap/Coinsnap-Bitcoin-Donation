@@ -5,6 +5,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class coinsnap_bitcoin_donation_Webhooks {
 
+    /** Donor details saved when the invoice is created; read back when it is paid. */
+    const DONOR_OPTION_PREFIX = 'coinsnap_bitcoin_donation_donor_';
+
+    /** Form type (form meta) => invoice type. */
+    const FORM_TYPES = array(
+        'simple_donation' => 'Bitcoin Donation',
+        'multi_amount'    => 'Multi Amount Donation',
+        'shoutout'        => 'Bitcoin Shoutout',
+    );
+
+    /** Donor fields accepted from the donation form (keys as sanitize_key() leaves them). */
+    const DONOR_FIELDS = array( 'donorname', 'donoremail', 'donoraddress', 'donormessage', 'donorcustom', 'donorcustomcheckbox', 'donoroptout', 'amountfiat' );
+
     public function __construct() {
         add_action( 'rest_api_init', array( $this, 'register_routes' ) );
     }
@@ -15,48 +28,67 @@ class coinsnap_bitcoin_donation_Webhooks {
         register_rest_route( $namespace, '/payment/create', array(
             'methods'             => 'POST',
             'callback'            => array( $this, 'create_payment' ),
+            // Public on purpose: visitors start donations. The server creates the invoice and records its amount.
             'permission_callback' => '__return_true',
         ) );
 
-        register_rest_route( $namespace, '/status/(?P<invoice_id>[a-zA-Z0-9]+)', array(
+        register_rest_route( $namespace, '/status/(?P<invoice_id>[A-Za-z0-9_-]{1,64})', array(
             'methods'             => 'GET',
             'callback'            => array( $this, 'check_payment_status' ),
+            // Public on purpose: returns only paid yes/no for an invoice the visitor already knows.
             'permission_callback' => '__return_true',
-            'args'                => array(
-                'invoice_id' => array(
-                    'required'          => true,
-                    'sanitize_callback' => 'sanitize_text_field',
-                ),
-            ),
         ) );
 
         register_rest_route( $namespace, '/webhook/coinsnap', array(
             'methods'             => 'POST',
             'callback'            => array( $this, 'handle_coinsnap_webhook' ),
-            'permission_callback' => '__return_true',
+            'permission_callback' => function ( WP_REST_Request $request ) {
+                return self::webhook_permission( 'coinsnap', $request );
+            },
         ) );
 
         register_rest_route( $namespace, '/webhook/btcpay', array(
             'methods'             => 'POST',
             'callback'            => array( $this, 'handle_btcpay_webhook' ),
-            'permission_callback' => '__return_true',
+            'permission_callback' => function ( WP_REST_Request $request ) {
+                return self::webhook_permission( 'btcpay', $request );
+            },
         ) );
 
-        // Legacy webhook endpoint — old installations may still have this URL registered
+        // Legacy webhook endpoint — old installations may still have this URL registered.
+        // It accepts only this plugin's own secrets, never the shared coinsnap_webhook_secret.
         register_rest_route( $namespace, '/webhook', array(
             'methods'             => 'POST',
             'callback'            => array( $this, 'handle_legacy_webhook' ),
-            'permission_callback' => '__return_true',
+            'permission_callback' => function ( WP_REST_Request $request ) {
+                return self::webhook_permission( self::legacy_provider( $request ), $request );
+            },
         ) );
+    }
+
+    /**
+     * Signature check for the webhook routes: timestamped X-Coinsnap-Signature or BTCPay-Sig,
+     * with this plugin's own secret. Failures are logged by the core with a fixed reason.
+     */
+    public static function webhook_permission( string $provider, WP_REST_Request $request ): bool {
+        if ( ! coinsnap_bitcoin_donation_core_ok() ) {
+            return false; // An older coinsnap-core was loaded by another plugin: refuse rather than trust the body.
+        }
+        return \CoinsnapCore\Rest\WebhookHelper::check_request( coinsnap_bitcoin_donation_get_core(), $provider, $request );
+    }
+
+    private static function legacy_provider( WP_REST_Request $request ): string {
+        return '' !== (string) $request->get_header( 'BTCPay-Sig' ) ? 'btcpay' : 'coinsnap';
     }
 
     public function create_payment( WP_REST_Request $request ) {
         // No nonce check — this is a public endpoint (permission_callback => __return_true).
         // Nonce verification breaks when pages are served from cache with a stale wp_rest nonce.
-        // Security is enforced by the payment provider (Coinsnap/BTCPay).
+        // The amount and currency sent to the provider are recorded here and checked when the invoice is paid.
 
         $core     = coinsnap_bitcoin_donation_get_core();
         $settings = \CoinsnapCore\Admin\SettingsPage::get_settings_for( $core );
+        $generic  = __( 'Invoice creation failed. Please try again.', 'coinsnap-bitcoin-donation' );
 
         // Check provider credentials before processing
         $provider_name = $settings['payment_provider'] ?? 'coinsnap';
@@ -70,51 +102,90 @@ class coinsnap_bitcoin_donation_Webhooks {
             }
         }
 
-        $params   = $request->get_json_params();
+        $params = $request->get_json_params();
+        $params = is_array( $params ) ? $params : array();
 
-        $amount      = isset( $params['amount'] ) ? floatval( $params['amount'] ) : 0;
-        $currency    = isset( $params['currency'] ) ? strtoupper( sanitize_text_field( $params['currency'] ) ) : 'SATS';
-        $message     = isset( $params['message'] ) ? sanitize_textarea_field( $params['message'] ) : '';
-        $form_type   = isset( $params['formType'] ) ? sanitize_text_field( $params['formType'] ) : 'Bitcoin Donation';
-        $redirect    = isset( $params['redirectUrl'] ) ? esc_url_raw( $params['redirectUrl'] ) : home_url();
-        $metadata    = isset( $params['metadata'] ) ? $params['metadata'] : array();
+        $amount   = ( isset( $params['amount'] ) && is_numeric( $params['amount'] ) ) ? (float) $params['amount'] : 0;
+        $currency = isset( $params['currency'] ) && is_string( $params['currency'] ) ? strtoupper( sanitize_text_field( $params['currency'] ) ) : 'SATS';
+        $message  = isset( $params['message'] ) && is_string( $params['message'] ) ? self::limit( sanitize_textarea_field( $params['message'] ), 1000 ) : '';
+        $redirect = isset( $params['redirectUrl'] ) && is_string( $params['redirectUrl'] ) ? esc_url_raw( $params['redirectUrl'] ) : home_url();
+        $metadata = isset( $params['metadata'] ) && is_array( $params['metadata'] ) ? array_change_key_case( $params['metadata'], CASE_LOWER ) : array();
 
-        if ( $amount <= 0 ) {
+        $currencies = defined( 'COINSNAP_CURRENCIES' ) ? COINSNAP_CURRENCIES : array( 'EUR', 'USD', 'SATS', 'BTC', 'CAD', 'JPY', 'GBP', 'CHF', 'RUB' );
+        if ( ! in_array( $currency, $currencies, true ) ) {
+            // translators: %s: currency code (e.g. EUR)
+            return new WP_REST_Response( array( 'success' => false, 'message' => sprintf( __( 'Currency %s is not supported.', 'coinsnap-bitcoin-donation' ), $currency ) ), 400 );
+        }
+        if ( $amount <= 0 || ! is_finite( $amount ) ) {
             return new WP_REST_Response( array( 'success' => false, 'message' => __( 'Invalid amount.', 'coinsnap-bitcoin-donation' ) ), 400 );
         }
 
-        $provider_name = $settings['payment_provider'] ?? 'coinsnap';
+        // Which form this is, and so what the payment is for, comes from the form's own settings.
+        $form_post_id = absint( is_scalar( $metadata['donationformid'] ?? null ) ? $metadata['donationformid'] : 0 );
+        if ( $form_post_id > 0 ) {
+            $form = get_post( $form_post_id );
+            if ( ! $form || 'donation-form' !== $form->post_type || 'publish' !== $form->post_status ) {
+                return new WP_REST_Response( array( 'success' => false, 'message' => $generic ), 400 );
+            }
+            $form_type_key = (string) get_post_meta( $form_post_id, '_coinsnap_donation_form_form_type', true );
+            $form_type     = self::FORM_TYPES[ $form_type_key ] ?? self::FORM_TYPES['simple_donation'];
+            $public_donor  = '1' === (string) get_post_meta( $form_post_id, '_coinsnap_donation_form_public_donors', true ) ? '1' : '0';
+        } else {
+            // Legacy shortcode without a form post: only the known types are accepted.
+            $requested    = isset( $params['formType'] ) && is_string( $params['formType'] ) ? $params['formType'] : '';
+            $form_type    = in_array( $requested, self::FORM_TYPES, true ) ? $requested : self::FORM_TYPES['simple_donation'];
+            $public_donor = '1' === (string) ( is_scalar( $metadata['publicdonor'] ?? null ) ? $metadata['publicdonor'] : '' ) ? '1' : '0';
+        }
+
         $mode = ( 'btcpay' === $provider_name ) ? 'lightning' : 'coinsnap';
         $exchange_rates = new \CoinsnapCore\Util\ExchangeRates();
         $check = $exchange_rates->check_payment_data( $amount, $currency, $mode );
         if ( isset( $check['result'] ) && $check['result'] === false ) {
             // Only block on currency/amount errors — skip if exchange rates couldn't be loaded
             if ( $check['error'] === 'currencyError' ) {
+                // translators: %s: currency code (e.g. EUR)
                 return new WP_REST_Response( array( 'success' => false, 'message' => sprintf( __( 'Currency %s is not supported.', 'coinsnap-bitcoin-donation' ), $currency ) ), 400 );
             } elseif ( $check['error'] === 'amountError' ) {
-                return new WP_REST_Response( array( 'success' => false, 'message' => sprintf( __( 'Amount cannot be less than %s %s.', 'coinsnap-bitcoin-donation' ), $check['min_value'] ?? '0', $currency ) ), 400 );
+                // translators: %1$s: minimum amount, %2$s: currency code (e.g. EUR)
+                return new WP_REST_Response( array( 'success' => false, 'message' => sprintf( __( 'Amount cannot be less than %1$s %2$s.', 'coinsnap-bitcoin-donation' ), $check['min_value'] ?? '0', $currency ) ), 400 );
             }
             // For ratesLoadingError/ratesListError — skip validation, let the provider handle it
         }
 
-        $amount_cents = intval( round( $amount * 100 ) );
-        if ( strtoupper( $currency ) === 'SATS' ) {
-            $amount_cents = intval( $amount );
+        // The core takes whole units for SATS and cents for fiat. BTC would be truncated to whole
+        // bitcoins, so it is sent as the same amount in sats.
+        if ( 'BTC' === $currency ) {
+            $currency = 'SATS';
+            $amount   = round( $amount * 100000000 );
         }
-
-        $sanitized_metadata = array();
-        foreach ( $metadata as $key => $val ) {
-            $sanitized_metadata[ sanitize_key( $key ) ] = sanitize_text_field( $val );
+        if ( 'SATS' === $currency ) {
+            $amount_minor = (int) round( $amount );
+            $amount_units = (float) $amount_minor;
+        } else {
+            $amount_minor = (int) round( $amount * 100 );
+            $amount_units = $amount_minor / 100;
         }
-        $sanitized_metadata['modal']     = '1';
-        $sanitized_metadata['formType']  = $form_type;
+        if ( $amount_minor <= 0 ) {
+            return new WP_REST_Response( array( 'success' => false, 'message' => __( 'Invalid amount.', 'coinsnap-bitcoin-donation' ) ), 400 );
+        }
+        $amount_text = self::format_amount( $amount_units, $currency );
 
-        // Surface the form's data on the provider invoice. Custom donor fields already
-        // travel inside 'metadata'; these top-level keys let the provider also populate
-        // the standard buyer name / email / description fields (shown in the dashboard).
-        $donor_name   = $sanitized_metadata['donorname'] ?? '';
-        $donor_email  = isset( $sanitized_metadata['donoremail'] ) ? sanitize_email( $sanitized_metadata['donoremail'] ) : '';
-        $form_post_id = absint( $sanitized_metadata['donationformid'] ?? 0 );
+        $donor = array();
+        foreach ( self::DONOR_FIELDS as $field ) {
+            $value           = $metadata[ $field ] ?? '';
+            $donor[ $field ] = is_scalar( $value ) ? self::limit( sanitize_text_field( (string) $value ), 500 ) : '';
+        }
+        $donor['donoremail'] = sanitize_email( $donor['donoremail'] );
+
+        // Metadata on the provider invoice (shown in its dashboard): the donor's fields plus what the server decided.
+        $sanitized_metadata = $donor;
+        $sanitized_metadata['modal']          = '1';
+        $sanitized_metadata['formType']       = $form_type;
+        $sanitized_metadata['type']           = $form_type;
+        $sanitized_metadata['amount']         = $amount_text;
+        $sanitized_metadata['satsamount']     = 'SATS' === $currency ? $amount_text : '';
+        $sanitized_metadata['publicdonor']    = $public_donor;
+        $sanitized_metadata['donationformid'] = (string) $form_post_id;
 
         // Generate the order reference up front so the same unique id is sent to the
         // provider (as orderId/orderNumber metadata, used by the wallet for reconciliation)
@@ -122,9 +193,9 @@ class coinsnap_bitcoin_donation_Webhooks {
         $transaction_id = 'donation_' . time() . '_' . wp_generate_password( 8, false );
 
         $invoice_data = array(
-            'name'        => $donor_name,
-            'email'       => $donor_email,
-            'buyer_email' => $donor_email, // back-compat alias
+            'name'        => $donor['donorname'],
+            'email'       => $donor['donoremail'],
+            'buyer_email' => $donor['donoremail'], // back-compat alias
             'description' => $message,
             'redirect'    => $redirect,
             'order_id'    => $transaction_id,
@@ -133,11 +204,10 @@ class coinsnap_bitcoin_donation_Webhooks {
 
         try {
             $provider = \CoinsnapCore\Util\ProviderFactory::create( $core );
-            $result   = $provider->create_invoice( $form_post_id, $amount_cents, $currency, $invoice_data );
+            $result   = $provider->create_invoice( $form_post_id, $amount_minor, $currency, $invoice_data );
 
-            if ( isset( $result['error'] ) || empty( $result['invoice_id'] ) ) {
-                $error_msg = $result['error'] ?? $result['message'] ?? __( 'Invoice creation failed. Please try again.', 'coinsnap-bitcoin-donation' );
-                return new WP_REST_Response( array( 'success' => false, 'message' => $error_msg ), 500 );
+            if ( isset( $result['error'] ) || empty( $result['invoice_id'] ) || empty( $result['payment_url'] ) ) {
+                return new WP_REST_Response( array( 'success' => false, 'message' => $generic ), 500 );
             }
 
             global $wpdb;
@@ -145,9 +215,9 @@ class coinsnap_bitcoin_donation_Webhooks {
             $wpdb->insert( $table_name, array(
                 'source_id'          => $form_post_id,
                 'transaction_id'     => $transaction_id,
-                'customer_name'      => $sanitized_metadata['donorname'] ?? '',
-                'customer_email'     => $sanitized_metadata['donoremail'] ?? '',
-                'amount'             => $amount,
+                'customer_name'      => $donor['donorname'],
+                'customer_email'     => $donor['donoremail'],
+                'amount'             => $amount_units,
                 'currency'           => $currency,
                 'description'        => $form_type,
                 'payment_provider'   => $provider_name,
@@ -159,6 +229,22 @@ class coinsnap_bitcoin_donation_Webhooks {
                 'created_at'         => current_time( 'mysql' ),
             ) );
 
+            // What the donor entered, kept on the server: the paid invoice's posts are made from this, never from a webhook body.
+            update_option( self::donor_option( (string) $result['invoice_id'] ), array(
+                'type'         => $form_type,
+                'public_donor' => $public_donor,
+                'form_id'      => $form_post_id,
+                'amount'       => $amount_text,
+                'sats_amount'  => 'SATS' === $currency ? $amount_text : '',
+                'name'         => $donor['donorname'],
+                'email'        => $donor['donoremail'],
+                'address'      => $donor['donoraddress'],
+                'message'      => $donor['donormessage'],
+                'custom'       => $donor['donorcustom'],
+                'checkbox'     => '1' === $donor['donorcustomcheckbox'] ? '1' : '0',
+                'opt_out'      => filter_var( $donor['donoroptout'], FILTER_VALIDATE_BOOLEAN ) ? '1' : '0',
+            ), false );
+
             return new WP_REST_Response( array(
                 'success'      => true,
                 'invoice_id'   => $result['invoice_id'],
@@ -166,13 +252,13 @@ class coinsnap_bitcoin_donation_Webhooks {
                 'redirect_url' => $redirect,
             ), 200 );
 
-        } catch ( \Exception $e ) {
-            return new WP_REST_Response( array( 'success' => false, 'message' => $e->getMessage() ), 500 );
+        } catch ( \Throwable $e ) {
+            return new WP_REST_Response( array( 'success' => false, 'message' => $generic ), 500 );
         }
     }
 
     public function check_payment_status( WP_REST_Request $request ) {
-        $invoice_id = $request->get_param( 'invoice_id' );
+        $invoice_id = (string) $request->get_param( 'invoice_id' );
         $core       = coinsnap_bitcoin_donation_get_core();
 
         global $wpdb;
@@ -205,11 +291,14 @@ class coinsnap_bitcoin_donation_Webhooks {
         // arrives, which never happens on hosts the provider can't reach (local dev) and
         // can be lost in production. Actively ask the provider, but throttle to ~1 remote
         // call per 10s per invoice so the 1s frontend poll loop can't hammer the API.
-        $throttle_key = 'cbd_status_poll_' . md5( $invoice_id );
-        if ( false === get_transient( $throttle_key ) ) {
-            set_transient( $throttle_key, 1, 10 );
-            if ( 'paid' === self::reconcile_invoice( $invoice_id ) ) {
-                return new WP_REST_Response( array( 'success' => true, 'data' => array( 'paid' => true ) ), 200 );
+        // Only invoices this plugin created and that are still open are looked up.
+        if ( in_array( $status, array( 'unpaid', 'failed' ), true ) ) {
+            $throttle_key = 'cbd_status_poll_' . md5( $invoice_id );
+            if ( false === get_transient( $throttle_key ) ) {
+                set_transient( $throttle_key, 1, 10 );
+                if ( 'paid' === self::reconcile_invoice( $invoice_id ) ) {
+                    return new WP_REST_Response( array( 'success' => true, 'data' => array( 'paid' => true ) ), 200 );
+                }
             }
         }
 
@@ -217,140 +306,38 @@ class coinsnap_bitcoin_donation_Webhooks {
     }
 
     public function handle_coinsnap_webhook( WP_REST_Request $request ) {
-        $core = coinsnap_bitcoin_donation_get_core();
-        $data = $request->get_json_params();
-
-        // Skip signature verification if disabled in settings (for debugging)
-        $settings = \CoinsnapCore\Admin\SettingsPage::get_settings_for( $core );
-        if ( empty( $settings['disable_webhook_verification'] ) ) {
-            // Verify using request body from WP_REST_Request (php://input may be empty)
-            $webhook_option = get_option( $core->webhook_key() );
-            $secret = '';
-            if ( is_array( $webhook_option ) && ! empty( $webhook_option['coinsnap']['secret'] ) ) {
-                $secret = (string) $webhook_option['coinsnap']['secret'];
-            }
-
-            $sig_headers = array(
-                $request->get_header( 'btcpay-signature' ) ?? '',
-                $request->get_header( 'x-coinsnap-signature' ) ?? '',
-                $request->get_header( 'x-signature' ) ?? '',
-                $request->get_header( 'x-coinsnap-sig' ) ?? '',
-            );
-
-            $body = $request->get_body();
-            $verified = false;
-
-            if ( $secret && $body ) {
-                $raw = hash_hmac( 'sha256', $body, $secret );
-                $with_prefix = 'sha256=' . $raw;
-                foreach ( $sig_headers as $sig ) {
-                    if ( $sig && ( hash_equals( $raw, $sig ) || hash_equals( $with_prefix, $sig ) ) ) {
-                        $verified = true;
-                        break;
-                    }
-                }
-            }
-
-            if ( ! $verified ) {
-                return new WP_REST_Response( array( 'success' => false, 'message' => 'Invalid signature.' ), 401 );
-            }
-        }
-
-        return $this->process_webhook( $data, 'coinsnap' );
+        return $this->process_webhook( $request, 'coinsnap' );
     }
 
     public function handle_btcpay_webhook( WP_REST_Request $request ) {
-        $core = coinsnap_bitcoin_donation_get_core();
-        $data = $request->get_json_params();
-
-        $settings = \CoinsnapCore\Admin\SettingsPage::get_settings_for( $core );
-        if ( empty( $settings['disable_webhook_verification'] ) ) {
-            $webhook_option = get_option( $core->webhook_key() );
-            $secret = '';
-            if ( is_array( $webhook_option ) && ! empty( $webhook_option['btcpay']['secret'] ) ) {
-                $secret = (string) $webhook_option['btcpay']['secret'];
-            }
-
-            $sig = $request->get_header( 'btcpay-signature' ) ?? '';
-            $body = $request->get_body();
-            $verified = false;
-
-            if ( $secret && $body && $sig ) {
-                $computed = 'sha256=' . hash_hmac( 'sha256', $body, $secret );
-                $verified = hash_equals( $computed, $sig );
-            }
-
-            if ( ! $verified ) {
-                return new WP_REST_Response( array( 'success' => false, 'message' => 'Invalid signature.' ), 401 );
-            }
-        }
-
-        return $this->process_webhook( $data, 'btcpay' );
+        return $this->process_webhook( $request, 'btcpay' );
     }
 
     /**
-     * Handle legacy /webhook endpoint — tries both signature methods, also checks old secret.
+     * Legacy /webhook endpoint: the provider is chosen by the signature header; the
+     * permission callback already checked it with this plugin's own secret.
      */
     public function handle_legacy_webhook( WP_REST_Request $request ) {
-        $core = coinsnap_bitcoin_donation_get_core();
-        $data = $request->get_json_params();
-
-        $provider = 'coinsnap';
-        if ( ! \CoinsnapCore\Rest\WebhookHelper::verify_coinsnap_signature( $core ) ) {
-            if ( ! \CoinsnapCore\Rest\WebhookHelper::verify_btcpay_signature( $core ) ) {
-                if ( ! $this->verify_legacy_signature() ) {
-                    return new WP_REST_Response( array( 'success' => false, 'message' => 'Invalid signature.' ), 401 );
-                }
-            } else {
-                $provider = 'btcpay';
-            }
-        }
-
-        return $this->process_webhook( $data, $provider );
+        return $this->process_webhook( $request, self::legacy_provider( $request ) );
     }
 
     /**
-     * Verify using the old coinsnap_webhook_secret option.
+     * Only the invoice id is taken from the webhook. The core asks the provider's API whether that
+     * invoice is Settled with the amount and currency recorded at creation, then the donation is
+     * applied once.
      */
-    private function verify_legacy_signature() {
-        $secret = get_option( 'coinsnap_webhook_secret', '' );
-        if ( ! $secret ) {
-            return false;
+    private function process_webhook( WP_REST_Request $request, string $provider ) {
+        $data   = json_decode( (string) $request->get_body(), true );
+        $data   = is_array( $data ) ? $data : array();
+        $parsed = \CoinsnapCore\Rest\WebhookHelper::parse_webhook( $provider, $data, coinsnap_bitcoin_donation_get_core() );
+
+        if ( ! empty( $parsed['retry'] ) ) {
+            // The API could not be asked: the provider sends the webhook again.
+            return new WP_REST_Response( array( 'success' => false ), 503 );
         }
-
-        $payload = file_get_contents( 'php://input' );
-        if ( ! $payload ) {
-            return false;
+        if ( ! empty( $parsed['paid'] ) ) {
+            self::apply_paid_invoice( (string) $parsed['invoice_id'], $provider );
         }
-
-        $computed = 'sha256=' . hash_hmac( 'sha256', $payload, $secret );
-
-        $headers = array(
-            isset( $_SERVER['HTTP_X_COINSNAP_SIG'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_COINSNAP_SIG'] ) ) : '',
-            isset( $_SERVER['HTTP_BTCPAY_SIG'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_BTCPAY_SIG'] ) ) : '',
-            isset( $_SERVER['HTTP_X_COINSNAP_SIGNATURE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_COINSNAP_SIGNATURE'] ) ) : '',
-            isset( $_SERVER['HTTP_BTCPAY_SIGNATURE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_BTCPAY_SIGNATURE'] ) ) : '',
-            isset( $_SERVER['HTTP_X_SIGNATURE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_SIGNATURE'] ) ) : '',
-        );
-
-        foreach ( $headers as $sig ) {
-            if ( $sig && hash_equals( $computed, $sig ) ) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private function process_webhook( array $data, string $provider ) {
-        $parsed = \CoinsnapCore\Rest\WebhookHelper::parse_webhook( $provider, $data );
-
-        if ( ! $parsed['paid'] ) {
-            return new WP_REST_Response( array( 'success' => true ), 200 );
-        }
-
-        $metadata = isset( $data['metadata'] ) && is_array( $data['metadata'] ) ? $data['metadata'] : array();
-        self::apply_paid_invoice( $parsed['invoice_id'], $metadata, $provider );
-
         return new WP_REST_Response( array( 'success' => true ), 200 );
     }
 
@@ -361,10 +348,11 @@ class coinsnap_bitcoin_donation_Webhooks {
      * 'paid' when an inbound webhook arrives, but the provider cannot reach local-dev hosts
      * (e.g. *.ddev.site) and webhooks can be lost/misconfigured in production. Both the
      * status endpoint (frontend poll) and the admin "Check status" action call this.
+     * Paid means what the core decides from the API: Settled, with the recorded amount and currency.
      *
      * @param string $invoice_id    Provider invoice id.
      * @param string $provider_name Optional provider override; defaults to the stored row's provider.
-     * @return string Resulting local payment_status ('paid', 'failed', or the unchanged status).
+     * @return string Resulting local payment_status ('paid', 'failed', 'error', or the unchanged status).
      */
     public static function reconcile_invoice( string $invoice_id, string $provider_name = '' ) {
         if ( '' === $invoice_id ) {
@@ -381,78 +369,74 @@ class coinsnap_bitcoin_donation_Webhooks {
             $invoice_id
         ) );
 
-        if ( $row && 'paid' === $row->payment_status ) {
+        if ( ! $row ) {
+            return 'unpaid'; // Not an invoice this plugin created.
+        }
+        if ( 'paid' === $row->payment_status ) {
             return 'paid';
+        }
+        if ( ! coinsnap_bitcoin_donation_core_ok() ) {
+            return 'error';
         }
 
         if ( '' === $provider_name ) {
-            $provider_name = ( $row && ! empty( $row->payment_provider ) ) ? (string) $row->payment_provider : '';
+            $provider_name = ! empty( $row->payment_provider ) ? (string) $row->payment_provider : 'coinsnap';
         }
 
         $provider_obj = \CoinsnapCore\Util\ProviderFactory::create( $core, $provider_name );
         $result       = $provider_obj->check_invoice_status( $invoice_id );
 
         if ( ! empty( $result['paid'] ) ) {
-            // check_invoice_status() returns the full invoice body under 'metadata';
-            // the custom metadata we set on creation lives at metadata.metadata.
-            $invoice_meta = array();
-            if ( isset( $result['metadata']['metadata'] ) && is_array( $result['metadata']['metadata'] ) ) {
-                $invoice_meta = $result['metadata']['metadata'];
-            }
-            self::apply_paid_invoice( $invoice_id, $invoice_meta, $provider_name ?: 'coinsnap' );
+            self::apply_paid_invoice( $invoice_id, $provider_name );
             return 'paid';
+        }
+        if ( ! empty( $result['retry'] ) ) {
+            return 'error';
         }
 
         // Reflect terminal non-paid states so the admin list isn't stuck showing "unpaid".
+        // Only an unpaid row changes: Expired or Invalid never move a paid or refunded one.
         $status = isset( $result['status'] ) ? (string) $result['status'] : '';
-        if ( in_array( $status, array( 'Expired', 'Invalid' ), true ) && $row && 'failed' !== $row->payment_status ) {
-            $wpdb->update(
-                $table_name,
-                array( 'payment_status' => 'failed', 'updated_at' => current_time( 'mysql' ) ),
-                array( 'payment_invoice_id' => $invoice_id )
-            );
-            return 'failed';
+        if ( in_array( $status, array( 'Expired', 'Invalid' ), true ) ) {
+            $wpdb->query( $wpdb->prepare(
+                "UPDATE {$table_name} SET payment_status = 'failed', updated_at = %s WHERE payment_invoice_id = %s AND payment_status = 'unpaid'",
+                current_time( 'mysql' ),
+                $invoice_id
+            ) );
+            return 'unpaid' === $row->payment_status ? 'failed' : (string) $row->payment_status;
         }
 
-        return $row ? (string) $row->payment_status : 'unpaid';
+        return (string) $row->payment_status;
     }
 
     /**
-     * Mark an invoice paid in the local store and create the donor/shoutout posts.
+     * Mark an invoice paid and create the donor/shoutout posts, once.
      *
-     * Idempotent: side effects run only on the unpaid->paid transition (guarded by the
-     * current row status), and donor/shoutout posts are de-duplicated by invoice id so a
-     * webhook and a status-poll racing on the same invoice cannot create duplicates.
+     * Call only after the provider's API confirmed the invoice (WebhookHelper::parse_webhook() or
+     * check_invoice_status()). The row moves from unpaid (or failed, for a late payment) to paid in
+     * one SQL statement, so a webhook and a status poll racing on the same invoice can't both get
+     * through. The posts are made from what the server saved when it created the invoice.
      *
      * @param string $invoice_id Provider invoice id.
-     * @param array  $metadata   Invoice custom metadata (keys may be camelCase or lowercased).
      * @param string $provider   'coinsnap' or 'btcpay'.
      * @return bool True if this call performed the unpaid->paid transition.
      */
-    public static function apply_paid_invoice( string $invoice_id, array $metadata, string $provider ) {
-        if ( '' === $invoice_id ) {
+    public static function apply_paid_invoice( string $invoice_id, string $provider ) {
+        if ( '' === $invoice_id || ! coinsnap_bitcoin_donation_core_ok() ) {
             return false;
         }
 
         $core = coinsnap_bitcoin_donation_get_core();
+        if ( ! \CoinsnapCore\Database\PaymentTable::mark_paid_once( $core, $invoice_id ) ) {
+            return false; // Already paid (or refunded, or not ours): its side effects already ran.
+        }
 
         global $wpdb;
         $table_name = \CoinsnapCore\Database\PaymentTable::table_name( $core, $wpdb );
-
-        // Idempotency guard: if the row is already paid, its side effects already ran.
-        $current = $wpdb->get_var( $wpdb->prepare(
-            "SELECT payment_status FROM {$table_name} WHERE payment_invoice_id = %s",
+        $row        = $wpdb->get_row( $wpdb->prepare(
+            "SELECT source_id, customer_name, customer_email, amount, currency FROM {$table_name} WHERE payment_invoice_id = %s",
             $invoice_id
         ) );
-        if ( 'paid' === $current ) {
-            return false;
-        }
-
-        $wpdb->update(
-            $table_name,
-            array( 'payment_status' => 'paid', 'updated_at' => current_time( 'mysql' ) ),
-            array( 'payment_invoice_id' => $invoice_id )
-        );
 
         $old_table    = $wpdb->prefix . 'donation_payments';
         $table_exists = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $old_table ) );
@@ -470,25 +454,24 @@ class coinsnap_bitcoin_donation_Webhooks {
             }
         }
 
-        // Normalize metadata keys to lower case. The frontend sends camelCase, but
-        // create_payment() runs every key through sanitize_key() (which lowercases)
-        // before they are stored on the provider invoice, so the values read back are
-        // lowercased. Lowercasing here makes lookups match regardless of source
-        // (webhook payload vs. status-poll response) and fixes blank donor/shoutout
-        // records that the previous camelCase lookups produced.
-        $m = array_change_key_case( $metadata, CASE_LOWER );
+        $donor = get_option( self::donor_option( $invoice_id ) );
+        if ( ! is_array( $donor ) ) {
+            $donor = self::legacy_donor_record( $invoice_id, $provider, $row );
+        }
+        // The amount is the one this plugin invoiced (and the core checked), never one sent by the browser.
+        if ( $row ) {
+            $donor['amount']      = self::format_amount( (float) $row->amount, (string) $row->currency );
+            $donor['sats_amount'] = 'SATS' === strtoupper( (string) $row->currency ) ? $donor['amount'] : '';
+        }
 
-        if ( '1' === (string) ( $m['publicdonor'] ?? '' )
+        $type    = (string) ( $donor['type'] ?? '' );
+        $form_id = absint( $donor['form_id'] ?? 0 );
+        $name    = sanitize_text_field( (string) ( $donor['name'] ?? '' ) );
+        $message = sanitize_text_field( (string) ( $donor['message'] ?? '' ) );
+        $amount  = sanitize_text_field( (string) ( $donor['amount'] ?? '' ) );
+
+        if ( '1' === (string) ( $donor['public_donor'] ?? '' )
             && ! self::post_exists_for_invoice( 'bitcoin-pds', '_coinsnap_bitcoin_donation_payment_id', $invoice_id ) ) {
-
-            $name    = sanitize_text_field( $m['donorname'] ?? '' );
-            $email   = sanitize_email( $m['donoremail'] ?? '' );
-            $address = sanitize_text_field( $m['donoraddress'] ?? '' );
-            $message = sanitize_text_field( $m['donormessage'] ?? '' );
-            $opt_out = filter_var( $m['donoroptout'] ?? false, FILTER_VALIDATE_BOOLEAN ) ? '1' : '0';
-            $custom  = sanitize_text_field( $m['donorcustom'] ?? '' );
-            $type    = sanitize_text_field( $m['formtype'] ?? '' );
-            $amount  = sanitize_text_field( $m['amount'] ?? '' );
 
             $post_id = wp_insert_post( array(
                 'post_title'   => $name,
@@ -497,31 +480,25 @@ class coinsnap_bitcoin_donation_Webhooks {
                 'post_content' => $message,
             ) );
 
-            if ( $post_id ) {
+            if ( $post_id && ! is_wp_error( $post_id ) ) {
                 update_post_meta( $post_id, '_coinsnap_bitcoin_donation_donor_name', $name );
                 update_post_meta( $post_id, '_coinsnap_bitcoin_donation_amount', $amount );
                 update_post_meta( $post_id, '_coinsnap_bitcoin_donation_message', $message );
-                update_post_meta( $post_id, '_coinsnap_bitcoin_donation_form_type', $type );
-                update_post_meta( $post_id, '_coinsnap_bitcoin_donation_dont_show', $opt_out );
-                update_post_meta( $post_id, '_coinsnap_bitcoin_donation_email', $email );
-                update_post_meta( $post_id, '_coinsnap_bitcoin_donation_address', $address );
+                update_post_meta( $post_id, '_coinsnap_bitcoin_donation_form_type', sanitize_text_field( $type ) );
+                update_post_meta( $post_id, '_coinsnap_bitcoin_donation_dont_show', '1' === (string) ( $donor['opt_out'] ?? '' ) ? '1' : '0' );
+                update_post_meta( $post_id, '_coinsnap_bitcoin_donation_email', sanitize_email( (string) ( $donor['email'] ?? '' ) ) );
+                update_post_meta( $post_id, '_coinsnap_bitcoin_donation_address', sanitize_text_field( (string) ( $donor['address'] ?? '' ) ) );
                 update_post_meta( $post_id, '_coinsnap_bitcoin_donation_payment_id', $invoice_id );
-                update_post_meta( $post_id, '_coinsnap_bitcoin_donation_custom_field', $custom );
-                $custom_checkbox = sanitize_text_field( $m['donorcustomcheckbox'] ?? '0' );
-                update_post_meta( $post_id, '_coinsnap_bitcoin_donation_custom_checkbox', $custom_checkbox );
-                if ( ! empty( $m['donationformid'] ) ) {
-                    update_post_meta( $post_id, '_coinsnap_donation_form_id', absint( $m['donationformid'] ) );
+                update_post_meta( $post_id, '_coinsnap_bitcoin_donation_custom_field', sanitize_text_field( (string) ( $donor['custom'] ?? '' ) ) );
+                update_post_meta( $post_id, '_coinsnap_bitcoin_donation_custom_checkbox', '1' === (string) ( $donor['checkbox'] ?? '' ) ? '1' : '0' );
+                if ( $form_id ) {
+                    update_post_meta( $post_id, '_coinsnap_donation_form_id', $form_id );
                 }
             }
         }
 
-        if ( 'Bitcoin Shoutout' === (string) ( $m['type'] ?? '' )
+        if ( self::FORM_TYPES['shoutout'] === $type
             && ! self::post_exists_for_invoice( 'bitcoin-shoutouts', '_coinsnap_bitcoin_donation_shoutouts_invoice_id', $invoice_id ) ) {
-
-            $name        = sanitize_text_field( $m['donorname'] ?? '' );
-            $message     = sanitize_text_field( $m['donormessage'] ?? '' );
-            $amount      = sanitize_text_field( $m['amount'] ?? '' );
-            $sats_amount = sanitize_text_field( $m['satsamount'] ?? '' );
 
             $post_id = wp_insert_post( array(
                 'post_title'  => 'Shoutout from ' . ( '' !== $name ? $name : 'Anonymous' ),
@@ -529,20 +506,68 @@ class coinsnap_bitcoin_donation_Webhooks {
                 'post_type'   => 'bitcoin-shoutouts',
             ) );
 
-            if ( $post_id ) {
+            if ( $post_id && ! is_wp_error( $post_id ) ) {
                 update_post_meta( $post_id, '_coinsnap_bitcoin_donation_shoutouts_name', $name );
                 update_post_meta( $post_id, '_coinsnap_bitcoin_donation_shoutouts_amount', $amount );
-                update_post_meta( $post_id, '_coinsnap_bitcoin_donation_shoutouts_sats_amount', $sats_amount );
+                update_post_meta( $post_id, '_coinsnap_bitcoin_donation_shoutouts_sats_amount', sanitize_text_field( (string) ( $donor['sats_amount'] ?? '' ) ) );
                 update_post_meta( $post_id, '_coinsnap_bitcoin_donation_shoutouts_invoice_id', $invoice_id );
                 update_post_meta( $post_id, '_coinsnap_bitcoin_donation_shoutouts_message', $message );
                 update_post_meta( $post_id, '_coinsnap_bitcoin_donation_shoutouts_provider', $provider );
-                if ( ! empty( $m['donationformid'] ) ) {
-                    update_post_meta( $post_id, '_coinsnap_donation_form_id', absint( $m['donationformid'] ) );
+                if ( $form_id ) {
+                    update_post_meta( $post_id, '_coinsnap_donation_form_id', $form_id );
                 }
             }
         }
 
+        delete_option( self::donor_option( $invoice_id ) );
         return true;
+    }
+
+    /**
+     * Donor details for an invoice created before this version, which saved none on the server:
+     * read from the invoice as the provider's API returns it (the metadata this plugin sent), never
+     * from the webhook body. The core accepts such invoices only for a day after the upgrade.
+     */
+    private static function legacy_donor_record( string $invoice_id, string $provider, $row ): array {
+        $core   = coinsnap_bitcoin_donation_get_core();
+        $result = \CoinsnapCore\Util\ProviderFactory::create( $core, $provider )->check_invoice_status( $invoice_id );
+        $meta   = ( isset( $result['metadata']['metadata'] ) && is_array( $result['metadata']['metadata'] ) ) ? $result['metadata']['metadata'] : array();
+        $m      = array_change_key_case( $meta, CASE_LOWER );
+        $get    = function ( $key ) use ( $m ) {
+            return is_scalar( $m[ $key ] ?? null ) ? (string) $m[ $key ] : '';
+        };
+        $form_id = $row ? absint( $row->source_id ) : 0;
+        $type    = $get( 'type' );
+        if ( $form_id ) {
+            $type = self::FORM_TYPES[ (string) get_post_meta( $form_id, '_coinsnap_donation_form_form_type', true ) ] ?? $type;
+        }
+        return array(
+            'type'         => in_array( $type, self::FORM_TYPES, true ) ? $type : self::FORM_TYPES['simple_donation'],
+            'public_donor' => '1' === $get( 'publicdonor' ) ? '1' : '0',
+            'form_id'      => $form_id,
+            'name'         => $row ? (string) $row->customer_name : $get( 'donorname' ),
+            'email'        => $row ? (string) $row->customer_email : $get( 'donoremail' ),
+            'address'      => $get( 'donoraddress' ),
+            'message'      => $get( 'donormessage' ),
+            'custom'       => $get( 'donorcustom' ),
+            'checkbox'     => '1' === $get( 'donorcustomcheckbox' ) ? '1' : '0',
+            'opt_out'      => filter_var( $get( 'donoroptout' ), FILTER_VALIDATE_BOOLEAN ) ? '1' : '0',
+        );
+    }
+
+    private static function donor_option( string $invoice_id ): string {
+        return self::DONOR_OPTION_PREFIX . md5( $invoice_id );
+    }
+
+    private static function format_amount( float $amount, string $currency ): string {
+        if ( 'SATS' === strtoupper( $currency ) ) {
+            return (string) (int) round( $amount );
+        }
+        return rtrim( rtrim( number_format( $amount, 2, '.', '' ), '0' ), '.' );
+    }
+
+    private static function limit( string $value, int $length ): string {
+        return function_exists( 'mb_substr' ) ? mb_substr( $value, 0, $length ) : substr( $value, 0, $length );
     }
 
     /**
