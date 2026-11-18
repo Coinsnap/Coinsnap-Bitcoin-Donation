@@ -160,18 +160,24 @@ class Coinsnap_Bitcoin_Donation_Settings {
         );
 
         // Hidden page for old URL — redirects to CPT list
-        // WordPress checks page exists before admin_init, so we must register it
-        add_submenu_page(
-            null, // hidden, no parent
+        // WordPress checks page exists before admin_init, so we must register it.
+        // Parent '' (not null): null makes WordPress log Deprecated notices on every admin page (PHP 8.1+).
+        $redirect = function () {
+            wp_safe_redirect( admin_url( 'edit.php?post_type=donation-form' ) );
+            exit;
+        };
+        $hook = add_submenu_page(
+            '',
             '',
             '',
             'manage_options',
             'coinsnap-bitcoin-donation',
-            function () {
-                wp_safe_redirect( admin_url( 'edit.php?post_type=donation-form' ) );
-                exit;
-            }
+            $redirect
         );
+        // Redirect on load-, before the admin header is sent; the page callback runs too late to redirect.
+        if ( $hook ) {
+            add_action( 'load-' . $hook, $redirect );
+        }
     }
 }
 
