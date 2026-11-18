@@ -48,7 +48,11 @@ class SettingsPage {
 			$opts = array();
 		}
 
-		return array_merge( $defaults, $opts );
+		$settings = array_merge( $defaults, $opts );
+		// Webhook signatures are always checked. The old debug switch is ignored, so a value saved by
+		// an earlier version can't leave a consuming plugin accepting unsigned "paid" webhooks.
+		$settings['disable_webhook_verification'] = false;
+		return $settings;
 	}
 
 	/**
@@ -201,7 +205,7 @@ class SettingsPage {
 			__( 'Coinsnap API Key', 'coinsnap-core' ),
 			function () use ( $inst, $option_key ) {
 				$s = self::get_settings_for( $inst );
-				echo '<input type="text" class="regular-text" name="' . esc_attr( $option_key ) . '[coinsnap_api_key]" value="' . esc_attr( $s['coinsnap_api_key'] ) . '" />';
+				self::render_key_field( $option_key, 'coinsnap_api_key', (string) $s['coinsnap_api_key'] );
 			},
 			$settings_page,
 			$inst->get( 'menu_slug' ) . '_coinsnap'
@@ -235,7 +239,7 @@ class SettingsPage {
 			__( 'BTCPay API Key', 'coinsnap-core' ),
 			function () use ( $inst, $option_key ) {
 				$s = self::get_settings_for( $inst );
-				echo '<input type="text" class="regular-text" name="' . esc_attr( $option_key ) . '[btcpay_api_key]" value="' . esc_attr( $s['btcpay_api_key'] ) . '" />';
+				self::render_key_field( $option_key, 'btcpay_api_key', (string) $s['btcpay_api_key'] );
 			},
 			$settings_page,
 			$inst->get( 'menu_slug' ) . '_btcpay'
@@ -284,6 +288,44 @@ class SettingsPage {
 	}
 
 	/**
+	 * Placeholder for a key field: the last characters of the saved key, or the given hint.
+	 */
+	private static function key_placeholder( string $stored, string $fallback ): string {
+		return '' === $stored ? $fallback : sprintf( '•••• %s', substr( $stored, -4 ) );
+	}
+
+	/**
+	 * The stored key is never printed; an empty field keeps it.
+	 */
+	private static function render_key_field( string $option_key, string $field, string $stored ): void {
+		echo '<input type="password" class="regular-text" autocomplete="new-password" name="' . esc_attr( $option_key ) . '[' . esc_attr( $field ) . ']" value="" />';
+		if ( '' !== $stored ) {
+			echo '<p class="description">' . esc_html(
+				sprintf(
+					/* translators: %s: last characters of the stored API key */
+					__( 'A key ending in %s is saved. Leave empty to keep it.', 'coinsnap-core' ),
+					substr( $stored, -4 )
+				)
+			) . '</p>';
+		}
+	}
+
+	/**
+	 * Empty key fields keep the stored keys; a BTCPay key is never kept for a different server.
+	 */
+	private static function keep_stored_keys( PluginInstance $inst, array $input, array $sanitized ): array {
+		$old = self::get_settings_for( $inst );
+		if ( array_key_exists( 'coinsnap_api_key', $input ) && '' === trim( (string) $input['coinsnap_api_key'] ) ) {
+			$sanitized['coinsnap_api_key'] = (string) ( $old['coinsnap_api_key'] ?? '' );
+		}
+		if ( array_key_exists( 'btcpay_api_key', $input ) && '' === trim( (string) $input['btcpay_api_key'] ) ) {
+			$new_host = isset( $input['btcpay_host'] ) ? sanitize_url( (string) $input['btcpay_host'] ) : (string) ( $old['btcpay_host'] ?? '' );
+			$sanitized['btcpay_api_key'] = ( $new_host === (string) ( $old['btcpay_host'] ?? '' ) ) ? (string) ( $old['btcpay_api_key'] ?? '' ) : '';
+		}
+		return $sanitized;
+	}
+
+	/**
 	 * Sanitize settings input for a plugin instance.
 	 *
 	 * @param PluginInstance $inst  Plugin instance.
@@ -298,10 +340,8 @@ class SettingsPage {
 			'payment_provider',
 			'coinsnap_api_key',
 			'coinsnap_store_id',
-			'coinsnap_webhook_secret',
 			'btcpay_api_key',
 			'btcpay_store_id',
-			'btcpay_webhook_secret',
 			'log_level',
 		);
 
@@ -310,6 +350,7 @@ class SettingsPage {
 				$sanitized[ $field ] = sanitize_text_field( $input[ $field ] );
 			}
 		}
+		$sanitized = self::keep_stored_keys( $inst, $input, $sanitized );
 
 		// Sanitize URL fields.
 		$url_fields = array( 'coinsnap_api_base', 'btcpay_host' );
@@ -329,8 +370,8 @@ class SettingsPage {
 			$sanitized['ngrok_url'] = esc_url_raw( $input['ngrok_url'] );
 		}
 
-		// Sanitize boolean fields.
-		$sanitized['disable_webhook_verification'] = isset( $input['disable_webhook_verification'] ) && $input['disable_webhook_verification'];
+		// Webhook verification can't be turned off (see get_settings_for()).
+		$sanitized['disable_webhook_verification'] = false;
 
 		// Clear connection transients so next admin page load re-checks.
 		$old        = self::get_settings_for( $inst );
@@ -444,13 +485,15 @@ class SettingsPage {
 							</div>
 							<div class="csc-field-row">
 								<label for="csc-coinsnap-api-key"><?php esc_html_e( 'API Key', 'coinsnap-core' ); ?></label>
-								<input type="text"
+								<?php // The stored key is never printed; an empty field keeps it. ?>
+								<input type="password"
 									id="csc-coinsnap-api-key"
 									name="<?php echo esc_attr( $option_key ); ?>[coinsnap_api_key]"
-									value="<?php echo esc_attr( $s['coinsnap_api_key'] ); ?>"
-									placeholder="<?php esc_attr_e( 'Enter your Coinsnap API Key', 'coinsnap-core' ); ?>"
+									value=""
+									autocomplete="new-password"
+									placeholder="<?php echo esc_attr( self::key_placeholder( (string) $s['coinsnap_api_key'], __( 'Enter your Coinsnap API Key', 'coinsnap-core' ) ) ); ?>"
 								/>
-								<p class="csc-field-description"><?php esc_html_e( 'Your API key from the Coinsnap dashboard.', 'coinsnap-core' ); ?></p>
+								<p class="csc-field-description"><?php esc_html_e( 'Your API key from the Coinsnap dashboard. Leave empty to keep the saved key.', 'coinsnap-core' ); ?></p>
 							</div>
 						</div>
 
@@ -474,11 +517,12 @@ class SettingsPage {
 							</div>
 							<div class="csc-field-row">
 								<label for="csc-btcpay-api-key"><?php esc_html_e( 'API Key', 'coinsnap-core' ); ?></label>
-								<input type="text"
+								<input type="password"
 									id="csc-btcpay-api-key"
 									name="<?php echo esc_attr( $option_key ); ?>[btcpay_api_key]"
-									value="<?php echo esc_attr( $s['btcpay_api_key'] ); ?>"
-									placeholder="<?php esc_attr_e( 'Auto-filled after authorization', 'coinsnap-core' ); ?>"
+									value=""
+									autocomplete="new-password"
+									placeholder="<?php echo esc_attr( self::key_placeholder( (string) $s['btcpay_api_key'], __( 'Auto-filled after authorization', 'coinsnap-core' ) ) ); ?>"
 								/>
 								<p class="csc-field-description"><?php esc_html_e( 'This field is populated automatically when you use the Generate API Key flow above.', 'coinsnap-core' ); ?></p>
 							</div>
@@ -546,18 +590,6 @@ class SettingsPage {
 								<span id="csc-webhook-status" style="margin-left:10px;"></span>
 								<p class="csc-field-description"><?php esc_html_e( 'Force re-registration of the webhook with the payment provider. Use if webhooks are not being received.', 'coinsnap-core' ); ?></p>
 							</div>
-						</div>
-						<div class="csc-field-row">
-							<label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-								<input type="checkbox"
-									id="csc-disable-webhook-verification"
-									name="<?php echo esc_attr( $option_key ); ?>[disable_webhook_verification]"
-									value="1"
-									<?php checked( ! empty( $s['disable_webhook_verification'] ) ); ?>
-								/>
-								<?php esc_html_e( 'Disable Webhook Verification', 'coinsnap-core' ); ?>
-							</label>
-							<p class="csc-field-description"><?php esc_html_e( 'Skip webhook signature verification. Use only for debugging — disable in production after testing.', 'coinsnap-core' ); ?></p>
 						</div>
 						<?php
 							$is_local = strpos( get_site_url(), 'localhost' ) !== false || strpos( get_site_url(), '.ddev.site' ) !== false || strpos( get_site_url(), '.local' ) !== false;

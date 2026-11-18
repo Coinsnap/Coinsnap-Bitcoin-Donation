@@ -88,8 +88,49 @@ class Logger {
 		if ( ! file_exists( $log_dir ) ) {
 			wp_mkdir_p( $log_dir );
 		}
+		self::protect_directory( $log_dir );
 
-		$this->log_file = $log_dir . '/' . $log_file_name;
+		// Uploads are served by the web server, and Nginx ignores .htaccess: the name must not be guessable.
+		$secret_name    = self::private_name( $log_file_name );
+		$this->log_file = $log_dir . '/' . $secret_name;
+		$old_file       = $log_dir . '/' . $log_file_name;
+		if ( $secret_name !== $log_file_name ) {
+			// Move logs written under the old public name, rotated copies included, out of reach.
+			foreach ( array_merge( array( '' ), array_map( fn( $i ) => '.' . $i, range( 1, 10 ) ) ) as $ext ) {
+				if ( file_exists( $old_file . $ext ) && ! file_exists( $this->log_file . $ext ) ) {
+					// phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename
+					rename( $old_file . $ext, $this->log_file . $ext );
+				}
+			}
+		}
+	}
+
+	/**
+	 * Log file name with a per-site random part, derived from the site's salts.
+	 */
+	private static function private_name( string $log_file_name ): string {
+		$suffix = substr( wp_hash( 'coinsnap-core-log-' . $log_file_name ), 0, 20 );
+		$dot    = strrpos( $log_file_name, '.' );
+		return false === $dot
+			? $log_file_name . '-' . $suffix
+			: substr( $log_file_name, 0, $dot ) . '-' . $suffix . substr( $log_file_name, $dot );
+	}
+
+	/**
+	 * Deny web access where the server honours it (Apache) and stop directory listings.
+	 */
+	private static function protect_directory( string $log_dir ): void {
+		$files = array(
+			'.htaccess'  => "Require all denied\nDeny from all\n",
+			'index.php'  => "<?php\n// Silence is golden.\n",
+			'index.html' => '',
+		);
+		foreach ( $files as $name => $content ) {
+			if ( ! file_exists( $log_dir . '/' . $name ) ) {
+				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+				file_put_contents( $log_dir . '/' . $name, $content );
+			}
+		}
 	}
 
 	/**
@@ -134,7 +175,7 @@ class Logger {
 	 */
 	private function format_log_entry( string $level, string $message, array $context ): string {
 		$timestamp   = current_time( 'Y-m-d H:i:s' );
-		$context_str = ! empty( $context ) ? ' ' . wp_json_encode( $context ) : '';
+		$context_str = ! empty( $context ) ? ' ' . wp_json_encode( self::redact( $context ) ) : '';
 
 		return sprintf(
 			'[%s] %s: %s%s' . PHP_EOL,
@@ -143,6 +184,20 @@ class Logger {
 			$message,
 			$context_str
 		);
+	}
+
+	/**
+	 * Credentials never reach the log, whatever a caller passes in.
+	 */
+	private static function redact( array $context ): array {
+		foreach ( $context as $key => $value ) {
+			if ( is_string( $key ) && preg_match( '/key|secret|token|password|signature|authorization|cookie/i', $key ) ) {
+				$context[ $key ] = '[redacted]';
+			} elseif ( is_array( $value ) ) {
+				$context[ $key ] = self::redact( $value );
+			}
+		}
+		return $context;
 	}
 
 	/**

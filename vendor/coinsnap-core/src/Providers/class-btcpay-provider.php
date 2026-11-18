@@ -102,6 +102,11 @@ class BTCPayProvider implements PaymentProviderInterface {
 	/**
 	 * Check existing webhook on BTCPay server.
 	 *
+	 * False only when the server answered and our stored webhook is not there, so the caller
+	 * should register a new one. When the server can't be asked (network error, 5xx) this
+	 * returns true: an API error is never "no webhook", or every glitch would create a new
+	 * webhook and replace the secret.
+	 *
 	 * @return bool
 	 */
 	public function check_webhook(): bool {
@@ -137,11 +142,11 @@ class BTCPayProvider implements PaymentProviderInterface {
 
 			$res = wp_remote_request( $url, $args );
 
-			if ( is_wp_error( $res ) ) {
-				return false;
+			$code = is_wp_error( $res ) ? 0 : (int) wp_remote_retrieve_response_code( $res );
+			if ( 0 === $code || $code >= 500 ) {
+				return true; // Unknown, not missing: keep the stored webhook and secret.
 			}
 
-			$code          = wp_remote_retrieve_response_code( $res );
 			$storeWebhooks = json_decode( wp_remote_retrieve_body( $res ), true );
 			if ( $code >= 200 && $code < 300 && is_array( $storeWebhooks ) ) {
 
@@ -307,10 +312,14 @@ class BTCPayProvider implements PaymentProviderInterface {
 		if ( $code >= 200 && $code < 300 && is_array( $body ) ) {
 			$invoice_id  = isset( $body['id'] ) ? (string) $body['id'] : '';
 			$payment_url = isset( $body['checkoutLink'] ) ? (string) $body['checkoutLink'] : '';
-			return $invoice_id && $payment_url ? array(
+			if ( ! $invoice_id || ! $payment_url ) {
+				return array();
+			}
+			\CoinsnapCore\Webhook\InvoiceCheck::record( $this->instance, $invoice_id, (string) $api_amount, $currency );
+			return array(
 				'invoice_id'  => $invoice_id,
 				'payment_url' => $payment_url,
-			) : array();
+			);
 		}
 		return array();
 	}
@@ -324,11 +333,12 @@ class BTCPayProvider implements PaymentProviderInterface {
 	public function handle_webhook( array $request ): array {
 		do_action( 'wpbn_btcpay_webhook_received', $request );
 		$invoice_id = isset( $request['invoiceId'] ) ? (string) $request['invoiceId'] : '';
-		$type       = isset( $request['type'] ) ? (string) $request['type'] : '';
-		$paid       = in_array( $type, array( 'InvoiceSettled', 'PaymentReceived', 'InvoicePaid', 'Settled' ), true );
+		// Only the invoice id is taken from the request; whether it is paid comes from the API.
+		$status = '' !== $invoice_id ? $this->check_invoice_status( $invoice_id ) : array( 'paid' => false );
 		return array(
 			'invoice_id' => $invoice_id,
-			'paid'       => $paid,
+			'paid'       => ! empty( $status['paid'] ),
+			'retry'      => ! empty( $status['retry'] ),
 			'metadata'   => $request,
 		);
 	}
@@ -372,7 +382,8 @@ class BTCPayProvider implements PaymentProviderInterface {
 				'invoice_id' => $invoice_id,
 				'paid'       => false,
 				'status'     => 'error',
-				'metadata'   => array( 'error' => $res->get_error_message() ),
+				'retry'      => true,
+				'metadata'   => array( 'error' => 'BTCPay Server could not be reached' ),
 			);
 		}
 
@@ -381,7 +392,7 @@ class BTCPayProvider implements PaymentProviderInterface {
 
 		if ( $code >= 200 && $code < 300 && is_array( $body ) ) {
 			$status = isset( $body['status'] ) ? (string) $body['status'] : 'unknown';
-			$paid   = in_array( $status, array( 'Settled', 'Paid', 'Complete' ), true );
+			$paid   = \CoinsnapCore\Webhook\InvoiceCheck::is_paid( $this->instance, $invoice_id, $body, true );
 
 			return array(
 				'invoice_id' => $invoice_id,
@@ -395,6 +406,8 @@ class BTCPayProvider implements PaymentProviderInterface {
 			'invoice_id' => $invoice_id,
 			'paid'       => false,
 			'status'     => 'error',
+			// Server errors are worth a retry; an unknown invoice is not.
+			'retry'      => ! ( $code >= 400 && $code < 500 ),
 			'metadata'   => array( 'error' => 'Invalid API response' ),
 		);
 	}
@@ -405,24 +418,11 @@ class BTCPayProvider implements PaymentProviderInterface {
 	 * @return bool True if valid.
 	 */
 	public function verify_signature(): bool {
-		// Get webhook secret from stored webhook registration data.
 		$webhook_option = get_option( $this->instance->webhook_key() );
-		$secret         = '';
-		if ( is_array( $webhook_option ) && ! empty( $webhook_option['btcpay']['secret'] ) ) {
-			$secret = (string) $webhook_option['btcpay']['secret'];
-		}
-		if ( ! $secret ) {
-			return false;
-		}
-		$sig     = isset( $_SERVER['HTTP_BTCPAY_SIGNATURE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_BTCPAY_SIGNATURE'] ) ) : '';
-		$payload = file_get_contents( 'php://input' );
-		if ( ! $payload ) {
-			$payload = '';
-		}
-		if ( ! $sig || ! $payload ) {
-			return false;
-		}
-		$calc = 'sha256=' . hash_hmac( 'sha256', $payload, $secret );
-		return hash_equals( $calc, $sig );
+		$secret         = ( is_array( $webhook_option ) && ! empty( $webhook_option['btcpay']['secret'] ) ) ? (string) $webhook_option['btcpay']['secret'] : '';
+		// BTCPay sends the header as "BTCPay-Sig: sha256=<HMAC of body>".
+		$header  = isset( $_SERVER['HTTP_BTCPAY_SIG'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_BTCPAY_SIG'] ) ) : '';
+		$payload = (string) file_get_contents( 'php://input' );
+		return '' !== $payload && null === \CoinsnapCore\Webhook\Signature::btcpayProblem( $header, $payload, $secret );
 	}
 }

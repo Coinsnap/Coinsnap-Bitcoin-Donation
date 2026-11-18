@@ -28,6 +28,9 @@ class LogsPage {
 	 * @param Logger         $logger   Logger instance.
 	 */
 	public static function render_page_for( PluginInstance $instance, Logger $logger ): void {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'Sorry, you are not allowed to view this page.', 'coinsnap-core' ), 403 );
+		}
 		$log_file_path = $logger->get_log_file_path();
 		$log_file_size = $logger->get_log_file_size();
 

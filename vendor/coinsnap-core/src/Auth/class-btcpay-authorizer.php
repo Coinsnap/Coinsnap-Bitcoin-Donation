@@ -25,19 +25,20 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class BTCPayAuthorizer {
 
-	/** Default BTCPay permissions required for invoice management. */
+	/**
+	 * Store permissions the core needs: create and read invoices, read the store (connection check,
+	 * payment methods) and manage its webhook. Nothing that moves money (no pull payments, no
+	 * invoice changes), nothing for other stores, nothing server-wide.
+	 */
 	public const REQUIRED_PERMISSIONS = array(
 		'btcpay.store.canviewinvoices',
 		'btcpay.store.cancreateinvoice',
 		'btcpay.store.canviewstoresettings',
-		'btcpay.store.canmodifyinvoices',
-	);
-
-	/** Optional BTCPay permissions for extended functionality. */
-	public const OPTIONAL_PERMISSIONS = array(
-		'btcpay.store.cancreatenonapprovedpullpayments',
 		'btcpay.store.webhooks.canmodifywebhooks',
 	);
+
+	/** No optional permissions: a key with more rights than REQUIRED_PERMISSIONS is refused. */
+	public const OPTIONAL_PERMISSIONS = array();
 
 	/**
 	 * Build BTCPay authorization URL. Pure function, no side effects.
@@ -126,8 +127,7 @@ class BTCPayAuthorizer {
 			'request',
 			function ( $vars ) use ( $endpoint ) {
 				if ( isset( $vars[ $endpoint ] ) ) {
-					$vars[ $endpoint ]              = true;
-					$vars[ $endpoint . '-nonce' ] = wp_create_nonce( 'coinsnap-core-btcpay-nonce' );
+					$vars[ $endpoint ] = true;
 				}
 				return $vars;
 			}
@@ -157,116 +157,115 @@ class BTCPayAuthorizer {
 			return;
 		}
 
-		if ( ! isset( $wp_query->query_vars[ $endpoint . '-nonce' ] )
-			|| ! wp_verify_nonce( $wp_query->query_vars[ $endpoint . '-nonce' ], 'coinsnap-core-btcpay-nonce' ) ) {
-			return;
+		// BTCPay posts here from the admin's browser; only the state handed out with the authorize URL is accepted, once.
+		$state      = isset( $_GET['state'] ) ? preg_replace( '/[^A-Za-z0-9]/', '', (string) wp_unslash( $_GET['state'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$state_host = ( '' !== $state ) ? get_transient( self::state_key( $state ) ) : false;
+		if ( '' !== $state ) {
+			delete_transient( self::state_key( $state ) );
+		}
+		if ( ! is_string( $state_host ) || '' === $state_host ) {
+			status_header( 403 );
+			exit();
 		}
 
-		$settings_url = admin_url( '/admin.php?page=' . $instance->get( 'menu_slug' ) . '-settings' );
-		$option_key   = $instance->option_key();
-		$form_data    = get_option( $option_key, array() );
-		if ( ! is_array( $form_data ) ) {
-			$form_data = array();
-		}
+		$settings_url   = admin_url( '/admin.php?page=' . $instance->get( 'menu_slug' ) . '-settings' );
+		$option_key     = $instance->option_key();
+		$btcpay_host    = $state_host;
+		$btcpay_api_key = isset( $_POST['apiKey'] ) ? sanitize_text_field( wp_unslash( $_POST['apiKey'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- the one-time state above authenticates this request.
 
-		$btcpay_host    = $form_data['btcpay_host'] ?? '';
-		$btcpay_api_key = filter_input( INPUT_POST, 'apiKey', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-
-		// Verify API key works by fetching stores.
-		$request_url = rtrim( $btcpay_host, '/' ) . '/api/v1/stores';
-		$args        = array(
-			'method'  => 'GET',
-			'headers' => array(
-				'Authorization' => 'token ' . $btcpay_api_key,
-				'Content-Type'  => 'application/json',
-			),
-			'timeout' => 20,
+		// The key must work on that server, or nothing is saved.
+		$response   = wp_remote_request(
+			rtrim( $btcpay_host, '/' ) . '/api/v1/stores',
+			array(
+				'method'  => 'GET',
+				'headers' => array(
+					'Authorization' => 'token ' . $btcpay_api_key,
+					'Content-Type'  => 'application/json',
+				),
+				'timeout' => 20,
+			)
 		);
-
-		$response   = wp_remote_request( $request_url, $args );
 		$code       = wp_remote_retrieve_response_code( $response );
 		$get_stores = json_decode( wp_remote_retrieve_body( $response ), true );
-
-		if ( $code >= 200 && $code < 300 && is_array( $get_stores ) ) {
-			if ( count( $get_stores ) < 1 ) {
-				wp_redirect( $settings_url ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
-				exit();
-			}
-		}
-
-		// Parse POST data for permissions.
-		$data = array();
-		if ( ! empty( $_POST ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified above via query_vars.
-			$data['apiKey'] = $btcpay_api_key;
-			if ( isset( $_POST['permissions'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-				$permissions = array_map( 'sanitize_text_field', wp_unslash( $_POST['permissions'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
-				if ( is_array( $permissions ) ) {
-					foreach ( $permissions as $key => $value ) {
-						$data['permissions'][ $key ] = sanitize_text_field( $permissions[ $key ] ?? '' );
-					}
-				}
-			}
-		}
-
-		if ( isset( $data['apiKey'] ) && isset( $data['permissions'] ) ) {
-			$btcpay_perms = $data['permissions'];
-
-			$permissions = array_reduce(
-				$btcpay_perms,
-				function ( array $carry, string $permission ) {
-					return array_merge( $carry, array( explode( ':', $permission )[0] ) );
-				},
-				array()
-			);
-
-			// Remove optional permissions to check only required ones.
-			$permissions  = array_diff( $permissions, self::OPTIONAL_PERMISSIONS );
-			$has_required = empty(
-				array_merge(
-					array_diff( self::REQUIRED_PERMISSIONS, $permissions ),
-					array_diff( $permissions, self::REQUIRED_PERMISSIONS )
-				)
-			);
-
-			$has_single_store = true;
-			$store_id         = null;
-			foreach ( $btcpay_perms as $perms ) {
-				$exploded = explode( ':', $perms );
-				if ( 2 !== count( $exploded ) ) {
-					wp_redirect( $settings_url ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
-					exit();
-				}
-				$received_store_id = $exploded[1] ?? null;
-				if ( null === $received_store_id ) {
-					$has_single_store = false;
-				}
-				if ( $store_id === $received_store_id ) {
-					continue;
-				}
-				if ( null === $store_id ) {
-					$store_id = $received_store_id;
-					continue;
-				}
-				$has_single_store = false;
-			}
-
-			if ( $has_single_store && $has_required ) {
-				self::update_settings(
-					$option_key,
-					array(
-						'btcpay_api_key'   => $data['apiKey'],
-						'btcpay_store_id'  => explode( ':', $btcpay_perms[0] )[1],
-						'payment_provider' => 'btcpay',
-					)
-				);
-			}
-
+		if ( '' === $btcpay_api_key || $code < 200 || $code >= 300 || ! is_array( $get_stores ) || count( $get_stores ) < 1 ) {
 			wp_redirect( $settings_url ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
 			exit();
 		}
 
+		// Permissions and store come from BTCPay itself, not from the posted form.
+		$data     = array();
+		$key_info = wp_remote_request(
+			rtrim( $btcpay_host, '/' ) . '/api/v1/api-keys/current',
+			array(
+				'method'  => 'GET',
+				'headers' => array( 'Authorization' => 'token ' . $btcpay_api_key ),
+				'timeout' => 20,
+			)
+		);
+		$key_body = json_decode( wp_remote_retrieve_body( $key_info ), true );
+		if ( 200 === wp_remote_retrieve_response_code( $key_info ) && is_array( $key_body['permissions'] ?? null ) ) {
+			$data['apiKey']      = $btcpay_api_key;
+			$data['permissions'] = array_values( array_filter( array_map( 'strval', $key_body['permissions'] ) ) );
+		}
+
+		$store_id = isset( $data['permissions'] ) ? self::acceptable_key_store( $data['permissions'] ) : '';
+		if ( '' !== $store_id ) {
+			self::update_settings(
+				$option_key,
+				array(
+					'btcpay_host'      => $btcpay_host,
+					'btcpay_api_key'   => $data['apiKey'],
+					'btcpay_store_id'  => $store_id,
+					'payment_provider' => 'btcpay',
+				)
+			);
+		}
+
 		wp_redirect( $settings_url ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
 		exit();
+	}
+
+	/**
+	 * The store a BTCPay key is limited to, or '' when the key must be refused.
+	 *
+	 * Accepted only if every permission is a store permission for one and the same store, each is
+	 * in REQUIRED_PERMISSIONS + OPTIONAL_PERMISSIONS, and every required one is present. Unrestricted,
+	 * server-wide, user-level or multi-store keys are refused. Pass permissions read from BTCPay
+	 * (GET /api/v1/api-keys/current), never ones posted by the browser.
+	 *
+	 * @param array $permissions Permissions as BTCPay reports them, e.g. "btcpay.store.canviewinvoices:STOREID".
+	 */
+	public static function acceptable_key_store( array $permissions ): string {
+		if ( array() === $permissions ) {
+			return '';
+		}
+		$allowed  = array_merge( self::REQUIRED_PERMISSIONS, self::OPTIONAL_PERMISSIONS );
+		$store_id = null;
+		$policies = array();
+		foreach ( $permissions as $permission ) {
+			$parts = explode( ':', (string) $permission, 2 );
+			if ( 2 !== count( $parts ) || '' === $parts[1] || ! in_array( $parts[0], $allowed, true ) ) {
+				return '';
+			}
+			if ( null !== $store_id && $store_id !== $parts[1] ) {
+				return '';
+			}
+			$store_id   = $parts[1];
+			$policies[] = $parts[0];
+		}
+		foreach ( self::REQUIRED_PERMISSIONS as $needed ) {
+			if ( ! in_array( $needed, $policies, true ) ) {
+				return '';
+			}
+		}
+		return (string) $store_id;
+	}
+
+	/**
+	 * Transient name for a one-time authorization state.
+	 */
+	public static function state_key( string $state ): string {
+		return 'coinsnap_core_btcpay_state_' . $state;
 	}
 
 	/**

@@ -78,4 +78,28 @@ class PaymentTable {
 
         \dbDelta( $sql );
     }
+
+    /**
+     * Mark the payment row for an invoice paid, once.
+     *
+     * Only an 'unpaid' row, or a 'failed' one (expired, then paid late), becomes 'paid'. The database
+     * does the check, so two webhooks arriving at the same moment can't both get through, and a paid
+     * or refunded row never changes.
+     * Fulfil (count the vote, send the e-mail, grant access) only when this returns true.
+     * Call it only after the API confirmed the invoice pays this row (WebhookHelper::parse_webhook()).
+     *
+     * @param PluginInstance $instance   Plugin config.
+     * @param string         $invoice_id Invoice id from the payment server.
+     * @return bool True if this call changed the row from unpaid to paid.
+     */
+    public static function mark_paid_once( PluginInstance $instance, string $invoice_id ): bool {
+        global $wpdb;
+        if ( '' === $invoice_id ) {
+            return false;
+        }
+        $table = self::table_name( $instance, $wpdb );
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- table name comes from the plugin config.
+        $changed = $wpdb->query( $wpdb->prepare( "UPDATE {$table} SET payment_status = 'paid' WHERE payment_invoice_id = %s AND payment_status IN ('unpaid', 'failed')", $invoice_id ) );
+        return 1 === $changed;
+    }
 }
