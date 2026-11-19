@@ -19,7 +19,9 @@ interface PaymentProviderInterface {
 	 * @param int    $form_id        Form ID.
 	 * @param int    $amount         Amount.
 	 * @param string $currency       Currency code.
-	 * @param array  $invoice_data   Invoice data.
+	 * @param array  $invoice_data   Invoice data: order_id (sent as orderId), order_number, email, name,
+	 *                               description, and metadata (any further keys, nested arrays allowed;
+	 *                               they win over the built ones). See Util\InvoiceMetadata::build().
 	 * @return array { invoice_id: string, payment_url: string, expires_at?: int }
 	 */
 	public function create_invoice( int $form_id, int $amount, string $currency, array $invoice_data ): array;

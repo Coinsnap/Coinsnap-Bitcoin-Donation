@@ -284,37 +284,25 @@ class CoinsnapProvider implements PaymentProviderInterface {
 			return array();
 		}
 
-		// Accept both 'email' (canonical) and 'buyer_email' (legacy alias) so the buyer
-		// email is never silently dropped, and surface the form's name/description as the
-		// standard buyer fields the Coinsnap/BTCPay dashboard displays. Custom metadata is
-		// merged last so caller-provided keys always win.
-		$buyer_email = (string) ( $invoice_data['email'] ?? $invoice_data['buyer_email'] ?? '' );
-		$buyer_name  = (string) ( $invoice_data['name'] ?? '' );
-		$item_desc   = (string) ( $invoice_data['description'] ?? '' );
-		$order_id    = (string) ( $invoice_data['order_id'] ?? '' );
-		$custom_meta = ( isset( $invoice_data['metadata'] ) && is_array( $invoice_data['metadata'] ) ) ? $invoice_data['metadata'] : array();
+		// Order ID, buyer email and metadata as the consuming plugin passed them (see InvoiceMetadata::build()).
+		// The top-level orderId is what Coinsnap shows and searches; it also copies it into metadata.orderId.
+		$invoice = \CoinsnapCore\Util\InvoiceMetadata::build( $form_id, $invoice_data );
 
 		$payload = array(
 			'amount'       => $amount_in_currency,
 			'currency'     => $currency,
 			'referralCode' => $this->instance->referral_code(),
-			'buyerEmail'   => $buyer_email,
-			'metadata'     => array_merge(
-				array(
-					'form_id'     => $form_id,
-					'email'       => $buyer_email,
-					'buyerEmail'  => $buyer_email,
-					'buyerName'   => $buyer_name,
-					'itemDesc'    => $item_desc,
-					'orderId'     => $order_id,
-					'orderNumber' => $order_id,
-				),
-				$custom_meta
-			),
+			'metadata'     => $invoice['metadata'],
 			'checkout'     => array(
 				'defaultPaymentMethod' => 'LightningNetwork',
 			),
 		);
+		if ( '' !== $invoice['order_id'] ) {
+			$payload['orderId'] = $invoice['order_id'];
+		}
+		if ( '' !== $invoice['buyer_email'] ) {
+			$payload['buyerEmail'] = $invoice['buyer_email'];
+		}
 
 		$args = array(
 			'method'  => 'POST',
