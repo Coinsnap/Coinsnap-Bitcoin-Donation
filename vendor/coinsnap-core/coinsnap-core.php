@@ -89,6 +89,7 @@ spl_autoload_register( function ( $class ) {
 		'Util\\Logger'                          => 'Util/class-logger',
 		'Util\\LogLevels'                       => 'Util/class-log-levels',
 		'Util\\ProviderFactory'                 => 'Util/class-provider-factory',
+		'Util\\InvoiceMetadata'                 => 'Util/class-invoice-metadata',
 		'Database\\PaymentTable'                => 'Database/class-payment-table',
 		'Rest\\WebhookHelper'                   => 'Rest/class-webhook-helper',
 		'Webhook\\Signature'                    => 'Webhook/class-signature',

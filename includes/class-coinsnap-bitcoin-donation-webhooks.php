@@ -188,9 +188,14 @@ class coinsnap_bitcoin_donation_Webhooks {
         $sanitized_metadata['donationformid'] = (string) $form_post_id;
 
         // Generate the order reference up front so the same unique id is sent to the
-        // provider (as orderId/orderNumber metadata, used by the wallet for reconciliation)
+        // provider (as orderId/orderNumber, used by the wallet for reconciliation)
         // and stored as the local transaction_id — keeping the two records matched 1:1.
         $transaction_id = 'donation_' . time() . '_' . wp_generate_password( 8, false );
+
+        // Standard invoice fields (BTCPay/Coinsnap names) next to the plugin's own keys above, which
+        // stay as they are. The core leaves out empty values and adds orderId, buyerName, customerName,
+        // buyerEmail and itemDesc from $invoice_data below.
+        $sanitized_metadata += self::standard_metadata( $donor, $message, $form_post_id, $form_type, $amount_units, $currency, $redirect );
 
         $invoice_data = array(
             'name'        => $donor['donorname'],
@@ -552,6 +557,49 @@ class coinsnap_bitcoin_donation_Webhooks {
             'custom'       => $get( 'donorcustom' ),
             'checkbox'     => '1' === $get( 'donorcustomcheckbox' ) ? '1' : '0',
             'opt_out'      => filter_var( $get( 'donoroptout' ), FILTER_VALIDATE_BOOLEAN ) ? '1' : '0',
+        );
+    }
+
+    /**
+     * Standard invoice metadata for a donation: what the form is, what is paid, and the donor's
+     * fields under the BTCPay/Coinsnap names. Plain values; the core drops empty ones.
+     */
+    private static function standard_metadata( array $donor, string $message, int $form_post_id, string $form_type, float $amount_units, string $currency, string $redirect ): array {
+        $form_title  = $form_post_id > 0 ? trim( (string) get_post_field( 'post_title', $form_post_id, 'raw' ) ) : '';
+        $item_name   = '' !== $form_title ? $form_title : $form_type;
+        $form_fields = array();
+        if ( $form_post_id > 0 && '' !== $donor['donorcustom'] ) {
+            $label = (string) get_post_meta( $form_post_id, '_coinsnap_donation_form_custom_field_name', true );
+            $form_fields[ '' !== $label ? $label : 'custom' ] = $donor['donorcustom'];
+        }
+        if ( $form_post_id > 0 && '1' === $donor['donorcustomcheckbox'] ) {
+            $label = (string) get_post_meta( $form_post_id, '_coinsnap_donation_form_custom_checkbox_label', true );
+            $form_fields[ '' !== $label ? $label : 'checkbox' ] = '1';
+        }
+        $page_url = wp_validate_redirect( $redirect, '' );
+
+        return array(
+            'buyerAddress1' => $donor['donoraddress'],
+            'buyerMessage'  => '' !== $donor['donormessage'] ? $donor['donormessage'] : $message,
+            'itemCode'      => $form_post_id > 0 ? 'donation-form-' . $form_post_id : '',
+            'lineItems'     => array(
+                array(
+                    'name'     => $item_name,
+                    'sku'      => $form_post_id > 0 ? 'donation-form-' . $form_post_id : '',
+                    'quantity' => 1,
+                    'price'    => $amount_units,
+                    'total'    => $amount_units,
+                    'currency' => $currency,
+                ),
+            ),
+            'formId'        => $form_post_id > 0 ? (string) $form_post_id : '',
+            'formTitle'     => $form_title,
+            'formFields'    => $form_fields,
+            'pageUrl'       => is_string( $page_url ) ? $page_url : '',
+            'platform'      => 'wordpress',
+            'plugin'        => 'coinsnap-bitcoin-donation',
+            'pluginVersion' => defined( 'COINSNAP_BITCOIN_DONATION_VERSION' ) ? COINSNAP_BITCOIN_DONATION_VERSION : '',
+            'language'      => (string) get_locale(),
         );
     }
 
