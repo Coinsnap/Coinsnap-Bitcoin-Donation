@@ -565,7 +565,7 @@ class coinsnap_bitcoin_donation_Webhooks {
      * fields under the BTCPay/Coinsnap names. Plain values; the core drops empty ones.
      */
     private static function standard_metadata( array $donor, string $message, int $form_post_id, string $form_type, float $amount_units, string $currency, string $redirect ): array {
-        $form_title  = $form_post_id > 0 ? wp_strip_all_tags( (string) get_the_title( $form_post_id ) ) : '';
+        $form_title  = $form_post_id > 0 ? trim( (string) get_post_field( 'post_title', $form_post_id, 'raw' ) ) : '';
         $item_name   = '' !== $form_title ? $form_title : $form_type;
         $form_fields = array();
         if ( $form_post_id > 0 && '' !== $donor['donorcustom'] ) {

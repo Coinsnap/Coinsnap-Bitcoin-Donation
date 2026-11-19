@@ -63,7 +63,7 @@ update_option( 'coinsnap_donation_webhook', array(
 	'btcpay'   => array( 'id' => 'wh2', 'secret' => 'test-secret-btcpay' ),
 ) );
 
-$form_id = wp_insert_post( array( 'post_type' => 'donation-form', 'post_status' => 'publish', 'post_title' => 'Library fund' ) );
+$form_id = wp_insert_post( array( 'post_type' => 'donation-form', 'post_status' => 'publish', 'post_title' => 'Anna\'s library fund' ) );
 update_post_meta( $form_id, '_coinsnap_donation_form_form_type', 'simple_donation' );
 update_post_meta( $form_id, '_coinsnap_donation_form_public_donors', '1' );
 update_post_meta( $form_id, '_coinsnap_donation_form_custom_field_name', 'Company' );
@@ -116,10 +116,10 @@ foreach ( array( 'coinsnap', 'btcpay' ) as $provider ) {
 		&& ( $m['buyerEmail'] ?? '' ) === 'jane@example.test' && ( $m['buyerAddress1'] ?? '' ) === 'Main St 1, Vienna'
 		&& ( $m['buyerMessage'] ?? '' ) === 'For the books' );
 	t_ok( "$provider: item fields", ( $m['itemDesc'] ?? '' ) === 'Keep going' && ( $m['itemCode'] ?? '' ) === "donation-form-$form_id"
-		&& ( $m['formId'] ?? '' ) === (string) $form_id && ( $m['formTitle'] ?? '' ) === 'Library fund'
+		&& ( $m['formId'] ?? '' ) === (string) $form_id && ( $m['formTitle'] ?? '' ) === 'Anna\'s library fund'
 		&& ( $m['formFields'] ?? null ) === array( 'Company' => 'ACME' ) );
 	$li = $m['lineItems'][0] ?? array();
-	t_ok( "$provider: lineItems", 1 === count( $m['lineItems'] ?? array() ) && 'Library fund' === ( $li['name'] ?? '' ) && 1 === ( $li['quantity'] ?? 0 ) && 15 == ( $li['total'] ?? 0 ) );
+	t_ok( "$provider: lineItems", 1 === count( $m['lineItems'] ?? array() ) && 'Anna\'s library fund' === ( $li['name'] ?? '' ) && 1 === ( $li['quantity'] ?? 0 ) && 15 == ( $li['total'] ?? 0 ) );
 	t_ok( "$provider: platform fields", 'wordpress' === ( $m['platform'] ?? '' ) && COINSNAP_BITCOIN_DONATION_VERSION === ( $m['pluginVersion'] ?? '' )
 		&& home_url( '/donate/' ) === ( $m['pageUrl'] ?? '' ) && '' !== ( $m['language'] ?? '' ) );
 	t_ok( "$provider: existing keys unchanged", 'Jane Doe' === ( $m['donorname'] ?? '' ) && 'jane@example.test' === ( $m['donoremail'] ?? '' )
