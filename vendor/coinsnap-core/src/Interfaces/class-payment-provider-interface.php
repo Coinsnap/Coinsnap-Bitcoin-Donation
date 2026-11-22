@@ -22,7 +22,10 @@ interface PaymentProviderInterface {
 	 * @param array  $invoice_data   Invoice data: order_id (sent as orderId), order_number, email, name,
 	 *                               description, and metadata (any further keys, nested arrays allowed;
 	 *                               they win over the built ones). See Util\InvoiceMetadata::build().
-	 * @return array { invoice_id: string, payment_url: string, expires_at?: int }
+	 * @return array { invoice_id: string, payment_url: string, expires_at?: int }; when Coinsnap
+	 *               refused the request (400/422), { error: 'invoice_refused', status: int,
+	 *               message: string } with the server's message as plain text ('' if none);
+	 *               an empty array on any other failure.
 	 */
 	public function create_invoice( int $form_id, int $amount, string $currency, array $invoice_data ): array;
 
