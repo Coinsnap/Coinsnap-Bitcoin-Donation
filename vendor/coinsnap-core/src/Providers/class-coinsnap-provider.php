@@ -325,6 +325,17 @@ class CoinsnapProvider implements PaymentProviderInterface {
 			}
 			$code = wp_remote_retrieve_response_code( $res );
 			$body = json_decode( wp_remote_retrieve_body( $res ), true );
+			// The server read the request and refused it (e.g. an amount under the on-chain dust
+			// threshold on a store without Lightning): pass that on instead of trying the legacy
+			// path, which only 404s. The message is plain text, or '' when the server sent none.
+			if ( 400 === $code || 422 === $code ) {
+				$message = ( is_array( $body ) && isset( $body['message'] ) && is_string( $body['message'] ) ) ? trim( sanitize_text_field( $body['message'] ) ) : '';
+				return array(
+					'error'   => 'invoice_refused',
+					'status'  => $code,
+					'message' => mb_substr( $message, 0, 300 ),
+				);
+			}
 			if ( $code >= 200 && $code < 300 && is_array( $body ) ) {
 				$invoice_id  = isset( $body['id'] ) ? (string) $body['id'] : '';
 				$payment_url = isset( $body['checkoutLink'] ) ? (string) $body['checkoutLink'] : '';

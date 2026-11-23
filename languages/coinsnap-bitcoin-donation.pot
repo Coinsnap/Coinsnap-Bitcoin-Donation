@@ -364,11 +364,15 @@ msgstr ""
 
 #: includes/class-coinsnap-bitcoin-donation-webhooks.php:96
 #, php-format
-msgid "Amount cannot be less than %s %s."
+msgid "Amount cannot be less than %1$s %2$s."
 msgstr ""
 
 #: includes/class-coinsnap-bitcoin-donation-webhooks.php:125
 msgid "Invoice creation failed. Please try again."
+msgstr ""
+
+#: includes/class-coinsnap-bitcoin-donation-webhooks.php:219
+msgid "The payment provider refused this amount; it may be too small."
 msgstr ""
 
 #: includes/class-coinsnap-bitcoin-donation-settings.php:28

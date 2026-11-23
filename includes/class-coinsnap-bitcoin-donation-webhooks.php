@@ -147,7 +147,7 @@ class coinsnap_bitcoin_donation_Webhooks {
                 return new WP_REST_Response( array( 'success' => false, 'message' => sprintf( __( 'Currency %s is not supported.', 'coinsnap-bitcoin-donation' ), $currency ) ), 400 );
             } elseif ( $check['error'] === 'amountError' ) {
                 // translators: %1$s: minimum amount, %2$s: currency code (e.g. EUR)
-                return new WP_REST_Response( array( 'success' => false, 'message' => sprintf( __( 'Amount cannot be less than %1$s %2$s.', 'coinsnap-bitcoin-donation' ), $check['min_value'] ?? '0', $currency ) ), 400 );
+                return new WP_REST_Response( array( 'success' => false, 'message' => sprintf( __( 'Amount cannot be less than %1$s %2$s.', 'coinsnap-bitcoin-donation' ), self::format_minimum( (float) ( $check['min_value'] ?? 0 ), $currency ), $currency ) ), 400 );
             }
             // For ratesLoadingError/ratesListError — skip validation, let the provider handle it
         }
@@ -211,6 +211,15 @@ class coinsnap_bitcoin_donation_Webhooks {
             $provider = \CoinsnapCore\Util\ProviderFactory::create( $core );
             $result   = $provider->create_invoice( $form_post_id, $amount_minor, $currency, $invoice_data );
 
+            // Coinsnap refused the request (400/422), e.g. an amount under the on-chain dust threshold
+            // on a store without Lightning: tell the donor why instead of the generic error.
+            if ( 'invoice_refused' === ( $result['error'] ?? '' ) ) {
+                $refusal = trim( (string) ( $result['message'] ?? '' ) );
+                if ( '' === $refusal ) {
+                    $refusal = __( 'The payment provider refused this amount; it may be too small.', 'coinsnap-bitcoin-donation' );
+                }
+                return new WP_REST_Response( array( 'success' => false, 'message' => $refusal ), 400 );
+            }
             if ( isset( $result['error'] ) || empty( $result['invoice_id'] ) || empty( $result['payment_url'] ) ) {
                 return new WP_REST_Response( array( 'success' => false, 'message' => $generic ), 500 );
             }
@@ -612,6 +621,18 @@ class coinsnap_bitcoin_donation_Webhooks {
             return (string) (int) round( $amount );
         }
         return rtrim( rtrim( number_format( $amount, 2, '.', '' ), '0' ), '.' );
+    }
+
+    /** Minimum amount as shown to the donor: 1 (SATS, JPY, RUB), 0.000001 (BTC, not 1.0E-6), 0.01 (fiat). */
+    private static function format_minimum( float $amount, string $currency ): string {
+        $currency = strtoupper( $currency );
+        if ( in_array( $currency, array( 'SATS', 'JPY', 'RUB' ), true ) ) {
+            return (string) (int) ceil( $amount );
+        }
+        if ( 'BTC' === $currency ) {
+            return rtrim( rtrim( number_format( $amount, 8, '.', '' ), '0' ), '.' );
+        }
+        return number_format( $amount, 2, '.', '' );
     }
 
     private static function limit( string $value, int $length ): string {

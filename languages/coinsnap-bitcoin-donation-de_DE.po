@@ -367,12 +367,16 @@ msgstr "Die Währung %s wird nicht unterstützt."
 
 #: includes/class-coinsnap-bitcoin-donation-webhooks.php:96
 #, php-format
-msgid "Amount cannot be less than %s %s."
-msgstr "Der Betrag darf nicht weniger als %s %s betragen."
+msgid "Amount cannot be less than %1$s %2$s."
+msgstr "Der Betrag darf nicht weniger als %1$s %2$s betragen."
 
 #: includes/class-coinsnap-bitcoin-donation-webhooks.php:125
 msgid "Invoice creation failed. Please try again."
 msgstr "Rechnungserstellung fehlgeschlagen. Bitte versuchen Sie es erneut."
+
+#: includes/class-coinsnap-bitcoin-donation-webhooks.php:219
+msgid "The payment provider refused this amount; it may be too small."
+msgstr "Der Zahlungsanbieter hat diesen Betrag abgelehnt; er ist möglicherweise zu klein."
 
 #: includes/class-coinsnap-bitcoin-donation-settings.php:28
 #: includes/class-coinsnap-bitcoin-donation-settings.php:29
